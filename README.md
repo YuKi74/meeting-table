@@ -31,7 +31,7 @@ docker-compose -f docker-compose-dev.yaml up -d
 ---
 ## 代码规范
 
-- 代码编辑器统一使用`VSCode`，安装`Vetur`, `ESLint`, `Python`, `Go`插件，Windows请打开设置，找到`Files: Eol`，选择`\n`，。
+- 代码编辑器统一使用`VSCode`，安装`Vetur`, `ESLint`, `Python`, `Go`，`EditorConfig for VS Code`插件，Windows请打开设置，找到`Files: Eol`，选择`\n`，。
 
 - 编辑代码时，请使用VSCode打开相关部分的目录，而不是在仓库根目录下。例如编写前端代码时，请使用VSCode打开`metting-table/frontend/`目录，而不是`metting-table/`目录。
 
@@ -44,7 +44,9 @@ docker-compose -f docker-compose-dev.yaml up -d
 ---
 ## Git使用规范
 
-- 开发时请根据issue，从主分支上创建一个新分支，完成对于issue后发起merge request。
+- 开发时请根据issue，从主分支上创建一个新分支，同时在issue中评论`/estimate [预计花费的时间]`。完成issue后发起merge request，merge request标题最后加上`Ref #issueId`，merge request的描述中加上`Closes #issueId`以及`/spend [实际花费的时间]`，还有必要的描述。
+
+- 开发中的各个阶段记得打开gitlab上的看板，将对应的issue拖动到对应的阶段，注意不要将issue拖动到Closed。
 
 - 分支上第一次commit时，在commit message最后加上`Closes #issueId`，注意`Closes`前留个空格，之后commit的时候，在commit message后加上`Ref #issueId`，注意Ref与前面也要空格。
 
