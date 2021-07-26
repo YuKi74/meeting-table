@@ -1,18 +1,32 @@
 <template>
     <div class="home">
-        <img alt="Vue logo" src="../assets/logo.png" />
-        <HelloWorld msg="Welcome to Your Vue.js App" />
+        <page-header title="This is a ant-design-vue test."></page-header>
+        <guest-input
+            autosize="{ minRows: 2, maxRows: 6 }"
+            placeholder="请输入内容"
+            v-model="input"
+        ></guest-input>
+        <submit-btn shape="round" size="large" @click="submitNote"
+            >提交</submit-btn
+        >
     </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import { PageHeader, Input, Button } from 'ant-design-vue';
 
 export default {
     name: 'Home',
     components: {
-        HelloWorld,
+        PageHeader: PageHeader,
+        GuestInput: Input.TextArea,
+        SubmitBtn: Button,
+    },
+    methods: {
+        submitNote: function () {
+            alert('####');
+        },
     },
 };
 </script>
