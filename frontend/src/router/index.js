@@ -10,6 +10,11 @@ const routes = [
         // component: ,
     },
     {
+        path: '/register',
+        name: 'Register',
+        component: () => import('../views/register'),
+    },
+    {
         path: '/login',
         name: 'Login',
         component: () => import('../views/login'),
@@ -17,18 +22,12 @@ const routes = [
     {
         path: '/create',
         name: 'Create',
-        component: () =>
-            import(
-                /* webpackChunkName: "about" */ '../views/create-team/Create.vue'
-            ),
+        component: () => import('../views/create-team/Create.vue'),
     },
     {
         path: '/create/list',
         name: 'CreateList',
-        component: () =>
-            import(
-                /* webpackChunkName: "about" */ '../views/create-team/CreateList.vue'
-            ),
+        component: () => import('../views/create-team/CreateList.vue'),
     },
 ];
 
