@@ -14,6 +14,22 @@ const routes = [
         name: 'Login',
         component: () => import('../views/login'),
     },
+    {
+        path: '/create',
+        name: 'Create',
+        component: () =>
+            import(
+                /* webpackChunkName: "about" */ '../views/create-team/Create.vue'
+            ),
+    },
+    {
+        path: '/create/list',
+        name: 'CreateList',
+        component: () =>
+            import(
+                /* webpackChunkName: "about" */ '../views/create-team/CreateList.vue'
+            ),
+    },
 ];
 
 const router = new VueRouter({
