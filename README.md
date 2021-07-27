@@ -44,7 +44,7 @@ docker-compose -f docker-compose-dev.yaml up -d
 ---
 ## Git使用规范
 
-- 开发时请根据issue，从主分支上创建一个新分支，同时在issue中评论`/estimate [预计花费的时间]`。完成issue后发起merge request，merge request标题最后加上`Ref #issueId`，merge request的描述中加上`Closes #issueId`以及`/spend [实际花费的时间]`，还有必要的描述。
+- 开发时请根据issue，从主分支上创建一个新分支，同时在issue中评论`/estimate [预计花费的时间]`。完成issue后在issue中评论`/spend [实际花费的时间]`，然后发起merge request，merge request标题最后加上`Ref #issueId`，merge request的描述中加上`Closes #issueId`以及`/spend [实际花费的时间]`，还有必要的描述。
 
 - 开发中的各个阶段记得打开gitlab上的看板，将对应的issue拖动到对应的阶段，注意不要将issue拖动到Closed。
 
