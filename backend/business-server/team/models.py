@@ -37,4 +37,4 @@ class MeetingRoom(models.Model):
 class MeetingRoomFiles(models.Model):
     id = models.BigAutoField(primary_key=True)
     meetingRoom = models.ForeignKey(to=MeetingRoom, on_delete=models.CASCADE)
-    files = models.FilePathField(path='/files', match='.pdf', recursive=True)
+    files = models.FileField()
