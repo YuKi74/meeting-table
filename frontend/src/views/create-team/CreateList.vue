@@ -25,14 +25,14 @@
                     <form-model-item label="团队简介" prop="desc">
                         <a-input v-model="form.desc" type="textarea" />
                     </form-model-item>
-                    <form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+                    <div id="create-btn">
                         <a-button type="primary" @click="onSubmit"
                             >提交</a-button
                         >
                         <a-button style="margin-left: 10px" @click="resetForm">
                             重填
                         </a-button>
-                    </form-model-item>
+                    </div>
                 </form-model>
             </div>
         </card>
@@ -45,16 +45,20 @@
     justify-content: center;
     background: #f1f3f8;
     padding: 200px 30px;
-    height: 858px;
+    min-height: 100vh;
 }
 .create-title {
     font-size: 25px;
     font-weight: 600;
-    margin: 50px;
+    margin: 50px 0;
     color: #ffcc5f;
+    width: 100%;
+    text-align: center;
 }
-.create-table {
-    margin-left: 20px;
+#create-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 </style>
 <script>

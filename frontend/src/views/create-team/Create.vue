@@ -24,15 +24,21 @@
     justify-content: center;
     background: #f1f3f8;
     padding: 200px 30px;
-    height: 858px;
+    min-height: 100vh;
+    width: 100%;
+    text-align: center;
 }
 .create-title {
     font-size: 24px;
     font-weight: 900;
     margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
 }
 .create-content {
     font-size: 16px;
+    width: 100%;
+    text-align: center;
 }
 #btn {
     color: #ffcc5f;
