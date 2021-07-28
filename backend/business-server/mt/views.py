@@ -1,8 +1,6 @@
 """
 自定义APIView
 """
-from typing import Union
-
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -45,7 +43,7 @@ class MTView(APIView):
         return Response(data=mt_data, status=mt_status.status_code)
 
     @staticmethod
-    def check_and_get(data: Union[Request.DATA, Request.QUERY_PARAMS], field: str):
+    def check_and_get(data: Request.DATA, field: str):
         """
         检查并返回请求的字段
         """
