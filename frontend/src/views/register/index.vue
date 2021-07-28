@@ -4,7 +4,7 @@
             title="注册"
             :bordered="true"
             class="shadow card"
-            headStyle="font-size: 30px; color: var(--black);"
+            :headStyle="head_style"
         >
             <div class="flex main-axis-center">
                 <register-form
@@ -80,7 +80,10 @@
 </template>
 
 <script>
-import { FormModel, Input, Button, Card } from 'ant-design-vue';
+import { FormModel, Input, Button, Card, Message } from 'ant-design-vue';
+import { register } from '../../requests/user';
+import Errors from '../../requests/errors';
+import router from '../../router';
 export default {
     name: 'Register',
     components: {
@@ -102,8 +105,7 @@ export default {
                 email: [
                     { required: true, message: '请输入邮箱', trigger: 'blur' },
                     {
-                        pattern:
-                            /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/,
+                        type: 'email',
                         message: '邮箱格式不正确',
                         trigger: 'blur',
                     },
@@ -137,6 +139,10 @@ export default {
                     },
                 ],
             },
+            head_style: {
+                'font-size': '30px',
+                color: '#212529',
+            },
         };
     },
     methods: {
@@ -144,9 +150,21 @@ export default {
             this.$refs.ruleForm.resetFields();
         },
         submitForm() {
+            const form = this.ruleForm;
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
-                    // TODO 发起请求
+                    register(form.email, form.user_name, form.password)
+                        .then(() => {
+                            Message.success('注册成功！正在跳转到登录界面');
+                            router.push('/login');
+                        })
+                        .catch((data) => {
+                            if (data.error === Errors.ERROR_INPUT) {
+                                Message.error(data.data);
+                            } else {
+                                Message.error(data.error.message);
+                            }
+                        });
                 }
             });
         },

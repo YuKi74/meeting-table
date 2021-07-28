@@ -3,10 +3,10 @@
         <div class="card">
             <div class="tip">登录</div>
             <form-model :model="form" :rules="rules" ref="form">
-                <form-model-item prop="id">
+                <form-model-item prop="email">
                     <guest-input
                         placeholder="请输入邮箱"
-                        v-model="form.id"
+                        v-model="form.email"
                         class="input"
                     >
                     </guest-input>
@@ -23,7 +23,10 @@
                 </form-model-item>
                 <div class="blank-space"></div>
                 <form-model-item>
-                    <submit-btn class="button" :disabled="form.password === ''"
+                    <submit-btn
+                        class="button"
+                        :disabled="form.password === ''"
+                        @click="submitLogin"
                         >立即进入</submit-btn
                     >
                 </form-model-item>
@@ -42,7 +45,10 @@
 </template>
 
 <script>
-import { Input, Button, FormModel } from 'ant-design-vue';
+import { Input, Button, FormModel, Message } from 'ant-design-vue';
+import { login } from '../../requests/user';
+import Errors from '../../requests/errors';
+import Cookies from 'js-cookie';
 
 export default {
     name: 'Home',
@@ -56,11 +62,11 @@ export default {
     data: () => {
         return {
             form: {
-                userid: '',
+                email: '',
                 password: '',
             },
             rules: {
-                id: [
+                email: [
                     {
                         required: true,
                         message: '请输入邮箱',
@@ -70,6 +76,11 @@ export default {
                         max: 50,
                         message: '邮箱长度应小于50',
                         trigger: 'change',
+                    },
+                    {
+                        type: 'email',
+                        message: '邮箱格式不正确',
+                        trigger: 'blur',
                     },
                 ],
                 password: [
@@ -87,6 +98,29 @@ export default {
     methods: {
         register: function () {
             this.$router.push('/register');
+        },
+        submitLogin: function () {
+            const form = this.form;
+            this.$refs.form.validate((valid) => {
+                if (valid) {
+                    login(form.email, form.password)
+                        .then((data) => {
+                            Cookies.set('token', data.data.token);
+                            Message.success('登录成功');
+                            // TODO 跳转到团队界面
+                        })
+                        .catch((data) => {
+                            if (
+                                data.error === Errors.ERROR_INPUT ||
+                                data.error === Errors.RECORD_NOT_FOUND
+                            ) {
+                                Message.error(data.data);
+                            } else {
+                                Message.error(data.error.message);
+                            }
+                        });
+                }
+            });
         },
     },
 };
