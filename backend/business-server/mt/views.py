@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .status import MTStatus
+from user.auth import Authentication
 
 
 class MTView(APIView):
@@ -57,5 +58,4 @@ class MTAuthView(MTView):
     """
     带身份验证的MTView
     """
-    # TODO 添加身份验证类
-    authentication_classes = []
+    authentication_classes = [Authentication]

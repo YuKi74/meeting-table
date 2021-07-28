@@ -32,7 +32,10 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'user',
-    'team'
+    'team',
+    'rest_framework',
+    'django.contrib.auth',
+    'django.contrib.contenttypes'
 ]
 
 MIDDLEWARE = [

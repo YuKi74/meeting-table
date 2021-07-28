@@ -8,7 +8,7 @@ class Team(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=64)
     creator = models.ForeignKey(
-        to=User, on_delete=models.CASCADE, null=False, blank=False)
+        to=User, on_delete=models.CASCADE, null=False, blank=False, related_name="team_creator")
     initroduction = models.CharField(max_length=255)
     uuid = models.UUIDField(max_length=32, default=uuid.uuid4)
 
