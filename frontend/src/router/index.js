@@ -29,6 +29,22 @@ const routes = [
         name: 'CreateList',
         component: () => import('../views/create-team/CreateList.vue'),
     },
+    {
+        path: '/team-outside',
+        name: 'TeamOutside',
+        component: () =>
+            import(
+                /* webpackChunkName: "about" */ '../views/team-outside/TeamOutside.vue'
+            ),
+    },
+    {
+        path: '/team-outside',
+        name: 'TeamOutside',
+        component: () =>
+            import(
+                /* webpackChunkName: "about" */ '../views/team-outside/TeamOutside.vue'
+            ),
+    },
 ];
 
 const router = new VueRouter({
