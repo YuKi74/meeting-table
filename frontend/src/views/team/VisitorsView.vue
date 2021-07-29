@@ -1,13 +1,13 @@
 <template>
     <body>
-        <div class="create-card">
+        <div class="card">
             <card :bordered="false" style="width: 500px">
                 <icon class="icon" type="team" />
-                <p class="create-title">{{ name }}</p>
-                <p class="create-content">
+                <p class="title">{{ name }}</p>
+                <p class="content">
                     {{ description }}
                 </p>
-                <a-button type="primary" @click="AttendRequest">
+                <a-button type="primary" @click="attendRequest">
                     申请加入
                 </a-button>
             </card>
@@ -45,17 +45,16 @@ export default {
     data() {
         return {
             islogin: true,
-            selfname: 'xxxx',
-            name: '干完这单就回家',
-            description:
-                '这是一坨团队介绍这是一坨团队介绍blabla...这是一坨团队介绍这是一坨团队介绍blabla...',
+            selfname: 'name',
+            name: '',
+            description: '',
         };
     },
     mounted: function () {
         // TODO 获取团队信息
     },
     methods: {
-        AttendRequest() {
+        attendRequest() {
             // TODO 申请加入
         },
     },
@@ -63,7 +62,7 @@ export default {
 </script>
 
 <style scoped>
-.create-card {
+.card {
     display: flex;
     justify-content: center;
     background: #f1f3f8;
@@ -73,7 +72,7 @@ export default {
     width: 100%;
     text-align: center;
 }
-.create-title {
+.title {
     color: #ffcc5f;
     font-size: 24px;
     font-weight: 900;
@@ -81,7 +80,7 @@ export default {
     width: 100%;
     text-align: center;
 }
-.create-content {
+.content {
     font-size: 16px;
     width: 100%;
     text-align: start;

@@ -47,7 +47,7 @@
                                             v-model="form.desc"
                                             type="textarea"
                                             :default-value="form.desc"
-                                            autosize="{minRows:4}"
+                                            :autosize="{ minRows: 4 }"
                                         />
                                     </form-model-item>
                                 </form-model>
@@ -61,7 +61,7 @@
                             class="dissolve"
                             type="primary"
                             @click="showDeleteConfirm"
-                            v-if="iscreater"
+                            v-if="isCreater"
                         >
                             解散
                         </a-button>
@@ -110,7 +110,7 @@ export default {
             description:
                 '这是一坨团队介绍这是一坨团队介绍blabla...这是一坨团队介绍这是一坨团队介绍blabla...',
             // 判断是否为创建者
-            iscreater: true,
+            isCreater: true,
             ModalText: '',
             visible: false,
             confirmLoading: false,
@@ -184,7 +184,7 @@ export default {
         },
         // eslint-disable-next-line no-unused-vars
         handleOk(e) {
-            // TODO 修改团队信息
+            // TODO 修改团队信息，删除eslint注释
         },
         handleCancel() {
             this.visible = false;
