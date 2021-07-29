@@ -47,13 +47,13 @@
                     <register-form-item
                         has-feedback
                         label="验证密码"
-                        prop="comfirmpass"
+                        prop="comfirmPassword"
                     >
                         <register-input
                             type="password"
                             placeholder="comfirm password"
                             class="input"
-                            v-model="ruleForm.comfirmpass"
+                            v-model="ruleForm.comfirmPassword"
                         />
                     </register-form-item>
                     <register-form-item>
@@ -102,7 +102,7 @@ export default {
                 email: '',
                 userName: '',
                 password: '',
-                comfirmpass: '',
+                comfirmPassword: '',
             },
             rules: {
                 email: [
@@ -139,7 +139,7 @@ export default {
                         trigger: 'blur',
                     },
                 ],
-                comfirmpass: [
+                comfirmPassword: [
                     {
                         required: true,
                         message: '请再次输入密码',
