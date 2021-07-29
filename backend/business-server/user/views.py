@@ -11,9 +11,13 @@ from constant.user import password_min_length
 
 
 class UserView(MTAuthView):
-    def get(self, request, pk):
+    '''
+    查看任意用户的个人信息
+    '''
+
+    def get(self, request, id):
         try:
-            user = User.objects.get(id=pk)
+            user = User.objects.get(id=id)
             user_serializer = UserSerializerWithoutPassword(user)
             return self.success(user_serializer.data)
         except User.DoesNotExist:
@@ -21,6 +25,10 @@ class UserView(MTAuthView):
 
 
 class UserRegisterView(MTView):
+    '''
+    用户注册
+    '''
+
     def post(self, request):
         try:
             email = self.check_and_get(request.data, 'email')
@@ -42,6 +50,10 @@ class UserRegisterView(MTView):
 
 
 class UserLoginView(MTView):
+    '''
+    用户登录
+    '''
+
     def post(self, request):
         try:
             email = self.check_and_get(request.data, 'email')
@@ -59,6 +71,10 @@ class UserLoginView(MTView):
 
 
 class UserEditView(MTAuthView):
+    '''
+    用户修改个人信息
+    '''
+
     def patch(self, request):
         email = request.data.get('email')
         if email is not None:
@@ -79,3 +95,16 @@ class UserEditView(MTAuthView):
             return self.success()
         else:
             return self.fail()
+
+    '''
+    查看用户自己的个人信息
+    '''
+
+    def get(self, request):
+        id = int(redis.get(request.auth))
+        try:
+            user = User.objects.get(id=id)
+            user_serializer = UserSerializerWithoutPassword(user)
+            return self.success(user_serializer.data)
+        except User.DoesNotExist:
+            return self.fail('用户不存在', MTStatus.RECORD_NOT_FOUND)
