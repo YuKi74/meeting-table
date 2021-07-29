@@ -8,8 +8,7 @@
                         placeholder="请输入邮箱"
                         v-model="form.email"
                         class="input"
-                    >
-                    </guest-input>
+                    />
                 </form-model-item>
                 <div class="blank-space"></div>
                 <form-model-item prop="password">
@@ -18,8 +17,7 @@
                         v-model="form.password"
                         :visibilityToggle="true"
                         class="input"
-                    >
-                    </password-input>
+                    />
                 </form-model-item>
                 <div class="blank-space"></div>
                 <form-model-item>
@@ -27,8 +25,9 @@
                         class="button"
                         :disabled="form.password === ''"
                         @click="submitLogin"
-                        >立即进入</submit-btn
                     >
+                        立即进入
+                    </submit-btn>
                 </form-model-item>
                 <div class="blank-space"></div>
                 <div class="blank-space"></div>
@@ -47,6 +46,11 @@
 <script>
 import { Input, Button, FormModel, Message } from 'ant-design-vue';
 import { login } from '../../requests/user';
+import {
+    EMAIL_MAX_LENGTH,
+    PASSWORD_MIN_LENGTH,
+    PASSWORD_MAX_LENGTH,
+} from '../../constants/user';
 import Errors from '../../requests/errors';
 import Cookies from 'js-cookie';
 
@@ -73,8 +77,8 @@ export default {
                         trigger: 'blur',
                     },
                     {
-                        max: 50,
-                        message: '邮箱长度应小于50',
+                        max: EMAIL_MAX_LENGTH,
+                        message: `邮箱长度应小于${EMAIL_MAX_LENGTH}`,
                         trigger: 'change',
                     },
                     {
@@ -86,9 +90,9 @@ export default {
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
                     {
-                        min: 6,
-                        max: 64,
-                        message: '密码长度应在6-64位之间',
+                        min: PASSWORD_MIN_LENGTH,
+                        max: PASSWORD_MAX_LENGTH,
+                        message: `密码长度应在${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH}位之间`,
                         trigger: 'change',
                     },
                 ],

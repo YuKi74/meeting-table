@@ -4,7 +4,7 @@
             class="card shadow text-center"
             title="申请列表"
             :bordered="true"
-            :headStyle="head_style"
+            :headStyle="headStyle"
             :bodyStyle="{ background: 'white' }"
         >
             <team-apply-list-list
@@ -16,7 +16,7 @@
                     slot-scope="item"
                     class="main-axis-center"
                 >
-                    <div class="list-item flex main-axis-between">
+                    <div class="full-width text-center flex main-axis-between">
                         <team-apply-list-popover
                             placement="topLeft"
                             arrow-point-at-center
@@ -30,12 +30,12 @@
                             </span>
                         </team-apply-list-popover>
                         <div>
-                            <team-apply-list-button @click="agree"
-                                >同意</team-apply-list-button
-                            >
-                            <team-apply-list-button @click="refuse"
-                                >拒绝</team-apply-list-button
-                            >
+                            <team-apply-list-button @click="agree">
+                                同意
+                            </team-apply-list-button>
+                            <team-apply-list-button @click="refuse">
+                                拒绝
+                            </team-apply-list-button>
                         </div>
                     </div>
                 </team-apply-list-list-item>
@@ -48,7 +48,6 @@
 import { Card, List, Button, Popover } from 'ant-design-vue';
 
 export default {
-    name: 'TeamApplyList',
     components: {
         TeamApplyListCard: Card,
         TeamApplyListList: List,
@@ -76,7 +75,7 @@ export default {
                     email: 'r@123.com',
                 },
             ],
-            head_style: {
+            headStyle: {
                 'font-size': '20px',
                 color: '#212529',
                 background: '#b4c8ff',
@@ -98,11 +97,6 @@ export default {
 .card {
     height: 400px;
     overflow: scroll;
-}
-
-.list-item {
-    text-align: center;
-    width: 100%;
 }
 
 .text {

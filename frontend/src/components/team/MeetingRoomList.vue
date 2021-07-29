@@ -1,34 +1,34 @@
 <template>
     <a-list
         :grid="{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 3, xl: 4, xxl: 4 }"
-        :data-source="list_data"
+        :data-source="listData"
         class="board"
     >
         <a-list-item slot="renderItem" slot-scope="item, index">
-            <div v-if="item === add_room_card">
-                <div class="create" @click="add_confirm">
+            <div v-if="item === roomAddCard">
+                <div class="create" @click="addConfirm">
                     <div class="blank"></div>
                     <a-icon
                         type="plus-circle"
-                        :style="plus_class"
+                        :style="plusClass"
                         class="plus"
-                        @click="add_confirm"
+                        @click="addConfirm"
                     />
                 </div>
             </div>
-            <div class="box" v-if="item !== add_room_card">
+            <div class="box" v-else>
                 <a-card
                     :title="item.title"
                     :number="index"
                     class="card"
-                    :bodyStyle="body_style"
+                    :bodyStyle="bodyStyle"
                     @click="enter"
                 >
                     <a
                         slot="extra"
                         class="delete-btn"
                         href="#"
-                        @click.stop="delete_confirm"
+                        @click.stop="deleteComfirm"
                     >
                         删除
                     </a>
@@ -42,7 +42,7 @@
 </template>
 <script>
 import { List, Card, Modal, Icon } from 'ant-design-vue';
-import Input from './Input.vue';
+import Input from './MeetingRoomCreateInput.vue';
 import Vue from 'vue';
 Vue.use(Modal);
 
@@ -59,38 +59,37 @@ export default {
     },
     data() {
         return {
-            plus_class: {
+            plusClass: {
                 color: '#94b1ff',
                 fontSize: '50px',
             },
-            add_room_card: '',
-            metting_rooms: [
+            roomAddCard: '',
+            mettingRooms: [
                 {
                     title: '该会议室主题',
                     thumbnail: '',
                 },
             ],
-            body_style: {
+            bodyStyle: {
                 padding: 0,
             },
         };
     },
     computed: {
-        list_data: function () {
+        listData: function () {
             return [this.add_room_card].concat(this.metting_rooms);
         },
     },
     methods: {
-        add_confirm() {
-            const input_node = this.$createElement(Input);
+        addConfirm() {
+            const inputNode = this.$createElement(Input);
             Modal.info({
                 title: '请输入会议室主题',
-                content: input_node,
+                content: inputNode,
                 okText: '创建',
                 cancelText: '返回',
                 onOk() {
-                    console.log(input_node);
-                    input_node.componentInstance.confirm();
+                    inputNode.componentInstance.confirm();
                     // TODO 在子组件Input的confirm函数中 发送创建会议室请求
                 },
                 onCancel() {},
@@ -99,7 +98,7 @@ export default {
         enter() {
             //TODO 进入对应会议室
         },
-        delete_confirm() {
+        deleteComfirm() {
             Modal.confirm({
                 title: '确定要删除此会议室吗？',
                 content: '点击“确认”后, 此会议室将会被删除',

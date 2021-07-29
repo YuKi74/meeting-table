@@ -7,10 +7,10 @@ const login = function (email, password) {
     });
 };
 
-const register = function (email, user_name, password) {
+const register = function (email, userName, password) {
     return request.post('user/register/', {
         email: email,
-        name: user_name,
+        name: userName,
         password: password,
     });
 };

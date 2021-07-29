@@ -1,3 +1,5 @@
+/* eslint-disable no-magic-numbers */
+
 const MTError = function (code, message) {
     this.code = parseInt(code);
     this.message = message;
@@ -12,16 +14,16 @@ const Errors = {
     ERROR_INPUT: new MTError(5, '输入数据有误'),
 };
 
-const err_map = {};
+const ErrorMap = {};
 
 Object.keys(Errors).forEach((key) => {
     const err = Errors[key];
-    err_map[err.code] = err;
+    ErrorMap[err.code] = err;
 });
 
-const response_handler = function (response) {
+const responseHandler = function (response) {
     if (response.data.status) {
-        const err = err_map[parseInt(response.data.status)];
+        const err = ErrorMap[parseInt(response.data.status)];
         if (err) {
             response.data.error = err;
         } else {
@@ -32,4 +34,4 @@ const response_handler = function (response) {
 };
 
 export default Errors;
-export { response_handler };
+export { responseHandler };

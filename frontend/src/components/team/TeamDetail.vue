@@ -2,14 +2,10 @@
     <div class="pop">
         <popover placement="bottomLeft" arrow-point-at-center>
             <template slot="content">
-                <div id="content">
-                    <div id="title">
-                        <p id="name">{{ name }}</p>
-                        <a-button
-                            id="edit"
-                            icon="edit"
-                            @click="showModal"
-                        ></a-button>
+                <div class="content">
+                    <div class="title">
+                        <p class="name">{{ name }}</p>
+                        <a-button class="edit" icon="edit" @click="showModal" />
                         <modal
                             title="编辑团队信息"
                             okText="确认"
@@ -59,67 +55,34 @@
                         </modal>
                     </div>
                     <p>{{ description }}</p>
-                    <div id="share-and-dissolve">
+                    <div class="share-and-dissolve">
                         <a-button type="danger" @click="success">分享</a-button>
                         <a-button
-                            id="dissolve"
+                            class="dissolve"
                             type="primary"
                             @click="showDeleteConfirm"
                             v-if="iscreater"
-                            >解散</a-button
                         >
+                            解散
+                        </a-button>
                         <a-button
-                            id="dissolve"
+                            class="dissolve"
                             type="primary"
                             @click="showDeleteConfirm"
                             v-else
-                            >退出</a-button
                         >
+                            退出
+                        </a-button>
                     </div>
                 </div>
             </template>
-            <a-button id="icon" type="primary" shape="circle">{{
-                name[0]
-            }}</a-button>
+            <a-button class="icon" type="primary" shape="circle">
+                {{ name[0] }}
+            </a-button>
         </popover>
     </div>
 </template>
 
-<style>
-#icon {
-    font-size: 16px;
-    width: 50px;
-    height: 50px;
-}
-#title {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 250px;
-}
-#edit {
-    flex-shrink: 0;
-}
-#content {
-    display: flex;
-    flex-wrap: wrap;
-    width: 250px;
-    justify-content: center;
-}
-#name {
-    color: var(--black);
-    font-size: 16px;
-    font-weight: 900;
-}
-#share-and-dissolve {
-    display: flex;
-    justify-content: space-around;
-    width: 180px;
-}
-#dissolve {
-    margin-left: 20px;
-}
-</style>
 <script>
 import {
     Popover,
@@ -129,6 +92,8 @@ import {
     FormModel,
     Input,
 } from 'ant-design-vue';
+import Vue from 'vue';
+Vue.use(Modal);
 
 export default {
     components: {
@@ -191,7 +156,7 @@ export default {
     },
     methods: {
         success() {
-            var input = document.createElement('input'); // js创建一个input输入框
+            let input = document.createElement('input'); // js创建一个input输入框
             input.value = 'https://antdv.com/components/modal-cn/'; // 将需要复制的文本赋值到创建的input输入框中，this.ruleForm.url这个是我要复制的内容
             document.body.appendChild(input); // 将输入框暂时创建到实例里面
             input.select(); // 选中输入框中的内容
@@ -212,31 +177,54 @@ export default {
                 okText: '确定',
                 cancelText: '取消',
                 iconType: 'exclamation-circle',
-                onOk() {
-                    console.log('OK');
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
             });
         },
         showModal() {
             this.visible = true;
         },
+        // eslint-disable-next-line no-unused-vars
         handleOk(e) {
-            console.log(e);
-            this.ModalText = 'The modal will be closed after two seconds';
-            this.confirmLoading = true;
-            setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-            }, 1000);
+            // TODO 修改团队信息
         },
-        handleCancel(e) {
-            console.log(e);
-            console.log('Clicked cancel button');
+        handleCancel() {
             this.visible = false;
         },
     },
 };
 </script>
+
+<style scoped>
+.icon {
+    font-size: 16px;
+    width: 50px;
+    height: 50px;
+}
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 250px;
+}
+.edit {
+    flex-shrink: 0;
+}
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    width: 250px;
+    justify-content: center;
+}
+.name {
+    color: var(--black);
+    font-size: 16px;
+    font-weight: 900;
+}
+.share-and-dissolve {
+    display: flex;
+    justify-content: space-around;
+    width: 180px;
+}
+.dissolve {
+    margin-left: 20px;
+}
+</style>

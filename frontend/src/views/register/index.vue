@@ -4,20 +4,16 @@
             title="注册"
             :bordered="true"
             class="shadow card"
-            :headStyle="head_style"
+            :headStyle="headStyle"
         >
             <div class="flex main-axis-center">
                 <register-form
-                    layout="vertical"
                     :rules="rules"
                     :model="ruleForm"
                     ref="ruleForm"
+                    :hideRequiredMark="true"
                 >
-                    <register-form-item
-                        has-feedback
-                        label="邮箱："
-                        prop="email"
-                    >
+                    <register-form-item has-feedback label="邮箱" prop="email">
                         <register-input
                             type="email"
                             placeholder="email"
@@ -27,18 +23,18 @@
                     </register-form-item>
                     <register-form-item
                         has-feedback
-                        label="姓名："
-                        prop="user_name"
+                        label="姓名"
+                        prop="userName"
                     >
                         <register-input
                             placeholder="name"
                             class="input"
-                            v-model="ruleForm.user_name"
+                            v-model="ruleForm.userName"
                         />
                     </register-form-item>
                     <register-form-item
                         has-feedback
-                        label="密码："
+                        label="密码"
                         prop="password"
                     >
                         <register-input
@@ -50,7 +46,7 @@
                     </register-form-item>
                     <register-form-item
                         has-feedback
-                        label="验证密码："
+                        label="验证密码"
                         prop="comfirmpass"
                     >
                         <register-input
@@ -82,8 +78,15 @@
 <script>
 import { FormModel, Input, Button, Card, Message } from 'ant-design-vue';
 import { register } from '../../requests/user';
+import {
+    EMAIL_MAX_LENGTH,
+    USER_NAME_MAX_LENGTH,
+    PASSWORD_MIN_LENGTH,
+    PASSWORD_MAX_LENGTH,
+} from '../../constants/user';
 import Errors from '../../requests/errors';
 import router from '../../router';
+
 export default {
     name: 'Register',
     components: {
@@ -97,7 +100,7 @@ export default {
         return {
             ruleForm: {
                 email: '',
-                user_name: '',
+                userName: '',
                 password: '',
                 comfirmpass: '',
             },
@@ -105,23 +108,36 @@ export default {
                 email: [
                     { required: true, message: '请输入邮箱', trigger: 'blur' },
                     {
+                        max: EMAIL_MAX_LENGTH,
+                        message: '邮箱长度应小于' + EMAIL_MAX_LENGTH,
+                        trigger: 'change',
+                    },
+                    {
                         type: 'email',
                         message: '邮箱格式不正确',
                         trigger: 'blur',
                     },
                 ],
-                user_name: [
+                userName: [
                     { required: true, message: '请输入姓名', trigger: 'blur' },
                     {
-                        max: 32,
-                        message: '姓名最长不超过32个字符',
+                        max: USER_NAME_MAX_LENGTH,
+                        message: '姓名长度不超过' + USER_NAME_MAX_LENGTH,
                         trigger: 'blur',
                     },
                 ],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                    { min: 6, message: '密码最小长度为6位', trigger: 'blur' },
-                    { max: 64, message: '密码长度最多为64位', trigger: 'blur' },
+                    {
+                        min: PASSWORD_MIN_LENGTH,
+                        message: '密码最小长度为' + PASSWORD_MIN_LENGTH + '位',
+                        trigger: 'blur',
+                    },
+                    {
+                        max: PASSWORD_MAX_LENGTH,
+                        message: '密码长度最多为' + PASSWORD_MAX_LENGTH + '位',
+                        trigger: 'blur',
+                    },
                 ],
                 comfirmpass: [
                     {
@@ -139,7 +155,7 @@ export default {
                     },
                 ],
             },
-            head_style: {
+            headStyle: {
                 'font-size': '30px',
                 color: '#212529',
             },
@@ -174,9 +190,8 @@ export default {
 
 <style scoped>
 * {
-    margin: 0;
-    border: 0;
     padding: 0;
+    margin: 0;
 }
 
 .content {
@@ -185,7 +200,6 @@ export default {
 }
 
 .card {
-    width: 400px;
     background-color: var(--white);
     border-radius: 10px;
 }

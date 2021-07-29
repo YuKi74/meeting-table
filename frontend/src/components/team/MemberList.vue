@@ -9,12 +9,16 @@
                 <div class="name" slot="title">{{ item.nickname }}</div>
                 <a-avatar :size="40" slot="avatar" icon="user" class="avatar" />
             </a-list-item-meta>
-            <div class="remove" @click="remove_confirm">移除成员</div>
+            <div class="remove" @click="removeConfirm">移除成员</div>
         </a-list-item>
     </a-list>
 </template>
+
 <script>
 import { List, Avatar, Modal } from 'ant-design-vue';
+import Vue from 'vue';
+Vue.use(Modal);
+
 export default {
     created: function () {
         // TODO 获取用户列表
@@ -36,7 +40,7 @@ export default {
         };
     },
     methods: {
-        remove_confirm() {
+        removeConfirm() {
             Modal.confirm({
                 title: '确定要移除此成员吗？',
                 content: '点击“确认”后, 此成员将被移出此会议室',
@@ -45,15 +49,15 @@ export default {
                 onOk() {
                     // TODO 将此成员移出此会议室
                 },
-                onCancel() {},
             });
         },
     },
 };
 </script>
+
 <style>
 .avatar {
-    background-color: #498d4ffb;
+    background-color: rgba(73, 141, 79, 251);
 }
 .description {
     color: rgb(2, 2, 2);
@@ -83,7 +87,7 @@ export default {
     font-size: 18px;
 }
 .box {
-    background-color: #82ca88fb;
+    background-color: rgba(130, 202, 136, 251);
     width: 100%;
     border-radius: 8px;
     min-width: 300px;

@@ -2,17 +2,17 @@
     <body>
         <div class="create-card">
             <card :bordered="false" style="width: 500px">
-                <icon id="icon" type="team" />
+                <icon class="icon" type="team" />
                 <p class="create-title">{{ name }}</p>
                 <p class="create-content">
                     {{ description }}
                 </p>
-                <a-button type="primary" @click="AttendRequest"
-                    >申请加入</a-button
-                >
+                <a-button type="primary" @click="AttendRequest">
+                    申请加入
+                </a-button>
             </card>
             <a-button
-                id="btn"
+                class="btn"
                 type="primary"
                 shape="circle"
                 size="large"
@@ -21,7 +21,7 @@
                 {{ selfname[0] }}
             </a-button>
             <a-button
-                id="btn"
+                class="btn"
                 type="primary"
                 shape="circle"
                 size="large"
@@ -51,17 +51,18 @@ export default {
                 '这是一坨团队介绍这是一坨团队介绍blabla...这是一坨团队介绍这是一坨团队介绍blabla...',
         };
     },
-    mounted: function () {},
+    mounted: function () {
+        // TODO 获取团队信息
+    },
     methods: {
         AttendRequest() {
-            // todo
-            //申请加入按钮操作
+            // TODO 申请加入
         },
     },
 };
 </script>
 
-<style>
+<style scoped>
 .create-card {
     display: flex;
     justify-content: center;
@@ -85,14 +86,14 @@ export default {
     width: 100%;
     text-align: start;
 }
-#icon {
+.icon {
     color: #ffcc5f;
     width: 100%;
     height: 160px;
     font-size: 100px;
     padding: 30px;
 }
-#btn {
+.btn {
     letter-spacing: -2px;
     font-size: 16px;
     width: 50px;

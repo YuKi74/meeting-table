@@ -25,10 +25,10 @@
                     <form-model-item label="团队简介" prop="desc">
                         <a-input v-model="form.desc" type="textarea" />
                     </form-model-item>
-                    <div id="create-btn">
-                        <a-button type="primary" @click="onSubmit"
-                            >提交</a-button
-                        >
+                    <div class="full-width flex main-axis-center">
+                        <a-button type="primary" @click="onSubmit">
+                            提交
+                        </a-button>
                         <a-button style="margin-left: 10px" @click="resetForm">
                             重填
                         </a-button>
@@ -39,30 +39,13 @@
     </div>
 </template>
 
-<style>
-.create-card {
-    display: flex;
-    justify-content: center;
-    background: #f1f3f8;
-    padding: 200px 30px;
-    min-height: 100vh;
-}
-.create-title {
-    font-size: 25px;
-    font-weight: 600;
-    margin: 50px 0;
-    color: #ffcc5f;
-    width: 100%;
-    text-align: center;
-}
-#create-btn {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-</style>
 <script>
 import { Card, FormModel, Input, Button } from 'ant-design-vue';
+import {
+    TEAM_NAME_MIN_LENGTH,
+    TEAM_NAME_MAX_LENGTH,
+    TEAM_DESCRIPTION_MAX_LENGTH,
+} from '../../../constants/team';
 
 export default {
     components: {
@@ -90,9 +73,9 @@ export default {
                         trigger: 'blur',
                     },
                     {
-                        min: 3,
-                        max: 64,
-                        message: '请控制在3-64个字符以内',
+                        min: TEAM_NAME_MIN_LENGTH,
+                        max: TEAM_NAME_MAX_LENGTH,
+                        message: `请控制在${TEAM_NAME_MIN_LENGTH}-${TEAM_NAME_MAX_LENGTH}个字符以内`,
                         trigger: 'blur',
                     },
                 ],
@@ -103,8 +86,8 @@ export default {
                         trigger: 'blur',
                     },
                     {
-                        max: 255,
-                        message: '请控制在255个字符以内',
+                        max: TEAM_DESCRIPTION_MAX_LENGTH,
+                        message: `请控制在${TEAM_DESCRIPTION_MAX_LENGTH}个字符以内`,
                         trigger: 'blur',
                     },
                 ],
@@ -113,12 +96,10 @@ export default {
     },
     methods: {
         onSubmit() {
-            console.log(this.$refs.ruleForm);
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
                     alert('创建成功!');
                 } else {
-                    console.log('error submit!!');
                     return false;
                 }
             });
@@ -129,3 +110,21 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.create-card {
+    display: flex;
+    justify-content: center;
+    background: #f1f3f8;
+    padding: 200px 30px;
+    min-height: 100vh;
+}
+.create-title {
+    font-size: 25px;
+    font-weight: 600;
+    margin: 50px 0;
+    color: #ffcc5f;
+    width: 100%;
+    text-align: center;
+}
+</style>

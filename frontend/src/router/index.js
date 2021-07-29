@@ -7,7 +7,7 @@ const routes = [
     {
         path: '/',
         name: 'index',
-        // component: ,
+        redirect: '/team',
     },
     {
         path: '/register',
@@ -20,30 +20,22 @@ const routes = [
         component: () => import('../views/login'),
     },
     {
-        path: '/create',
-        name: 'Create',
-        component: () => import('../views/create-team/Create.vue'),
+        path: '/team',
+        name: 'Team',
+        component: () => import('../views/team'),
     },
     {
-        path: '/create/list',
-        name: 'CreateList',
-        component: () => import('../views/create-team/CreateList.vue'),
+        path: '/team/create',
+        component: () => import('../views/team/create'),
     },
     {
-        path: '/team-outside',
-        name: 'TeamOutside',
-        component: () =>
-            import(
-                /* webpackChunkName: "about" */ '../views/team-outside/TeamOutside.vue'
-            ),
+        path: '/team/:uuid',
+        component: () => import('../views/team'),
     },
     {
-        path: '/team-outside',
-        name: 'TeamOutside',
-        component: () =>
-            import(
-                /* webpackChunkName: "about" */ '../views/team-outside/TeamOutside.vue'
-            ),
+        path: '*',
+        name: '404',
+        // TODO 指定到404页面
     },
 ];
 

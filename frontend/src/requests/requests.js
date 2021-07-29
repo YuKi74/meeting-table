@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import router from '../router';
 import Errors from './errors';
-import { response_handler } from './errors';
+import { responseHandler } from './errors';
 
 const instance = axios.create({
     baseURL: '/api/',
@@ -18,10 +18,10 @@ instance.interceptors.request.use(function (config) {
 
 instance.interceptors.response.use(
     function (response) {
-        return response_handler(response).data;
+        return responseHandler(response).data;
     },
     function (error) {
-        const response = response_handler(error.response);
+        const response = responseHandler(error.response);
         if (response.data.error === Errors.NEED_LOG_IN) {
             router.push('/login');
         } else {

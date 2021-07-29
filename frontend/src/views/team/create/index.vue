@@ -1,13 +1,13 @@
 <template>
-    <body>
-        <div class="create-card">
+    <div>
+        <div class="create-card" v-show="!isFormShow">
             <card :bordered="false" style="width: 500px">
                 <a-button
                     id="btn"
                     type="link"
-                    href="../create/list"
                     icon="plus-circle"
                     :size="size"
+                    @click="isFormShow = true"
                 />
                 <p class="create-title">创建团队</p>
                 <p class="create-content">
@@ -15,10 +15,30 @@
                 </p>
             </card>
         </div>
-    </body>
+        <create-form v-show="isFormShow" />
+    </div>
 </template>
 
-<style>
+<script>
+import { Card, Button } from 'ant-design-vue';
+import CreateForm from './TeamCreateFormView.vue';
+
+export default {
+    data() {
+        return {
+            size: 'large',
+            isFormShow: false,
+        };
+    },
+    components: {
+        Card,
+        AButton: Button,
+        CreateForm,
+    },
+};
+</script>
+
+<style scoped>
 .create-card {
     display: flex;
     justify-content: center;
@@ -50,18 +70,3 @@
     padding-bottom: 0;
 }
 </style>
-<script>
-import { Card, Button } from 'ant-design-vue';
-
-export default {
-    data() {
-        return {
-            size: 'large',
-        };
-    },
-    components: {
-        Card,
-        AButton: Button,
-    },
-};
-</script>

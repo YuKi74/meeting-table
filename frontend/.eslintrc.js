@@ -10,6 +10,20 @@ module.exports = {
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        'no-magic-numbers': 'error',
+        camelcase: 'error',
+        eqeqeq: 'error',
+        'comma-dangle': [
+            'error',
+            {
+                arrays: 'always-multiline',
+                objects: 'always-multiline',
+                imports: 'always-multiline',
+                exports: 'always-multiline',
+                functions: 'never',
+            },
+        ],
+        'no-var': 'error',
         'prettier/prettier': [
             'error',
             {

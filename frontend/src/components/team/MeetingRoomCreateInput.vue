@@ -9,6 +9,7 @@
         </a-form-model-item>
     </a-form-model>
 </template>
+
 <script>
 import { Input, FormModel, Message } from 'ant-design-vue';
 
@@ -56,6 +57,7 @@ export default {
     },
 };
 </script>
+
 <style>
 .input {
     width: 85%;
