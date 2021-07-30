@@ -1,11 +1,7 @@
 <template>
     <div class="content flex main-axis-center background">
-        <Card
-            title="注册"
-            :bordered="true"
-            class="shadow card"
-            :headStyle="headStyle"
-        >
+        <card :bordered="true" class="card" :headStyle="headStyle">
+            <div class="flex reg">注册</div>
             <div class="flex main-axis-center">
                 <register-form
                     :rules="rules"
@@ -13,65 +9,63 @@
                     ref="ruleForm"
                     :hideRequiredMark="true"
                 >
-                    <register-form-item has-feedback label="邮箱" prop="email">
+                    <register-form-item class="input-box" prop="email">
                         <register-input
                             type="email"
-                            placeholder="email"
+                            placeholder="请输入邮箱"
                             class="input"
                             v-model="ruleForm.email"
                         />
                     </register-form-item>
-                    <register-form-item
-                        has-feedback
-                        label="姓名"
-                        prop="userName"
-                    >
+                    <register-form-item class="input-box" prop="userName">
                         <register-input
-                            placeholder="name"
+                            placeholder="请输入用户名"
                             class="input"
                             v-model="ruleForm.userName"
                         />
                     </register-form-item>
-                    <register-form-item
-                        has-feedback
-                        label="密码"
-                        prop="password"
-                    >
+                    <register-form-item class="input-box" prop="password">
                         <register-input
                             type="password"
-                            placeholder="password"
+                            :placeholder="passwordtext"
                             class="input"
                             v-model="ruleForm.password"
                         />
                     </register-form-item>
-                    <register-form-item
-                        has-feedback
-                        label="验证密码"
-                        prop="comfirmPassword"
-                    >
+                    <register-form-item class="input-box" prop="comfirmpass">
                         <register-input
                             type="password"
-                            placeholder="comfirm password"
+                            placeholder="请确认密码"
                             class="input"
                             v-model="ruleForm.comfirmPassword"
                         />
                     </register-form-item>
-                    <register-form-item>
-                        <register-button class="button" @click="resetForm">
+                    <register-form-item
+                        class="flex main-axis-around button-box"
+                    >
+                        <register-button
+                            class="button"
+                            @click="resetForm"
+                            type="danger"
+                        >
                             重置
                         </register-button>
-                        <register-button class="button" @click="submitForm">
+                        <register-button
+                            class="button"
+                            @click="submitForm"
+                            type="primary"
+                        >
                             提交
                         </register-button>
                     </register-form-item>
                     <register-form-item>
                         <router-link to="/login" class="linkto">
-                            已有账号？点击这里登录吧
+                            已有账号？点击这里登录
                         </router-link>
                     </register-form-item>
                 </register-form>
             </div>
-        </Card>
+        </card>
     </div>
 </template>
 
@@ -98,6 +92,12 @@ export default {
     },
     data() {
         return {
+            passwordtext:
+                '请输入' +
+                PASSWORD_MIN_LENGTH +
+                '-' +
+                PASSWORD_MAX_LENGTH +
+                '位密码',
             ruleForm: {
                 email: '',
                 userName: '',
@@ -119,7 +119,11 @@ export default {
                     },
                 ],
                 userName: [
-                    { required: true, message: '请输入姓名', trigger: 'blur' },
+                    {
+                        required: true,
+                        message: '请输入用户名',
+                        trigger: 'blur',
+                    },
                     {
                         max: USER_NAME_MAX_LENGTH,
                         message: '姓名长度不超过' + USER_NAME_MAX_LENGTH,
@@ -142,7 +146,7 @@ export default {
                 comfirmPassword: [
                     {
                         required: true,
-                        message: '请再次输入密码',
+                        message: '请确认密码',
                         trigger: 'blur',
                     },
                     {
@@ -193,27 +197,38 @@ export default {
     padding: 0;
     margin: 0;
 }
-
+.reg {
+    font-size: 24px;
+    justify-content: center;
+    font-weight: bolder;
+    margin-bottom: 20px;
+}
 .content {
     min-width: 100vw;
     min-height: 100vh;
+    background-color: var(--background);
 }
-
 .card {
+    padding: 40px 64px 40px;
+    width: 500px;
     background-color: var(--white);
-    border-radius: 10px;
+    border-radius: var(--border-radius);
 }
-
+.input-box {
+    margin: 20px 10px;
+}
 .input {
-    border: 1px var(--black) solid;
-    width: 300px;
+    width: 360px;
+    height: 32px;
+    padding: 10px;
 }
 
+.button-box {
+    display: flex;
+}
 .button {
-    width: 80px;
-    background-color: var(--primary-color-2);
+    width: 100px;
     margin: 20px;
-    color: var(--black);
 }
 
 .linkto {

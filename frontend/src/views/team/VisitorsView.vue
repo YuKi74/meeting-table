@@ -1,7 +1,7 @@
 <template>
     <body>
-        <div class="card">
-            <card :bordered="false" style="width: 500px">
+        <div class="create-card">
+            <card class="card" :bordered="false">
                 <icon class="icon" type="team" />
                 <p class="title">{{ name }}</p>
                 <p class="content">
@@ -63,6 +63,11 @@ export default {
 
 <style scoped>
 .card {
+    width: 500px;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+}
+.create-card {
     display: flex;
     justify-content: center;
     background: #f1f3f8;

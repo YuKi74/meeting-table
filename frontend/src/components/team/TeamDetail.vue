@@ -106,9 +106,8 @@ export default {
     },
     data: function () {
         return {
-            name: '干完这单就回家干完这单就回家干完这单就回家干完这单就回家',
-            description:
-                '这是一坨团队介绍这是一坨团队介绍blabla...这是一坨团队介绍这是一坨团队介绍blabla...',
+            name: '',
+            description: '',
             // 判断是否为创建者
             isCreater: true,
             ModalText: '',
@@ -165,15 +164,15 @@ export default {
             Message.success('分享链接已复制到剪贴板');
         },
         showDeleteConfirm() {
-            let isexit = '退出';
-            let dissolve = '解散后不可恢复';
+            let title = '确认要退出团队吗';
+            let message = '';
             if (this.iscreater) {
-                isexit = '解散';
-                dissolve = '解散后不可恢复，且所有会议室文件都会丢失';
+                title = '确认要解散团队吗';
+                message = '解散后不可恢复，且所有会议室文件都会丢失';
             }
             Modal.confirm({
-                title: '请确认是否要' + isexit + '团队',
-                content: dissolve,
+                title: title,
+                content: message,
                 okText: '确定',
                 cancelText: '取消',
                 iconType: 'exclamation-circle',

@@ -1,8 +1,8 @@
 <template>
     <div class="create-card">
-        <card :bordered="false" style="width: 500px">
+        <card class="card" :bordered="false" style="width: 500px">
             <p class="create-title">创建属于你的团队</p>
-            <div class="create-table">
+            <div>
                 <form-model
                     ref="ruleForm"
                     :model="form"
@@ -11,8 +11,9 @@
                     :wrapper-col="wrapperCol"
                     layout="vertical"
                 >
-                    <form-model-item ref="name" label="团队名称" prop="name">
+                    <form-model-item ref="name" prop="name">
                         <a-input
+                            class="input"
                             v-model="form.name"
                             @blur="
                                 () => {
@@ -22,15 +23,28 @@
                             placeholder="请输入团队名称..."
                         />
                     </form-model-item>
-                    <form-model-item label="团队简介" prop="desc">
-                        <a-input v-model="form.desc" type="textarea" />
+                    <form-model-item prop="desc">
+                        <a-input
+                            class="input desc"
+                            v-model="form.desc"
+                            type="textarea"
+                            placeholder="请输入团队简介..."
+                        />
                     </form-model-item>
-                    <div class="full-width flex main-axis-center">
-                        <a-button type="primary" @click="onSubmit">
-                            提交
+                    <div class="full-width flex main-axis-around btn">
+                        <a-button
+                            class="button"
+                            @click="resetForm"
+                            type="danger"
+                        >
+                            重置
                         </a-button>
-                        <a-button style="margin-left: 10px" @click="resetForm">
-                            重填
+                        <a-button
+                            type="primary"
+                            class="button"
+                            @click="onSubmit"
+                        >
+                            提交
                         </a-button>
                     </div>
                 </form-model>
@@ -112,6 +126,10 @@ export default {
 </script>
 
 <style scoped>
+.card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+}
 .create-card {
     display: flex;
     justify-content: center;
@@ -120,11 +138,22 @@ export default {
     min-height: 100vh;
 }
 .create-title {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 600;
-    margin: 50px 0;
-    color: #ffcc5f;
+    margin: 40px 0;
     width: 100%;
     text-align: center;
+}
+.input {
+    margin-left: 95px;
+}
+.btn {
+    padding: 0 60px;
+}
+.button {
+    width: 100px;
+}
+.desc {
+    height: 100px;
 }
 </style>

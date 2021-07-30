@@ -7,7 +7,6 @@
                     <guest-input
                         placeholder="请输入邮箱"
                         v-model="form.email"
-                        class="input"
                     />
                 </form-model-item>
                 <div class="blank-space"></div>
@@ -16,7 +15,6 @@
                         placeholder="请输入密码"
                         v-model="form.password"
                         :visibilityToggle="true"
-                        class="input"
                     />
                 </form-model-item>
                 <div class="blank-space"></div>
@@ -29,14 +27,10 @@
                         立即进入
                     </submit-btn>
                 </form-model-item>
-                <div class="blank-space"></div>
-                <div class="blank-space"></div>
-                <div class="blank-space"></div>
                 <form-model-item>
-                    <div class="to-register">
-                        还没有账号？
-                        <span @click="register">去注册</span>
-                    </div>
+                    <router-link to="/register" class="linkto">
+                        还没有账号？点击这里注册
+                    </router-link>
                 </form-model-item>
             </form-model>
         </div>
@@ -139,16 +133,13 @@ export default {
     cursor: pointer;
 }
 .button {
-    background-color: black;
-    color: white;
+    background-color: var(--primary-color-1);
+    color: var(--black);
     height: 40px;
     width: 100%;
 }
 .blank-space {
     height: 20px;
-}
-.input {
-    height: 40px;
 }
 div {
     text-align: center;
@@ -158,7 +149,6 @@ div {
     justify-content: center;
     margin-bottom: 30px;
     font-weight: bolder;
-    color: black;
 }
 .login {
     height: 100vh;
@@ -166,15 +156,22 @@ div {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #dde1ea;
+    background-color: var(--background);
 }
 .card {
     width: 500px;
     padding: 64px 64px 40px;
-    border-radius: 1.5rem;
-    background-color: #f5f6f9;
+    border-radius: var(--border-radius);
+    background-color: var(--white);
     display: flex;
     flex-direction: column;
     position: relative;
+}
+.linkto {
+    color: var(--black);
+}
+
+.linkto:hover {
+    color: var(--primary-color-1);
 }
 </style>

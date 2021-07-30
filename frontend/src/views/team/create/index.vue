@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="create-card" v-show="!isFormShow">
-            <card :bordered="false" style="width: 500px">
+            <card class="card" :bordered="false">
                 <a-button
                     id="btn"
                     type="link"
@@ -39,6 +39,11 @@ export default {
 </script>
 
 <style scoped>
+.card {
+    width: 500px;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+}
 .create-card {
     display: flex;
     justify-content: center;

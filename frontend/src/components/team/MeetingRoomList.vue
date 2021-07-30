@@ -60,7 +60,7 @@ export default {
     data() {
         return {
             plusClass: {
-                color: '#94b1ff',
+                color: 'var(--white)',
                 fontSize: '50px',
             },
             roomAddCard: '',
@@ -77,7 +77,7 @@ export default {
     },
     computed: {
         listData: function () {
-            return [this.add_room_card].concat(this.metting_rooms);
+            return [this.roomAddCard].concat(this.mettingRooms);
         },
     },
     methods: {
@@ -131,7 +131,7 @@ export default {
     height: 250px;
     display: flex;
     justify-content: center;
-    background-color: #fce1ac;
+    background-color: var(--primary-color-2);
     border-radius: 8px;
     box-shadow: 0 3px 20px rgb(0 0 0 / 20%);
     flex-wrap: wrap;
@@ -163,10 +163,9 @@ export default {
 .card {
     width: 100%;
     height: 250px;
-    background-color: #ebebeb;
+    background-color: var(--white);
     border-radius: 8px;
     flex-wrap: wrap;
-    border-color: #ebebeb;
     box-shadow: 0 3px 20px rgb(0 0 0 / 20%);
     cursor: pointer;
     padding: 0;
@@ -174,6 +173,7 @@ export default {
     overflow: hidden;
 }
 .box {
+    padding: 0;
     width: 100%;
     display: flex;
     justify-content: center;

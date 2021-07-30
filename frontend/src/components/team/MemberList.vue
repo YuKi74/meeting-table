@@ -9,13 +9,20 @@
                 <div class="name" slot="title">{{ item.nickname }}</div>
                 <a-avatar :size="40" slot="avatar" icon="user" class="avatar" />
             </a-list-item-meta>
-            <div class="remove" @click="removeConfirm">移除成员</div>
+            <a-button
+                class="remove font-small"
+                @click="removeConfirm"
+                size="small"
+                type="danger"
+            >
+                移除成员
+            </a-button>
         </a-list-item>
     </a-list>
 </template>
 
 <script>
-import { List, Avatar, Modal } from 'ant-design-vue';
+import { List, Avatar, Modal, Button } from 'ant-design-vue';
 import Vue from 'vue';
 Vue.use(Modal);
 
@@ -28,6 +35,7 @@ export default {
         AAvatar: Avatar,
         AListItem: List.Item,
         AListItemMeta: List.Item.Meta,
+        AButton: Button,
     },
     data() {
         return {
@@ -56,30 +64,12 @@ export default {
 </script>
 
 <style>
-.avatar {
-    background-color: rgba(73, 141, 79, 251);
-}
 .description {
     color: rgb(2, 2, 2);
 }
 .remove {
-    background-color: rgba(221, 221, 221, 0.486);
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 10%);
-    padding-left: 4px;
-    padding-right: 4px;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    border-radius: 20px;
-    font-size: 8px;
-    color: rgb(6, 51, 17);
-    margin-right: 20px;
-    font-weight: 100;
-    cursor: pointer;
-}
-.remove:hover {
-    color: red;
-    transform: scale(1.1, 1.1);
-    transition: 500ms;
+    background-color: rgb(219, 215, 215);
+    margin: 10px;
 }
 .name {
     width: 100%;
@@ -87,7 +77,7 @@ export default {
     font-size: 18px;
 }
 .box {
-    background-color: rgba(130, 202, 136, 251);
+    background-color: var(--primary-color-2);
     width: 100%;
     border-radius: 8px;
     min-width: 300px;

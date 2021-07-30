@@ -96,7 +96,7 @@ export default {
 <style scoped>
 .card {
     height: 400px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .text {
