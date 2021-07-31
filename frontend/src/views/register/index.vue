@@ -32,12 +32,15 @@
                             v-model="ruleForm.password"
                         />
                     </register-form-item>
-                    <register-form-item class="input-box" prop="comfirmpass">
+                    <register-form-item
+                        class="input-box"
+                        prop="confirmPassword"
+                    >
                         <register-input
                             type="password"
                             placeholder="请确认密码"
                             class="input"
-                            v-model="ruleForm.comfirmPassword"
+                            v-model="ruleForm.confirmPassword"
                         />
                     </register-form-item>
                     <register-form-item
@@ -102,7 +105,7 @@ export default {
                 email: '',
                 userName: '',
                 password: '',
-                comfirmPassword: '',
+                confirmPassword: '',
             },
             rules: {
                 email: [
@@ -143,7 +146,7 @@ export default {
                         trigger: 'blur',
                     },
                 ],
-                comfirmPassword: [
+                confirmPassword: [
                     {
                         required: true,
                         message: '请确认密码',
