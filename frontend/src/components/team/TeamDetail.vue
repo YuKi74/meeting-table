@@ -77,7 +77,7 @@
                 </div>
             </template>
             <a-button class="icon" type="primary" shape="circle">
-                {{ name[0] }}
+                {{ name.charAt(0) }}
             </a-button>
         </popover>
     </div>
@@ -93,6 +93,11 @@ import {
     Input,
 } from 'ant-design-vue';
 import Vue from 'vue';
+import {
+    TEAM_NAME_MIN_LENGTH,
+    TEAM_NAME_MAX_LENGTH,
+    TEAM_DESCRIPTION_MAX_LENGTH,
+} from '../../constants/team';
 Vue.use(Modal);
 
 export default {
@@ -128,10 +133,10 @@ export default {
                         trigger: 'blur',
                     },
                     {
-                        min: 3,
-                        max: 64,
-                        message: '请控制在3-64个字符以内',
-                        trigger: 'blur',
+                        min: TEAM_NAME_MIN_LENGTH,
+                        max: TEAM_NAME_MAX_LENGTH,
+                        message: `请控制在${TEAM_NAME_MIN_LENGTH}-${TEAM_NAME_MAX_LENGTH}个字符以内`,
+                        trigger: 'change',
                     },
                 ],
                 desc: [
@@ -141,9 +146,9 @@ export default {
                         trigger: 'blur',
                     },
                     {
-                        max: 255,
-                        message: '请控制在255个字符以内',
-                        trigger: 'blur',
+                        max: TEAM_DESCRIPTION_MAX_LENGTH,
+                        message: `请控制在${TEAM_DESCRIPTION_MAX_LENGTH}个字符以内`,
+                        trigger: 'change',
                     },
                 ],
             },
@@ -164,12 +169,8 @@ export default {
             Message.success('分享链接已复制到剪贴板');
         },
         showDeleteConfirm() {
-            let title = '确认要退出团队吗';
-            let message = '';
-            if (this.iscreater) {
-                title = '确认要解散团队吗';
-                message = '解散后不可恢复，且所有会议室文件都会丢失';
-            }
+            let title = this.provideTitleAndMessage(this.isCreater).title;
+            let message = this.provideTitleAndMessage(this.isCreater).message;
             Modal.confirm({
                 title: title,
                 content: message,
@@ -177,6 +178,13 @@ export default {
                 cancelText: '取消',
                 iconType: 'exclamation-circle',
             });
+        },
+        provideTitleAndMessage(creater) {
+            let title = creater ? '确认要解散团队吗' : '确认要退出团队吗';
+            let message = creater
+                ? '解散后不可恢复，且所有会议室文件都会丢失'
+                : '';
+            return { title, message };
         },
         showModal() {
             this.visible = true;
