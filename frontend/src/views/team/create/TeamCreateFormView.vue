@@ -113,8 +113,6 @@ export default {
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
                     alert('创建成功!');
-                } else {
-                    return false;
                 }
             });
         },
