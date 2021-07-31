@@ -12,6 +12,7 @@
 
 <script>
 import { Input, FormModel, Message } from 'ant-design-vue';
+import { TEAM_NAME_MAX_LENGTH } from '../../constants/team';
 
 export default {
     components: {
@@ -32,8 +33,8 @@ export default {
                         trigger: 'blur',
                     },
                     {
-                        max: 64,
-                        message: '主题长度应小于64',
+                        max: TEAM_NAME_MAX_LENGTH,
+                        message: `主题长度应小于${TEAM_NAME_MAX_LENGTH}`,
                         trigger: 'change',
                     },
                 ],
@@ -48,7 +49,11 @@ export default {
 
                     return true;
                 } else {
-                    Message.error('主题长度应小于64');
+                    if (this.form.content === '') {
+                        Message.error('请输入创建会议室的主题');
+                    } else {
+                        Message.error(`主题长度应小于${TEAM_NAME_MAX_LENGTH}`);
+                    }
 
                     return false;
                 }
