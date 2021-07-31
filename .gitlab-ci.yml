@@ -37,7 +37,7 @@ install_python_modules:
 pylint:
     stage: pylint
     script:
-        - pylint --ignore=migrations,models.py --load-plugins=pylint_django --exit-zero backend/business-server
+        - pylint --ignore=migrations --exit-zero backend/business-server
 
 django_unit_test:
     stage: django_unit_test
