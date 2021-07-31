@@ -44,20 +44,21 @@ export default {
     methods: {
         confirm() {
             this.$refs.form.validate((valid) => {
-                if (valid) {
-                    Message.success('创建成功');
-
-                    return true;
-                } else {
-                    if (this.form.content === '') {
-                        Message.error('请输入创建会议室的主题');
-                    } else {
-                        Message.error(`主题长度应小于${TEAM_NAME_MAX_LENGTH}`);
-                    }
-
-                    return false;
-                }
+                return this.confirmHitMessage(valid);
             });
+        },
+        confirmHitMessage(isChecked) {
+            if (isChecked) {
+                Message.success('创建成功');
+                return true;
+            } else {
+                if (this.form.content === '') {
+                    Message.error('请输入创建会议室的主题');
+                } else {
+                    Message.error(`主题长度应小于${TEAM_NAME_MAX_LENGTH}`);
+                }
+                return false;
+            }
         },
     },
 };
