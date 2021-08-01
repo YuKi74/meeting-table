@@ -1,7 +1,8 @@
 from mt.views import MTAuthView, ResponseData
 from team import services
+from team.serializers import MeetingRoomSerializer
 
-from .models import Team
+from .models import MeetingRoom, Team
 
 
 class TeamView(MTAuthView):
@@ -305,6 +306,21 @@ class MeetingRoomView(MTAuthView):
             id = self.check_and_get(request.data, 'id', response_data)
             room = services.is_room_creator(user, id, response_data)
             room.delete()
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
+
+
+class TeamMeetingRoomView(MTAuthView):
+    def get(self, request):
+        user = request.user
+        response_data = ResponseData()
+        try:
+            services.has_team(user, response_data)
+            response_data.data = MeetingRoomSerializer(MeetingRoom.objects.filter(
+                team_id=user.team_id), many=True).data
         except:
             # TODO log error
             pass
