@@ -1,4 +1,6 @@
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from rest_framework.status import (HTTP_200_OK, HTTP_400_BAD_REQUEST,
+                                   HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN,
+                                   HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class Status:
@@ -14,3 +16,9 @@ class MTStatus:
     MISSING_PARAMETER = Status(3, '请求参数不完整', HTTP_400_BAD_REQUEST)
     RECORD_NOT_FOUND = Status(4, '查找的数据不存在', HTTP_400_BAD_REQUEST)
     ERROR_INPUT = Status(5, '输入数据有误', HTTP_400_BAD_REQUEST)
+    INTERNAL_SERVER_ERROR = Status(
+        6, '服务器内部错误', HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # 用户请求数据部分
+    FORBIDDEN = Status(100, '当前用户没有权限', HTTP_403_FORBIDDEN)
+    TEAM_NOT_EXIST = Status(101, '当前团队不存在', HTTP_400_BAD_REQUEST)

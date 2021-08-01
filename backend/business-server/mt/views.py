@@ -5,9 +5,15 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from .status import MTStatus
 from user.auth import Authentication
+
+from .status import MTStatus, Status
+
+
+class ResponseData:
+    def __init__(self, data=None, mt_status=MTStatus.OK):
+        self.data = data
+        self.mt_status = mt_status
 
 
 class MTView(APIView):
@@ -16,42 +22,49 @@ class MTView(APIView):
     """
 
     @staticmethod
-    def success(data=None):
-        """
-        请求成功时调用
-        """
-        if data is None:
-            data = MTStatus.OK.message
-
-        mt_data = {
-            'status': MTStatus.OK.mt_code,
-            'data': data,
-        }
-        return Response(data=mt_data, status=MTStatus.OK.status_code)
-
-    @staticmethod
-    def fail(data=None, mt_status=MTStatus.ERROR_INPUT):
-        """
-        请求失败时调用
-        """
-        if data is None:
-            data = mt_status.message
-
-        mt_data = {
-            'status': mt_status.mt_code,
-            'data': data,
-        }
-        return Response(data=mt_data, status=mt_status.status_code)
+    def respond(response_data=None):
+        if not response_data \
+                or not isinstance(response_data, ResponseData) \
+                or not isinstance(response_data.mt_status, Status):
+            response_data = ResponseData(
+                mt_status=MTStatus.INTERNAL_SERVER_ERROR)
+        if not response_data.data:
+            response_data.data = response_data.mt_status.message
+        return Response(data={
+            'status': response_data.mt_status.mt_code,
+            'data': response_data.data,
+        }, status=response_data.mt_status.status_code)
 
     @staticmethod
-    def check_and_get(data: Request.DATA, field: str):
+    def check_and_get(data: Request.DATA, field: str, response_data: ResponseData, length_limitation=None):
         """
         检查并返回请求的字段
         """
         value = data.get(field)
         if value is None:
-            raise ValidationError('请求缺少字段："%s"' % field)
+            response_data.mt_status = MTStatus.MISSING_PARAMETER
+            response_data.data = '请求缺少字段："%s"' % field
+            raise ValidationError()
+        if length_limitation is not None and len(value) < length_limitation:
+            response_data.mt_status = MTStatus.ERROR_INPUT
+            response_data.data = '输入值"%s"长度不可小于%d位' % (
+                field, length_limitation)
+            raise ValidationError()
         return value
+
+    @staticmethod
+    def check_optional_value(data: Request.DATA, field: str, response_data: ResponseData, length_limitation=None):
+        """
+        检查并返回部分更新的字段
+        """
+        value = data.get(field)
+        if value is not None \
+                and length_limitation is not None \
+                and len(value) < length_limitation:
+            response_data.mt_status = MTStatus.ERROR_INPUT
+            response_data.data = '输入值"%s"长度不可小于 %d' % (
+                field, length_limitation)
+            raise ValidationError()
 
 
 class MTAuthView(MTView):

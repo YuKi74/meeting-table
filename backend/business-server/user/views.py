@@ -1,110 +1,89 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from mt.redis import redis, token_expire, genetate_token
-from user.models import User
-from .serializers import UserSerializer, UserSerializerWithoutPassword
-from rest_framework import status
-from mt.views import MTAuthView, MTView
-from mt.status import MTStatus
-from rest_framework.exceptions import ValidationError
 from constant.user import password_min_length
+from mt.views import MTAuthView, MTView, ResponseData
+from user import services
+
+from .serializers import UserSerializerWithoutPassword
 
 
 class UserView(MTAuthView):
-    '''
-    查看任意用户的个人信息
-    '''
 
     def get(self, request, id):
+        '''
+        查看任意用户的个人信息
+        '''
+        response_data = ResponseData()
         try:
-            user = User.objects.get(id=id)
-            user_serializer = UserSerializerWithoutPassword(user)
-            return self.success(user_serializer.data)
-        except User.DoesNotExist:
-            return self.fail('用户不存在', MTStatus.RECORD_NOT_FOUND)
+            services.get_information(id, response_data)
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
 
 
 class UserRegisterView(MTView):
-    '''
-    用户注册
-    '''
 
     def post(self, request):
+        '''
+        用户注册
+        '''
+        response_data = ResponseData()
         try:
-            email = self.check_and_get(request.data, 'email')
-            name = self.check_and_get(request.data, 'name')
-            password = self.check_and_get(request.data, 'password')
-        except ValidationError as err:
-            return self.fail(err.detail, MTStatus.MISSING_PARAMETER)
+            email = self.check_and_get(request.data, 'email', response_data)
+            name = self.check_and_get(request.data, 'name', response_data, 1)
+            password = self.check_and_get(
+                request.data, 'password', response_data, 6)
+            services.register(email, name, password, response_data)
+        except:
+            # TODO log error
+            pass
 
-        if len(str(password)) < password_min_length:
-            return self.fail('密码不能短于'+password_min_length+'位', MTStatus.ERROR_INPUT)
-        user = User(email=email, name=name, password=password)
-        user.set_password(password)
-        user_serializer = UserSerializer(data=request.data)
-        if user_serializer.is_valid():
-            user.save()
-            token = genetate_token(user.id)
-            return self.success({'token': token})
-        return self.fail('当前邮箱已被占用')
+        return self.respond(response_data)
 
 
 class UserLoginView(MTView):
-    '''
-    用户登录
-    '''
 
     def post(self, request):
+        '''
+        用户登录
+        '''
+        response_data = ResponseData()
         try:
-            email = self.check_and_get(request.data, 'email')
-            password = self.check_and_get(request.data, 'password')
-            user = User.objects.get(email=email)
-            if user.check_password(password):
-                token = genetate_token(user.id)
-                return self.success({'token': token})
-            else:
-                return self.fail('密码输入错误', MTStatus.ERROR_INPUT)
-        except User.DoesNotExist:
-            return self.fail('用户不存在', MTStatus.RECORD_NOT_FOUND)
-        except ValidationError as err:
-            return self.fail(err.detail, MTStatus.MISSING_PARAMETER)
+            email = self.check_and_get(request.data, 'email', response_data)
+            password = self.check_and_get(
+                request.data, 'password', response_data)
+            services.login(email, password, response_data)
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
 
 
 class UserEditView(MTAuthView):
-    '''
-    用户修改个人信息
-    '''
 
     def patch(self, request):
-        email = request.data.get('email')
-        if email is not None:
-            return self.fail('邮箱不可更改', MTStatus.ERROR_INPUT)
-        if not any(request.data):
-            return self.fail('请输入修改内容', MTStatus.MISSING_PARAMETER)
-        name = request.data.get('name')
-        password = request.data.get('password')
-        if name is not None and not name:
-            return self.fail('用户名不能为空', MTStatus.ERROR_INPUT)
-        if password is not None and len(str(password)) < password_min_length:
-            return self.fail('密码不能短于'+password_min_length+'位', MTStatus.ERROR_INPUT)
+        '''
+        用户修改个人信息
+        '''
+        response_data = ResponseData()
         user = request.user
-        user_serializer = UserSerializer(
-            instance=user, data=request.data, partial=True)
-        if user_serializer.is_valid():
-            user_serializer.save()
-            return self.success()
-        else:
-            return self.fail()
+        try:
+            services.has_data(request.data, response_data)
+            self.check_optional_value(request.data, 'name', response_data, 1)
+            self.check_optional_value(
+                request.data, 'password', response_data, password_min_length)
+            services.update_user_information(user, request.data, response_data)
+        except:
+            # TODO log error
+            pass
 
-    '''
-    查看用户自己的个人信息
-    '''
+        return self.respond(response_data)
 
     def get(self, request):
-        id = int(redis.get(request.auth))
-        try:
-            user = User.objects.get(id=id)
-            user_serializer = UserSerializerWithoutPassword(user)
-            return self.success(user_serializer.data)
-        except User.DoesNotExist:
-            return self.fail('用户不存在', MTStatus.RECORD_NOT_FOUND)
+        '''
+        查看用户自己的个人信息
+        '''
+        response_data = ResponseData()
+        response_data.data = UserSerializerWithoutPassword(request.user).data
+        return self.respond(response_data)

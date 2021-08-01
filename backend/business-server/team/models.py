@@ -9,8 +9,9 @@ class Team(models.Model):
     name = models.CharField(max_length=64)
     creator = models.ForeignKey(
         to=User, on_delete=models.CASCADE, null=False, blank=False, related_name="team_creator")
-    initroduction = models.CharField(max_length=255)
-    uuid = models.UUIDField(max_length=32, default=uuid.uuid4)
+    introduction = models.CharField(max_length=255)
+    uuid = models.UUIDField(
+        max_length=32, default=uuid.uuid4)
 
 
 class Application(models.Model):

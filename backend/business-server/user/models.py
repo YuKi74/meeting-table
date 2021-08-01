@@ -7,6 +7,11 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=32)
     email = models.EmailField(max_length=50, unique=True)
     team = models.ForeignKey(
-        'team.Team', on_delete=models.CASCADE, null=True, blank=True, related_name="user_team")
+        'team.Team', on_delete=models.SET_NULL, null=True, blank=True, related_name="user_team")
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['id', 'name', 'email']
+    REQUIRED_FIELDS = ['name', 'email', 'password']
+
+    def is_creator(self):
+        if self.team and self.team.creator_id == self.id:
+            return True
+        return False

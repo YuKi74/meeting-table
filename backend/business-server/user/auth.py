@@ -1,7 +1,8 @@
+from mt.redis import redis
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.request import Request
-from mt.redis import redis
+
 from .models import User
 
 

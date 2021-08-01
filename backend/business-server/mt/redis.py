@@ -1,8 +1,7 @@
-import redis as r
 import random
 import string
-from rest_framework.exceptions import AuthenticationFailed
 
+import redis as r
 
 redis = r.Redis(host='localhost', port=6379, decode_responses=True)
 token_expire = 259800
