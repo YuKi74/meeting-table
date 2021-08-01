@@ -1,4 +1,4 @@
-from team.models import MeetingRoom, Team
+from team.models import Application, MeetingRoom, Team
 from user.models import User
 
 
@@ -19,3 +19,9 @@ def create_room(name, team, creator):
     room = MeetingRoom(name=name, team=team, creator=creator)
     room.save()
     return room
+
+
+def create_application(user, team):
+    application = Application(user=user, team=team)
+    application.save()
+    return application
