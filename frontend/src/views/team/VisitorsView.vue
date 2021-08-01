@@ -70,7 +70,7 @@ export default {
 .create-card {
     display: flex;
     justify-content: center;
-    background: #f1f3f8;
+    background: var(--background-color);
     padding-top: 200px;
     padding-bottom: 250px;
     min-height: 100vh;
