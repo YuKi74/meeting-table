@@ -1,9 +1,9 @@
-from django.urls.base import is_valid_path
+from mt.views import ResponseData
 from mt.errors import HasTeam
 from mt.status import MTStatus
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from team.models import Application, Team
-from team.serializers import (ApplicantSerializer, ApplicationSerializer,
+from team.models import Application, MeetingRoom, Team
+from team.serializers import (ApplicantSerializer, ApplicationSerializer, MeetingRoomSerializer,
                               TeamInformationSerializer, TeamSerializer)
 from user.models import User
 from user.serializers import UserSerializerWithoutPassword
@@ -41,9 +41,7 @@ def get_team_detail(uuid, response_data):
         team = Team.objects.get(uuid=uuid)
     except Team.DoesNotExist as err:
         response_data.mt_status = MTStatus.TEAM_NOT_EXIST
-        print(123123123)
         raise Team.DoesNotExist from err
-    print(7897897879789)
     response_data.data = TeamInformationSerializer(team).data
 
 
@@ -68,20 +66,23 @@ def update_team(team, data, response_data):
     team_serializer.save()
 
 
-def delete_member(member_id, team, response_data):
+def belong_to_team(member_id, team, response_data):
     try:
         member = User.objects.get(id=member_id)
     except User.DoesNotExist as err:
         response_data.mt_status = MTStatus.RECORD_NOT_FOUND
         response_data.data = '当前用户不存在'
         raise User.DoesNotExist() from err
-    if member.team_id == team.id:
-        member.team_id = None
-        member.save()
-    else:
+    if member.team_id != team.id:
         response_data.mt_status = MTStatus.ERROR_INPUT
         response_data.data = '当前用户不属于本团队'
         raise PermissionDenied()
+    return member
+
+
+def delete_member(member):
+    member.team_id = None
+    member.save()
 
 
 def get_team_members(team, response_data):
@@ -102,9 +103,7 @@ def solve_application(application_id, is_admitted, response_data):
         raise ValidationError()
     user = User.objects.get(id=application.user_id)
     team = Team.objects.get(id=application.team_id)
-    print(is_admitted)
-    print(type(is_admitted))
-    if is_admitted == "True":
+    if is_admitted == True:
         user.team_id = team.id
         user.save()
         Application.objects.filter(user_id=user.id).update(
@@ -129,13 +128,56 @@ def post_application(user_id, uuid, response_data):
         'user': user_id,
         'team': team.id
     })
-    print('111')
-    if(application_serializer.is_valid()):
-        applicant = application_serializer.save()
-        print(applicant.id)
+    if application_serializer.is_valid():
+        application_serializer.save()
 
 
 def get_applicants(team_id, response_data):
     applicants = ApplicantSerializer(Application.objects.filter(
         status=Application.Status.PENDING, team_id=team_id), many=True)
     response_data.data = applicants.data
+
+
+def create_room(user: User, name, response_data: ResponseData):
+    room_serializer = MeetingRoomSerializer(data={
+        'name': name,
+        'creator': user.id,
+        'team': user.team_id
+    })
+    if room_serializer.is_valid():
+        room_serializer.save()
+    else:
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        raise ValidationError
+
+
+def is_room_creator(user: User, room_id, response_data: ResponseData):
+    try:
+        room = MeetingRoom.objects.get(id=room_id)
+    except MeetingRoom.DoesNotExist as err:
+        response_data.mt_status = MTStatus.RECORD_NOT_FOUND
+        response_data.data = '当前会议室不存在'
+        raise MeetingRoom.DoesNotExist from err
+    if user.id != room.creator_id:
+        response_data.mt_status = MTStatus.FORBIDDEN
+        response_data.data = '当前用户不是会议室创建人'
+        raise PermissionDenied
+    return room
+
+
+def is_room_exist(uuid, response_data: ResponseData):
+    try:
+        room = MeetingRoom.objects.get(uuid=uuid)
+    except MeetingRoom.DoesNotExist as err:
+        response_data.mt_status = MTStatus.RECORD_NOT_FOUND
+        response_data.data = '当前会议室不存在'
+        raise MeetingRoom.DoesNotExist from err
+    return room
+
+
+def get_room_information(user: User, room: MeetingRoom, response_data: ResponseData):
+    if user.team_id == room.team_id:
+        response_data.data = MeetingRoomSerializer(room).data
+    else:
+        response_data.mt_status = MTStatus.FORBIDDEN
+        raise PermissionDenied

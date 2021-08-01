@@ -1,20 +1,18 @@
 from mt.views import MTAuthView, ResponseData
 from team import services
+
 from .models import Team
 
 
 class TeamView(MTAuthView):
     def post(self, request):
         '''
-        @api {post} /team/ Create a new team
+        @api {post} /team/ 创建团队
         @apiName create_team
         @apiGroup Team
 
         @apiParam {String[1..64]} name 团队名
         @apiParam {String[1..255]} introduction 团队介绍
-
-        @api
-
         '''
         response_data = ResponseData()
         creator = request.user
@@ -27,20 +25,16 @@ class TeamView(MTAuthView):
         except:
             # TODO log error
             pass
-
         return self.respond(response_data)
 
     def patch(self, request):
         '''
-        修改团队信息，可以传入团队名name，团队介绍introduction（至少传入一个）
-        '''
-        '''
-        @api {patch} /team/ update team information
+        @api {patch} /team/ 修改团队信息
         @apiName update_team_information
         @apiGroup Team
 
-        @apiParam {String[1..32]} []
-
+        @apiParam {String[1..64]} [name] 团队名
+        @apiParam {String[1..255]} [introduction] 团队介绍
         '''
         response_data = ResponseData()
         user = request.user
@@ -60,17 +54,16 @@ class TeamView(MTAuthView):
 
     def delete(self, request):
         '''
-        解散团队
+        @api {delete} /team/ 解散团队
+        @apiName delete_team
+        @apiGroup Team
         '''
         response_data = ResponseData()
         user = request.user
-        print('88888')
         try:
             services.has_team(user, response_data)
             services.is_creator(user, response_data)
-            print('lalala')
             Team.objects.get(id=user.team_id).delete()
-            print('aaaa')
         except:
             # TODO log error
             pass
@@ -82,7 +75,11 @@ class TeamMemberView(MTAuthView):
 
     def get(self, request):
         '''
-        查看团队内所有成员
+        @api {get} /team/member/ 查看用户所在团队内所有成员
+        @apiName get_all_team_members
+        @apiGroup Team
+        # TODO 看一下返回值类型
+        @apiSuccess {String[]} 团队内所有成员信息
         '''
         user = request.user
         response_data = ResponseData()
@@ -97,7 +94,11 @@ class TeamMemberView(MTAuthView):
 
     def delete(self, request):
         '''
-        团队创建者移出团队内成员
+        @api {delete} /team/member/  团队创建者移出团队内成员
+        @apiName delete_team_member
+        @apiGroup Team
+
+        @apiParam {Number} member_id 团队成员id
         '''
         response_data = ResponseData()
         user = request.user
@@ -106,7 +107,9 @@ class TeamMemberView(MTAuthView):
             services.is_creator(user, response_data)
             member_id = self.check_and_get(
                 request.data, 'member_id', response_data)
-            services.delete_member(member_id, user.team, response_data)
+            member = services.belong_to_team(
+                member_id, user.team, response_data)
+            services.delete_member(member)
         except:
             # TODO log error
             pass
@@ -115,7 +118,12 @@ class TeamMemberView(MTAuthView):
 
     def post(self, request):
         '''
-        团队创建者通过修改申请人状态，修改团队内成员，传入申请记录id，是否允许申请is_admitted
+        @api {post} /team/member/ 团队创建者审核申请人
+        @apiName process_member_application
+        @apiGroup Team
+
+        @apiParam {Number} application_id 申请记录id
+        @apiParam {Boolean} is_admitted 申请是否同意
         '''
         user = request.user
         response_data = ResponseData()
@@ -124,7 +132,7 @@ class TeamMemberView(MTAuthView):
             services.is_creator(user, response_data)
             application_id = self.check_and_get(
                 request.data, 'application_id', response_data)
-            is_admitted = (self.check_and_get(
+            is_admitted = bool(self.check_and_get(
                 request.data, 'is_admitted', response_data))
             services.solve_application(
                 application_id, is_admitted, response_data)
@@ -139,7 +147,11 @@ class ApplicationView(MTAuthView):
 
     def post(self, request):
         '''
-        申请人提交加入团队的申请，传入团队uuid
+        @api {post} /team/join/ 申请人提交加入团队的申请
+        @apiName submit_application
+        @apiGroup Team
+
+        @apiParam {String} uuid 申请团队uuid
         '''
         user = request.user
         response_data = ResponseData()
@@ -155,7 +167,11 @@ class ApplicationView(MTAuthView):
 
     def get(self, request):
         '''
-        团队创建者获取未处理的申请人名单
+        @api {get} /team/join/ 团队创建者获取未处理的申请人名单
+        @apiName get_unsolved_applications
+        @apiGroup Team
+
+        @apiSuccess {String[]} 未处理的申请人名单
         '''
         user = request.user
         response_data = ResponseData()
@@ -174,7 +190,9 @@ class TeamMemberQuitView(MTAuthView):
 
     def post(self, request):
         '''
-        用户退出团队
+        @api {post} /team/quit/ 用户退出团队
+        @apiName quit_team
+        @apiGroup Team
         '''
         user = request.user
         response_data = ResponseData()
@@ -192,19 +210,101 @@ class TeamMemberQuitView(MTAuthView):
 class TeamInformationView(MTAuthView):
     def get(self, request, uuid):
         '''
-        @api {get} /team/:uuid get team information
+        @api {get} /team/:uuid 获取团队信息
         @apiName get_team_information
         @apiGroup Team
 
-        @apiParam {String[1..64]} [name] Team Name
-        @apiParam {String[1..255]} [introduction] Team Introduction
-
+        @apiSuccess {String[]} 团队信息
         '''
 
         response_data = ResponseData()
-        print('uuid')
         try:
             services.get_team_detail(uuid, response_data)
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
+
+
+class MeetingRoomView(MTAuthView):
+    def post(self, request):
+        '''
+        @api {post} /room/ 创建会议室
+        @apiName create_new_room
+        @apiGroup Room
+
+        @apiParam {String[1..64]} name 团队名
+        '''
+        user = request.user
+        response_data = ResponseData()
+        try:
+            name = self.check_and_get(request.data, 'name', response_data, 1)
+            services.create_room(user, name, response_data)
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
+
+    def patch(self, request):
+        '''
+        @api {patch} /room/ 创建人编辑会议室信息
+        @apiName update_room_information
+        @apiGroup Room
+
+        @apiParam {String[1..64]} name 会议室新名字
+        @apiParam {Number} id 会议室id
+        '''
+        user = request.user
+        response_data = ResponseData()
+        try:
+            id = self.check_and_get(request.data, 'id', response_data)
+            name = self.check_and_get(request.data, 'name', response_data, 1)
+            room = services.is_room_creator(user, id, response_data)
+            room.name = name
+            room.save()
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
+
+    def get(self, request, uuid):
+        '''
+        @api {get} /room/ 获取会议室信息
+        @apiName update_room_information
+        @apiGroup Room
+
+        @apiParam {String} uuid 会议室uuid
+
+        @apiSuccess {String[]} 会议室信息
+        '''
+        user = request.user
+        response_data = ResponseData()
+        try:
+            room = services.is_room_exist(uuid, response_data)
+            services.get_room_information(user, room, response_data)
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
+
+    def delete(self, request):
+        '''
+        @api {delete} /room/ 创建人删除会议室
+        @apiName delete_room
+        @apiGroup Room
+
+        @apiParam {Number} id 会议室id
+        '''
+        user = request.user
+        response_data = ResponseData()
+        try:
+            id = self.check_and_get(request.data, 'id', response_data)
+            room = services.is_room_creator(user, id, response_data)
+            room.delete()
         except:
             # TODO log error
             pass

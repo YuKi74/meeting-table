@@ -1,3 +1,5 @@
+from rest_framework.serializers import ModelSerializer
+from .models import MeetingRoom
 from rest_framework import serializers
 
 from .models import Application, Team
@@ -29,4 +31,10 @@ class ApplicantSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
+        fields = '__all__'
+
+
+class MeetingRoomSerializer(ModelSerializer):
+    class Meta:
+        model = MeetingRoom
         fields = '__all__'

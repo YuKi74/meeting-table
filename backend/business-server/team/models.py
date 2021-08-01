@@ -33,6 +33,7 @@ class MeetingRoom(models.Model):
     creator = models.ForeignKey(to=User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     uuid = models.UUIDField(max_length=32, default=uuid.uuid4)
+    team = models.ForeignKey(to=Team, on_delete=models.CASCADE)
 
 
 class MeetingRoomFiles(models.Model):

@@ -38,7 +38,7 @@ class MTView(APIView):
     @staticmethod
     def check_and_get(data: Request.DATA, field: str, response_data: ResponseData, length_limitation=None):
         """
-        检查并返回请求的字段
+        检查并返回部分更新的字段
         """
         value = data.get(field)
         if value is None:

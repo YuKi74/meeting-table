@@ -1,4 +1,3 @@
-from re import T
 from mt.redis import genetate_token
 from mt.status import MTStatus
 from mt.views import ResponseData
