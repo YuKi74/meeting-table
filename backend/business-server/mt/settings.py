@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -121,3 +122,49 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/files/'
 MEDIA_ROOT = '/files/'
+
+LOG_PATH = '/var/log/mt/business-server'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{asctime} [{levelname}]\t{message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file-info': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'simple',
+            'filename': os.path.join(LOG_PATH, 'info.log'),
+            'when': 'midnight',
+            'interval': 1,
+            'delay': True,
+            'backupCount': 30,
+        },
+        'file-debug': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'simple',
+            'filename': os.path.join(LOG_PATH, 'debug.log'),
+            'when': 'midnight',
+            'interval': 1,
+            'delay': True,
+            'backupCount': 30,
+        },
+    },
+    'loggers': {
+        'log': {
+            'handlers': ['console', 'file-info', 'file-debug', ],
+            'level': 'DEBUG',
+        }
+    },
+}
