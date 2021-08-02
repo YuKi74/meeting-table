@@ -36,6 +36,8 @@ install_python_modules:
 
 pylint:
     stage: pylint
+    before_script:
+        - touch backend/business-server/__init__.py
     script:
         - pylint --ignore=migrations --exit-zero backend/business-server
 
