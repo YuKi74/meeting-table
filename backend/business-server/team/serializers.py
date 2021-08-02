@@ -12,9 +12,10 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TeamInformationSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Team
-        fields = ('name', 'introduction')
+        fields = ('name', 'introduction', 'creator')
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
