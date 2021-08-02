@@ -1,5 +1,3 @@
-from io import RawIOBase
-import re
 from mt.views import MTAuthView, ResponseData
 from team import services
 from team.serializers import MeetingRoomSerializer
@@ -22,6 +20,9 @@ class TeamView(MTAuthView):
             "name":"干完这单就回家",
             "introduction":"这是团队介绍啊"
         }
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError FORBIDDEN
         """
         response_data = ResponseData()
         creator = request.user
@@ -44,6 +45,11 @@ class TeamView(MTAuthView):
 
         @apiParam {String[1..64]} [name] 团队名
         @apiParam {String[1..255]} [introduction] 团队介绍
+
+        @apiError TEAM_NOT_EXIST
+        @apiError FORBIDDEN
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
         """
         response_data = ResponseData()
         user = request.user
@@ -66,6 +72,10 @@ class TeamView(MTAuthView):
         @api {delete} /team/ 解散团队
         @apiName delete_team
         @apiGroup Team
+
+        @apiError TEAM_NOT_EXIST
+        @apiError FORBIDDEN
+
         """
         response_data = ResponseData()
         user = request.user
@@ -87,7 +97,9 @@ class TeamMemberView(MTAuthView):
         @api {get} /team/member/ 查看用户所在团队内所有成员
         @apiName get_all_team_members
         @apiGroup Team
-        @apiSuccess {String[]} information 团队内所有成员信息
+        @apiSuccess {String} information 团队内所有成员信息
+
+        @apiError TEAM_NOT_EXIST
         """
         # TODO 看一下返回值类型
 
@@ -109,6 +121,12 @@ class TeamMemberView(MTAuthView):
         @apiGroup Team
 
         @apiParam {Number} member_id 团队成员id
+
+        @apiError TEAM_NOT_EXIST
+        @apiError FORBIDDEN
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError RECORD_NOT_FOUND
         """
         response_data = ResponseData()
         user = request.user
@@ -134,6 +152,12 @@ class TeamMemberView(MTAuthView):
 
         @apiParam {Number} application_id 申请记录id
         @apiParam {Boolean} is_admitted 申请是否同意
+
+        @apiError TEAM_NOT_EXIST
+        @apiError FORBIDDEN
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError RECORD_NOT_FOUND
         """
         user = request.user
         response_data = ResponseData()
@@ -162,6 +186,11 @@ class ApplicationView(MTAuthView):
         @apiGroup Team
 
         @apiParam {String} uuid 申请团队uuid
+
+        @apiError FORBIDDEN
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError TEAM_NOT_EXIST
         """
         user = request.user
         response_data = ResponseData()
@@ -182,6 +211,9 @@ class ApplicationView(MTAuthView):
         @apiGroup Team
 
         @apiSuccess {String[]} unsolved_list 未处理的申请人名单
+
+        @apiError FORBIDDEN
+        @apiError TEAM_NOT_EXIST
         """
         user = request.user
         response_data = ResponseData()
@@ -203,6 +235,8 @@ class TeamMemberQuitView(MTAuthView):
         @api {post} /team/quit/ 用户退出团队
         @apiName quit_team
         @apiGroup Team
+
+        @apiError TEAM_NOT_EXIST
         """
         user = request.user
         response_data = ResponseData()
@@ -225,6 +259,8 @@ class TeamInformationView(MTAuthView):
         @apiGroup Team
 
         @apiSuccess {String[]} team_information 团队信息
+
+        @apiError TEAM_NOT_EXIST
         """
 
         response_data = ResponseData()
@@ -245,6 +281,9 @@ class MeetingRoomView(MTAuthView):
         @apiGroup Room
 
         @apiParam {String[1..64]} name 团队名
+
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
         """
         user = request.user
         response_data = ResponseData()
@@ -265,6 +304,11 @@ class MeetingRoomView(MTAuthView):
 
         @apiParam {String[1..64]} name 会议室新名字
         @apiParam {Number} id 会议室id
+
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError RECORD_NOT_FOUND
+        @apiError FORBIDDEN
         """
         user = request.user
         response_data = ResponseData()
@@ -289,6 +333,9 @@ class MeetingRoomView(MTAuthView):
         @apiParam {String} uuid 会议室uuid
 
         @apiSuccess {String[]} room_information 会议室信息
+
+        @apiError RECORD_NOT_FOUND
+        @apiError FORBIDDEN
         """
         user = request.user
         response_data = ResponseData()
@@ -308,6 +355,11 @@ class MeetingRoomView(MTAuthView):
         @apiGroup Room
 
         @apiParam {Number} id 会议室id
+
+        @apiError RECORD_NOT_FOUND
+        @apiError FORBIDDEN
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
         """
         user = request.user
         response_data = ResponseData()
@@ -330,6 +382,8 @@ class TeamMeetingRoomView(MTAuthView):
         @apiGroup Room
 
         @apiSuccess {String[]} 会议室信息
+
+        @apiError TEAM_NOT_EXIST
         '''
         user = request.user
         response_data = ResponseData()

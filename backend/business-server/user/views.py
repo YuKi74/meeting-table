@@ -16,6 +16,7 @@ class UserView(MTAuthView):
         @apiGroup User
 
         @apiSuccess {String[]} user_information 用户信息
+        @apiError RECORD_NOT_FOUND
         """
         response_data = ResponseData()
         try:
@@ -46,6 +47,8 @@ class UserRegisterView(MTView):
             "password":"123456"
         }
         @apiSuccess {String} token 后续发请求都要携带
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
         """
         response_data = ResponseData()
         try:
@@ -78,6 +81,9 @@ class UserLoginView(MTView):
             "password":"123456"
         }
         @apiSuccess {String} token 后续发请求都要携带
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError RECORD_NOT_FOUND
         """
         response_data = ResponseData()
         try:
@@ -104,6 +110,10 @@ class UserEditView(MTAuthView):
         @apiParam {String[1..128]} [password] 用户密码
 
         @apiSuccess {String} token 后续发请求都要携带
+
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError FORBIDDEN
 
         """
         response_data = ResponseData()
