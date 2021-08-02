@@ -8,7 +8,7 @@ from mt.views import ResponseData
 from .serializers import UserSerializerWithoutPassword
 
 from helper.test import create_user
-from constant.usertest import not_exist_user_id
+from constant.user import not_exist_user_id
 
 
 class UserModelTestCase(TestCase):

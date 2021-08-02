@@ -1,5 +1,6 @@
-from constant.teamtest import (not_exist_application_id, not_exist_room_id,
-                               not_exist_room_uuid, not_exist_team_uuid)
+from constant.team import (not_exist_application_id, not_exist_room_id,
+                           not_exist_room_uuid, not_exist_team_uuid,
+                           not_exist_user_id)
 from django.test import TestCase
 from helper.test import (create_application, create_room, create_team,
                          create_user)
@@ -15,9 +16,6 @@ from user.serializers import UserSerializerWithoutPassword
 
 from .models import Application, Team
 from .serializers import ApplicantSerializer, TeamInformationSerializer
-
-# TODO 将下面的变量移到constant文件夹
-not_exist_user_id = 1000
 
 
 class TeamTestCase(TestCase):

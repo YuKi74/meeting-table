@@ -62,7 +62,7 @@ class MTView(APIView):
                 and length_limitation is not None \
                 and len(value) < length_limitation:
             response_data.mt_status = MTStatus.ERROR_INPUT
-            response_data.data = '输入值"%s"长度不可小于 %d' % (
+            response_data.data = '输入值"%s"长度不可小于%d位' % (
                 field, length_limitation)
             raise ValidationError()
 
