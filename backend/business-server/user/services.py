@@ -59,7 +59,7 @@ def has_data(data, response_data):
 
 
 def update_user_information(user: User, data, response_data: ResponseData):
-    if data.get('eamil') is not None:
+    if data.get('email') is not None:
         response_data.mt_status = MTStatus.FORBIDDEN
         response_data.data = '邮箱不可更改'
         raise PermissionError()
