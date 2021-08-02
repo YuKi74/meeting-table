@@ -9,14 +9,20 @@ from .models import MeetingRoom, Team
 
 class TeamView(MTAuthView):
     def post(self, request):
-        '''
+        """
         @api {post} /team/ 创建团队
         @apiName create_team
         @apiGroup Team
 
         @apiParam {String[1..64]} name 团队名
         @apiParam {String[1..255]} introduction 团队介绍
-        '''
+
+        @apiParamExample {json} 请求示例
+        {
+            "name":"干完这单就回家",
+            "introduction":"这是团队介绍啊"
+        }
+        """
         response_data = ResponseData()
         creator = request.user
         try:
@@ -31,14 +37,14 @@ class TeamView(MTAuthView):
         return self.respond(response_data)
 
     def patch(self, request):
-        '''
+        """
         @api {patch} /team/ 修改团队信息
         @apiName update_team_information
         @apiGroup Team
 
         @apiParam {String[1..64]} [name] 团队名
         @apiParam {String[1..255]} [introduction] 团队介绍
-        '''
+        """
         response_data = ResponseData()
         user = request.user
         try:
@@ -56,11 +62,11 @@ class TeamView(MTAuthView):
         return self.respond(response_data)
 
     def delete(self, request):
-        '''
+        """
         @api {delete} /team/ 解散团队
         @apiName delete_team
         @apiGroup Team
-        '''
+        """
         response_data = ResponseData()
         user = request.user
         try:
@@ -77,13 +83,14 @@ class TeamView(MTAuthView):
 class TeamMemberView(MTAuthView):
 
     def get(self, request):
-        '''
+        """
         @api {get} /team/member/ 查看用户所在团队内所有成员
         @apiName get_all_team_members
         @apiGroup Team
+        @apiSuccess {String[]} information 团队内所有成员信息
+        """
         # TODO 看一下返回值类型
-        @apiSuccess {String[]} 团队内所有成员信息
-        '''
+
         user = request.user
         response_data = ResponseData()
         try:
@@ -96,13 +103,13 @@ class TeamMemberView(MTAuthView):
         return self.respond(response_data)
 
     def delete(self, request):
-        '''
+        """
         @api {delete} /team/member/  团队创建者移出团队内成员
         @apiName delete_team_member
         @apiGroup Team
 
         @apiParam {Number} member_id 团队成员id
-        '''
+        """
         response_data = ResponseData()
         user = request.user
         try:
@@ -120,14 +127,14 @@ class TeamMemberView(MTAuthView):
         return self.respond(response_data)
 
     def post(self, request):
-        '''
+        """
         @api {post} /team/member/ 团队创建者审核申请人
         @apiName process_member_application
         @apiGroup Team
 
         @apiParam {Number} application_id 申请记录id
         @apiParam {Boolean} is_admitted 申请是否同意
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -149,13 +156,13 @@ class TeamMemberView(MTAuthView):
 class ApplicationView(MTAuthView):
 
     def post(self, request):
-        '''
+        """
         @api {post} /team/join/ 申请人提交加入团队的申请
         @apiName submit_application
         @apiGroup Team
 
         @apiParam {String} uuid 申请团队uuid
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -169,13 +176,13 @@ class ApplicationView(MTAuthView):
         return self.respond(response_data)
 
     def get(self, request):
-        '''
+        """
         @api {get} /team/join/ 团队创建者获取未处理的申请人名单
         @apiName get_unsolved_applications
         @apiGroup Team
 
-        @apiSuccess {String[]} 未处理的申请人名单
-        '''
+        @apiSuccess {String[]} unsolved_list 未处理的申请人名单
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -192,11 +199,11 @@ class ApplicationView(MTAuthView):
 class TeamMemberQuitView(MTAuthView):
 
     def post(self, request):
-        '''
+        """
         @api {post} /team/quit/ 用户退出团队
         @apiName quit_team
         @apiGroup Team
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -212,13 +219,13 @@ class TeamMemberQuitView(MTAuthView):
 
 class TeamInformationView(MTAuthView):
     def get(self, request, uuid):
-        '''
+        """
         @api {get} /team/:uuid 获取团队信息
         @apiName get_team_information
         @apiGroup Team
 
-        @apiSuccess {String[]} 团队信息
-        '''
+        @apiSuccess {String[]} team_information 团队信息
+        """
 
         response_data = ResponseData()
         try:
@@ -232,13 +239,13 @@ class TeamInformationView(MTAuthView):
 
 class MeetingRoomView(MTAuthView):
     def post(self, request):
-        '''
+        """
         @api {post} /room/ 创建会议室
         @apiName create_new_room
         @apiGroup Room
 
         @apiParam {String[1..64]} name 团队名
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -251,14 +258,14 @@ class MeetingRoomView(MTAuthView):
         return self.respond(response_data)
 
     def patch(self, request):
-        '''
+        """
         @api {patch} /room/ 创建人编辑会议室信息
         @apiName update_room_information
         @apiGroup Room
 
         @apiParam {String[1..64]} name 会议室新名字
         @apiParam {Number} id 会议室id
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -274,15 +281,15 @@ class MeetingRoomView(MTAuthView):
         return self.respond(response_data)
 
     def get(self, request, uuid):
-        '''
+        """
         @api {get} /room/ 获取会议室信息
         @apiName update_room_information
         @apiGroup Room
 
         @apiParam {String} uuid 会议室uuid
 
-        @apiSuccess {String[]} 会议室信息
-        '''
+        @apiSuccess {String[]} room_information 会议室信息
+        """
         user = request.user
         response_data = ResponseData()
         try:
@@ -295,13 +302,13 @@ class MeetingRoomView(MTAuthView):
         return self.respond(response_data)
 
     def delete(self, request):
-        '''
+        """
         @api {delete} /room/ 创建人删除会议室
         @apiName delete_room
         @apiGroup Room
 
         @apiParam {Number} id 会议室id
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:

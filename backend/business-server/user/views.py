@@ -8,9 +8,15 @@ from .serializers import UserSerializerWithoutPassword
 class UserView(MTAuthView):
 
     def get(self, request, id):
-        '''
-        查看任意用户的个人信息
-        '''
+        """
+        @api {get} /user/:id 用户获取其他用户信息
+        @apiExample 请求路径示例
+        http://localhost/api/user/1/
+        @apiName user_information
+        @apiGroup User
+
+        @apiSuccess {String[]} user_information 用户信息
+        """
         response_data = ResponseData()
         try:
             services.get_information(id, response_data)
@@ -24,9 +30,23 @@ class UserView(MTAuthView):
 class UserRegisterView(MTView):
 
     def post(self, request):
-        '''
-        用户注册
-        '''
+        """
+        @api {post} /user/register/ 用户注册
+        @apiName user_register
+        @apiGroup User
+
+        @apiParam {String} name 用户名
+        @apiParam {String} email 用户邮箱
+        @apiParam {String} password 用户密码
+
+        @apiParamExample {json} 请求示例
+        {
+            "name":"gan",
+            "email":"test@qq.com",
+            "password":"123456"
+        }
+        @apiSuccess {String} token 后续发请求都要携带
+        """
         response_data = ResponseData()
         try:
             email = self.check_and_get(request.data, 'email', response_data)
@@ -44,9 +64,21 @@ class UserRegisterView(MTView):
 class UserLoginView(MTView):
 
     def post(self, request):
-        '''
-        用户登录
-        '''
+        """
+        @api {post} /user/login/ 用户登录
+        @apiName user_login
+        @apiGroup User
+
+        @apiParam {String} email 用户邮箱
+        @apiParam {String} password 用户密码
+
+        @apiParamExample {json} 请求示例
+        {
+            "email":"test@qq.com",
+            "password":"123456"
+        }
+        @apiSuccess {String} token 后续发请求都要携带
+        """
         response_data = ResponseData()
         try:
             email = self.check_and_get(request.data, 'email', response_data)
@@ -63,9 +95,17 @@ class UserLoginView(MTView):
 class UserEditView(MTAuthView):
 
     def patch(self, request):
-        '''
-        用户修改个人信息
-        '''
+        """
+        @api {patch} /user/ 用户修改个人信息
+        @apiName update_information
+        @apiGroup User
+
+        @apiParam {String[1..32]} [name] 用户名
+        @apiParam {String[1..128]} [password] 用户密码
+
+        @apiSuccess {String} token 后续发请求都要携带
+
+        """
         response_data = ResponseData()
         user = request.user
         try:
@@ -81,9 +121,14 @@ class UserEditView(MTAuthView):
         return self.respond(response_data)
 
     def get(self, request):
-        '''
-        查看用户自己的个人信息
-        '''
+        """
+        @api {get} /user/ 用户查看个人信息
+        @apiHeader token 发送请求时携带token
+        @apiName update_information
+        @apiGroup User
+
+        @apiSuccess {String} information 用户个人信息
+        """
         response_data = ResponseData()
         response_data.data = UserSerializerWithoutPassword(request.user).data
         return self.respond(response_data)
