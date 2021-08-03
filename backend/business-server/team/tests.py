@@ -249,14 +249,18 @@ class ApplicationProcessTestCase(TestCase):
         self.assertRaises(
             Team.DoesNotExist,
             services.get_team_detail,
+            self.creator1,
             not_exist_team_uuid,
             response_data)
         self.assertEqual(response_data.mt_status, MTStatus.TEAM_NOT_EXIST)
 
         response_data = ResponseData()
-        services.get_team_detail(self.team1.uuid, response_data)
-        self.assertEqual(response_data.data,
-                         TeamInformationSerializer(self.team1).data)
+        services.get_team_detail(self.creator1, self.team1.uuid, response_data)
+        self.assertEqual(response_data.data['is_creator'], True)
+
+        response_data = ResponseData()
+        services.get_team_detail(self.user1, self.team1.uuid, response_data)
+        self.assertEqual(response_data.data['is_creator'], False)
 
 
 class MeetingRoomTestCase(TestCase):

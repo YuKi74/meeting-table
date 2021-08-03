@@ -264,8 +264,9 @@ class TeamInformationView(MTAuthView):
         """
 
         response_data = ResponseData()
+        user = request.user
         try:
-            services.get_team_detail(uuid, response_data)
+            services.get_team_detail(user, uuid, response_data)
         except:
             # TODO log error
             pass

@@ -10,9 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializerWithoutPassword(serializers.ModelSerializer):
-    team_uuid = serializers.CharField(
-        source='team.uuid')
-
     class Meta:
         model = User
-        fields = ('id', 'name', 'email', 'team_uuid')
+        fields = ('id', 'name', 'email')

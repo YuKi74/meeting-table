@@ -37,13 +37,14 @@ def create_team(name, introduction, creator, response_data):
     creator.save()
 
 
-def get_team_detail(uuid, response_data):
+def get_team_detail(user, uuid, response_data):
     try:
         team = Team.objects.get(uuid=uuid)
     except Team.DoesNotExist as err:
         response_data.mt_status = MTStatus.TEAM_NOT_EXIST
         raise Team.DoesNotExist from err
     response_data.data = TeamInformationSerializer(team).data
+    response_data.data['is_creator'] = team.creator_id == user.id
 
 
 def is_creator(user, response_data):

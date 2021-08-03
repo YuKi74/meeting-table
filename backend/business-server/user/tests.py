@@ -1,14 +1,12 @@
+from constant.user import not_exist_user_id
 from django.test import TestCase
-from rest_framework.exceptions import ValidationError
+from helper.test import create_team, create_user
 from mt.status import MTStatus
+from mt.views import ResponseData
+from rest_framework.exceptions import ValidationError
+from user import services
 
 from .models import User
-from user import services
-from mt.views import ResponseData
-from .serializers import UserSerializerWithoutPassword
-
-from helper.test import create_user
-from constant.user import not_exist_user_id
 
 
 class UserModelTestCase(TestCase):
@@ -21,10 +19,17 @@ class UserModelTestCase(TestCase):
                                  email='test3@qq.com', password='123456')
 
     def test_get_information(self):
+        self.team1 = create_team('team_name', 'team_introduction', self.user1)
+        self.user1.team = self.team1
+        self.user1.save()
+
         response_data = ResponseData()
         services.get_information(self.user1.id, response_data)
-        self.assertEqual(response_data.data,
-                         UserSerializerWithoutPassword(self.user1).data)
+        self.assertEqual(response_data.data['team_uuid'], self.team1.uuid)
+
+        response_data = ResponseData()
+        services.get_information(self.user2.id, response_data)
+        self.assertEqual(response_data.data['team_uuid'], None)
 
         response_data = ResponseData()
         self.assertRaises(User.DoesNotExist,
@@ -100,3 +105,16 @@ class UserModelTestCase(TestCase):
                 'name': 'newname'}
         services.update_user_information(self.user1, data, response_data)
         self.assertEqual(response_data.mt_status, MTStatus.OK)
+
+    def test_get_self_information(self):
+        self.team1 = create_team('team_name', 'team_introduction', self.user1)
+        self.user1.team = self.team1
+        self.user1.save()
+
+        response_data = ResponseData()
+        services.get_self_information(self.user1, response_data)
+        self.assertEqual(response_data.data['team_uuid'], self.team1.uuid)
+
+        response_data = ResponseData()
+        services.get_self_information(self.user2, response_data)
+        self.assertEqual(response_data.data['team_uuid'], None)

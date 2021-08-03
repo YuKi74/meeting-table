@@ -1,7 +1,6 @@
 import uuid
 
 from django.db import models
-from django.db.models.deletion import CASCADE
 from user.models import User
 
 

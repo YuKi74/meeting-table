@@ -1,8 +1,7 @@
-from rest_framework.serializers import ModelSerializer
-from .models import MeetingRoom
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
-from .models import Application, Team
+from .models import Application, MeetingRoom, Team
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -12,10 +11,9 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TeamInformationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Team
-        fields = ('name', 'introduction', 'creator')
+        fields = ('name', 'introduction')
 
 
 class ApplicantSerializer(serializers.ModelSerializer):

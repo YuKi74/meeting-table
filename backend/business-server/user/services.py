@@ -2,6 +2,7 @@ from mt.redis import genetate_token
 from mt.status import MTStatus
 from mt.views import ResponseData
 from rest_framework.exceptions import ValidationError
+from team.models import Team
 
 from .models import User
 from .serializers import UserSerializer, UserSerializerWithoutPassword
@@ -15,6 +16,7 @@ def get_information(id, response_data):
         response_data.data = '当前用户不存在'
         raise User.DoesNotExist() from err
     response_data.data = UserSerializerWithoutPassword(user).data
+    response_data.data['team_uuid'] = user.team.uuid if user.team else None
 
 
 def register(email, name, password, response_data: ResponseData):
@@ -74,3 +76,8 @@ def update_user_information(user: User, data, response_data: ResponseData):
     else:
         response_data.mt_status = MTStatus.ERROR_INPUT
         raise ValidationError()
+
+
+def get_self_information(user, response_data):
+    response_data.data = UserSerializerWithoutPassword(user).data
+    response_data.data['team_uuid'] = user.team.uuid if user.team else None

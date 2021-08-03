@@ -2,8 +2,6 @@ from constant.user import password_min_length
 from mt.views import MTAuthView, MTView, ResponseData
 from user import services
 
-from .serializers import UserSerializerWithoutPassword
-
 
 class UserView(MTAuthView):
 
@@ -140,5 +138,6 @@ class UserEditView(MTAuthView):
         @apiSuccess {String} information 用户个人信息
         """
         response_data = ResponseData()
-        response_data.data = UserSerializerWithoutPassword(request.user).data
+        user = request.user
+        services.get_self_information(user, response_data)
         return self.respond(response_data)
