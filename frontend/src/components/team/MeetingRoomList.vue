@@ -5,9 +5,8 @@
         class="board"
     >
         <a-list-item slot="renderItem" slot-scope="item, index">
-            <div v-if="item === roomAddCard">
-                <div class="create" @click="addConfirm">
-                    <div class="blank"></div>
+            <div class="box" v-if="item === roomAddCard">
+                <div class="create flex main-axis-center" @click="addConfirm">
                     <a-icon
                         type="plus-circle"
                         :style="plusClass"
@@ -18,7 +17,7 @@
             </div>
             <div class="box" v-else>
                 <a-card
-                    :title="item.title"
+                    :title="item.name"
                     :number="index"
                     class="card"
                     :bodyStyle="bodyStyle"
@@ -28,12 +27,12 @@
                         slot="extra"
                         class="delete-btn"
                         href="#"
-                        @click.stop="deleteComfirm"
+                        @click.stop="deleteComfirm(item.id)"
                     >
                         删除
                     </a>
                     <div class="pic-container">
-                        <img :src="item.thumbnail" class="pic" />
+                        <img :src="thumbnail" class="pic" />
                     </div>
                 </a-card>
             </div>
@@ -41,9 +40,15 @@
     </a-list>
 </template>
 <script>
-import { List, Card, Modal, Icon } from 'ant-design-vue';
+import { List, Card, Modal, Icon, Message } from 'ant-design-vue';
 import Input from './MeetingRoomCreateInput.vue';
+import { defaultErrorHandler } from '../../requests/errors';
+import {
+    getMeetingRooms,
+    deleteMeetingRoom,
+} from '../../requests/meeting-room';
 import Vue from 'vue';
+
 Vue.use(Modal);
 
 export default {
@@ -59,17 +64,13 @@ export default {
     },
     data() {
         return {
+            thumbnail: '',
             plusClass: {
                 color: 'var(--white)',
                 fontSize: '50px',
             },
             roomAddCard: '',
-            mettingRooms: [
-                {
-                    title: '该会议室主题',
-                    thumbnail: '',
-                },
-            ],
+            meetingRooms: [],
             bodyStyle: {
                 padding: 0,
             },
@@ -77,8 +78,15 @@ export default {
     },
     computed: {
         listData: function () {
-            return [this.roomAddCard].concat(this.mettingRooms);
+            return [this.roomAddCard].concat(this.meetingRooms);
         },
+    },
+    mounted() {
+        getMeetingRooms()
+            .then((data) => {
+                this.meetingRooms = data.data;
+            })
+            .catch(defaultErrorHandler(getMeetingRooms));
     },
     methods: {
         addConfirm() {
@@ -92,22 +100,24 @@ export default {
                     inputNode.componentInstance.confirm();
                     // TODO 在子组件Input的confirm函数中 发送创建会议室请求
                 },
-                onCancel() {},
             });
         },
         enter() {
             //TODO 进入对应会议室
         },
-        deleteComfirm() {
+        deleteComfirm(id) {
             Modal.confirm({
                 title: '确定要删除此会议室吗？',
                 content: '点击“确认”后, 此会议室将会被删除',
                 okText: '确认',
                 cancelText: '取消',
                 onOk() {
-                    //TODO 删除相应会议室
+                    deleteMeetingRoom(id)
+                        .then(() => {
+                            Message.success('删除成功');
+                        })
+                        .catch(defaultErrorHandler(deleteMeetingRoom));
                 },
-                onCancel() {},
             });
         },
     },
@@ -129,12 +139,10 @@ export default {
 .create {
     width: 100%;
     height: 250px;
-    display: flex;
-    justify-content: center;
     background-color: var(--primary-color-2);
     border-radius: 8px;
     box-shadow: 0 3px 20px rgb(0 0 0 / 20%);
-    flex-wrap: wrap;
+    max-width: 500px;
 }
 .create:hover {
     transform: translateY(-5px);
@@ -158,14 +166,12 @@ export default {
 }
 .board {
     width: 100%;
-    background-color: #fafafa;
 }
 .card {
     width: 100%;
     height: 250px;
     background-color: var(--white);
     border-radius: 8px;
-    flex-wrap: wrap;
     box-shadow: 0 3px 20px rgb(0 0 0 / 20%);
     cursor: pointer;
     padding: 0;

@@ -45,7 +45,7 @@ import {
     PASSWORD_MIN_LENGTH,
     PASSWORD_MAX_LENGTH,
 } from '../../constants/user';
-import Errors from '../../requests/errors';
+import { defaultErrorHandler } from '../../requests/errors';
 import Cookies from 'js-cookie';
 
 export default {
@@ -107,16 +107,7 @@ export default {
                             Message.success('登录成功');
                             // TODO 跳转到团队界面
                         })
-                        .catch((data) => {
-                            if (
-                                data.error === Errors.ERROR_INPUT ||
-                                data.error === Errors.RECORD_NOT_FOUND
-                            ) {
-                                Message.error(data.data);
-                            } else {
-                                Message.error(data.error.message);
-                            }
-                        });
+                        .catch(defaultErrorHandler(login));
                 }
             });
         },

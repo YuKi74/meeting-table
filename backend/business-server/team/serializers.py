@@ -24,7 +24,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ('applicant_name', 'applicant_email')
+        fields = ('id','applicant_name', 'applicant_email')
 
 
 class ApplicationSerializer(serializers.ModelSerializer):

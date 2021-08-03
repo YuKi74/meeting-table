@@ -54,12 +54,15 @@
 </template>
 
 <script>
-import { Card, FormModel, Input, Button } from 'ant-design-vue';
+import { Card, FormModel, Input, Button, Message } from 'ant-design-vue';
 import {
     TEAM_NAME_MIN_LENGTH,
     TEAM_NAME_MAX_LENGTH,
     TEAM_DESCRIPTION_MAX_LENGTH,
 } from '../../../constants/team';
+import { createTeam } from '../../../requests/team';
+import { defaultErrorHandler } from '../../../requests/errors';
+import router from '../../../router';
 
 export default {
     components: {
@@ -74,7 +77,6 @@ export default {
             size: 'large',
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
-            other: '',
             form: {
                 name: '',
                 desc: '',
@@ -112,7 +114,12 @@ export default {
         onSubmit() {
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
-                    alert('创建成功!');
+                    createTeam(this.form.name, this.form.desc)
+                        .then(() => {
+                            Message.success('创建成功');
+                            router.push('/team');
+                        })
+                        .catch(defaultErrorHandler(createTeam));
                 }
             });
         },

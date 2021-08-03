@@ -22,18 +22,23 @@
                             arrow-point-at-center
                         >
                             <div slot="content" class="popover">
-                                <div><span>姓名:</span> {{ item.name }}</div>
-                                <div><span>邮箱:</span> {{ item.email }}</div>
+                                <div>
+                                    <span>姓名:</span> {{ item.applicant_name }}
+                                </div>
+                                <div>
+                                    <span>邮箱:</span>
+                                    {{ item.applicant_email }}
+                                </div>
                             </div>
                             <span class="text">
-                                {{ item.name }}
+                                {{ item.applicant_name }}
                             </span>
                         </team-apply-list-popover>
                         <div>
-                            <team-apply-list-button @click="agree">
+                            <team-apply-list-button @click="agree(item.id)">
                                 同意
                             </team-apply-list-button>
-                            <team-apply-list-button @click="refuse">
+                            <team-apply-list-button @click="refuse(item.id)">
                                 拒绝
                             </team-apply-list-button>
                         </div>
@@ -45,7 +50,9 @@
 </template>
 
 <script>
-import { Card, List, Button, Popover } from 'ant-design-vue';
+import { Card, List, Button, Popover, Message } from 'ant-design-vue';
+import { getApplyList, handleApplication } from '../../requests/team';
+import { defaultErrorHandler } from '../../requests/errors';
 
 export default {
     components: {
@@ -57,24 +64,7 @@ export default {
     },
     data() {
         return {
-            data: [
-                {
-                    name: 'xiaomingfgdfgdfgdfgdfgdfdfgdf',
-                    email: 'xiaoming@123.com',
-                },
-                {
-                    name: '小明爸爸',
-                    email: 'xiaoming@123.com',
-                },
-                {
-                    name: '李华h',
-                    email: 'lihuah@123.com',
-                },
-                {
-                    name: 'r',
-                    email: 'r@123.com',
-                },
-            ],
+            data: [],
             headStyle: {
                 'font-size': '20px',
                 color: '#212529',
@@ -82,12 +72,26 @@ export default {
             },
         };
     },
-    method: {
-        agree: function () {
-            // TODO 同意申请，将此条申请消息从列表中移除
+    mounted() {
+        getApplyList()
+            .then((data) => {
+                this.data = data.data;
+            })
+            .catch(defaultErrorHandler(getApplyList));
+    },
+    methods: {
+        handleCheckButton(id, is) {
+            handleApplication(id, is)
+                .then(() => {
+                    Message.success('申请已同意');
+                })
+                .catch(defaultErrorHandler(handleApplication));
         },
-        refuse: function () {
-            // TODO 拒绝申请，将此条申请消息从列表中移除
+        agree(id) {
+            this.handleCheckButton(id, true);
+        },
+        refuse(id) {
+            this.handleCheckButton(id, false);
         },
     },
 };

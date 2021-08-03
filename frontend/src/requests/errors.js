@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
+import { message } from 'ant-design-vue';
+
 const MTError = function (code, message) {
     this.code = parseInt(code);
     this.message = message;
@@ -12,6 +14,8 @@ const Errors = {
     MISSING_PARAMETER: new MTError(3, '请求参数不完整'),
     RECORD_NOT_FOUND: new MTError(4, '查找的数据不存在'),
     ERROR_INPUT: new MTError(5, '输入数据有误'),
+    FORBIDDEN: new MTError(100, '当前用户没有权限'),
+    TEAM_NOT_EXIST: new MTError(101, '当前团队不存在'),
 };
 
 const ErrorMap = {};
@@ -33,5 +37,15 @@ const responseHandler = function (response) {
     return response;
 };
 
+const defaultErrorHandler = function (request) {
+    return function (data) {
+        if (request.errors.includes(data.error)) {
+            message.error(data.data);
+        } else {
+            message.error(data.error.message);
+        }
+    };
+};
+
 export default Errors;
-export { responseHandler };
+export { responseHandler, defaultErrorHandler };

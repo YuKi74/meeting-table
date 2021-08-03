@@ -4,7 +4,7 @@ import { shallowMount } from '@vue/test-utils';
 describe('MeetingRoomCreateInput.vue', () => {
     const wrapper = shallowMount(MeetingRoomCreateInput);
     it('check confirmHitMessage method', () => {
-        expect(wrapper.vm.confirmHitMessage(true)).toBe(true);
-        expect(wrapper.vm.confirmHitMessage(false)).toBe(false);
+        expect(wrapper.vm.confirmHintMessage(true)).toBe(true);
+        expect(wrapper.vm.confirmHintMessage(false)).toBe(false);
     });
 });

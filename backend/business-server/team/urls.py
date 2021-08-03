@@ -8,7 +8,7 @@ urlpatterns = [
     path('', TeamView.as_view()),
     path('join/', ApplicationView.as_view()),
     path('member/', TeamMemberView.as_view()),
-    path('member/<int:id>/', TeamMemberView.as_view()),
+    path('member/<int:member_id>/', TeamMemberView.as_view()),
     path('quit/', TeamMemberQuitView.as_view()),
     path('room/', MeetingRoomView.as_view()),
     path('room/<int:id>/', MeetingRoomView.as_view()),

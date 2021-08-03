@@ -1,10 +1,10 @@
 <template>
-    <div class="pop">
+    <div>
         <popover placement="bottomLeft" arrow-point-at-center>
             <template slot="content">
                 <div class="content">
                     <div class="title">
-                        <p class="name">{{ name }}</p>
+                        <p class="form.name">{{ data.name }}</p>
                         <a-button class="edit" icon="edit" @click="showModal" />
                         <modal
                             title="编辑团队信息"
@@ -41,12 +41,12 @@
                                     </form-model-item>
                                     <form-model-item
                                         label="团队简介"
-                                        prop="desc"
+                                        prop="description"
                                     >
                                         <a-input
-                                            v-model="form.desc"
+                                            v-model="form.description"
                                             type="textarea"
-                                            :default-value="form.desc"
+                                            :default-value="form.description"
                                             :autosize="{ minRows: 4 }"
                                         />
                                     </form-model-item>
@@ -54,7 +54,7 @@
                             </div>
                         </modal>
                     </div>
-                    <p>{{ description }}</p>
+                    <p>{{ form.description }}</p>
                     <div class="share-and-dissolve">
                         <a-button type="danger" @click="success">分享</a-button>
                         <a-button
@@ -77,7 +77,7 @@
                 </div>
             </template>
             <a-button class="icon" type="primary" shape="circle">
-                {{ name.charAt(0) }}
+                {{ form.name.charAt(0) }}
             </a-button>
         </popover>
     </div>
@@ -98,9 +98,18 @@ import {
     TEAM_NAME_MAX_LENGTH,
     TEAM_DESCRIPTION_MAX_LENGTH,
 } from '../../constants/team';
+import {
+    updateTeam,
+    getTeaminfo,
+    dissolveTeam,
+    quitTeam,
+} from '../../requests/team';
+import { defaultErrorHandler } from '../../requests/errors';
+import router from '../../router';
 Vue.use(Modal);
 
 export default {
+    props: ['uuid'],
     components: {
         Popover,
         AButton: Button,
@@ -111,19 +120,19 @@ export default {
     },
     data: function () {
         return {
-            name: '',
-            description: '',
             // 判断是否为创建者
             isCreater: true,
-            ModalText: '',
             visible: false,
             confirmLoading: false,
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
-            other: '',
+            data: {
+                name: '',
+                description: '',
+            },
             form: {
                 name: '',
-                desc: '',
+                description: '',
             },
             rules: {
                 name: [
@@ -139,7 +148,7 @@ export default {
                         trigger: 'change',
                     },
                 ],
-                desc: [
+                description: [
                     {
                         required: true,
                         message: '请输入团队简介',
@@ -155,8 +164,12 @@ export default {
         };
     },
     mounted() {
-        this.form.name = this.name;
-        this.form.desc = this.description;
+        getTeaminfo(this.uuid)
+            .then((data) => {
+                this.data = data.data;
+                this.form = data.data;
+            })
+            .catch(defaultErrorHandler(getTeaminfo));
     },
     methods: {
         success() {
@@ -169,14 +182,30 @@ export default {
             Message.success('分享链接已复制到剪贴板');
         },
         showDeleteConfirm() {
-            let title = this.provideTitleAndMessage(this.isCreater).title;
-            let message = this.provideTitleAndMessage(this.isCreater).message;
+            const that = this;
+            const title = this.provideTitleAndMessage(this.isCreater).title;
+            const message = this.provideTitleAndMessage(this.isCreater).message;
             Modal.confirm({
                 title: title,
                 content: message,
                 okText: '确定',
                 cancelText: '取消',
                 iconType: 'exclamation-circle',
+                onOk() {
+                    if (that.isCreater === true) {
+                        dissolveTeam()
+                            .then(() => {
+                                router.push('/team/create');
+                            })
+                            .catch(defaultErrorHandler(dissolveTeam));
+                    } else {
+                        quitTeam()
+                            .then(() => {
+                                router.push('/team/create');
+                            })
+                            .catch(defaultErrorHandler(dissolveTeam));
+                    }
+                },
             });
         },
         provideTitleAndMessage(creater) {
@@ -189,9 +218,13 @@ export default {
         showModal() {
             this.visible = true;
         },
-        // eslint-disable-next-line no-unused-vars
-        handleOk(e) {
-            // TODO 修改团队信息，删除eslint注释
+        handleOk() {
+            updateTeam(this.form.name, this.form.description)
+                .then(() => {
+                    Message.success('修改成功');
+                    this.visible = false;
+                })
+                .catch(defaultErrorHandler(updateTeam));
         },
         handleCancel() {
             this.visible = false;

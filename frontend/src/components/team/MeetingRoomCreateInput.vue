@@ -13,6 +13,8 @@
 <script>
 import { Input, FormModel, Message } from 'ant-design-vue';
 import { TEAM_NAME_MAX_LENGTH } from '../../constants/team';
+import { defaultErrorHandler } from '../../requests/errors';
+import { createMeetingRoom } from '../../requests/meeting-room';
 
 export default {
     components: {
@@ -44,12 +46,18 @@ export default {
     methods: {
         confirm() {
             this.$refs.form.validate((valid) => {
-                return this.confirmHitMessage(valid);
+                if (this.confirmHintMessage(valid)) {
+                    createMeetingRoom(this.form.content)
+                        .then(() => {
+                            Message.success('创建成功');
+                            // TODO 跳转至会议室界面
+                        })
+                        .catch(defaultErrorHandler(createMeetingRoom));
+                }
             });
         },
-        confirmHitMessage(isChecked) {
+        confirmHintMessage(isChecked) {
             if (isChecked) {
-                Message.success('创建成功');
                 return true;
             } else {
                 if (this.form.content === '') {

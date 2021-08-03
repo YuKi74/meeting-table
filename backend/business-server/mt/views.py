@@ -28,7 +28,7 @@ class MTView(APIView):
                 or not isinstance(response_data.mt_status, Status):
             response_data = ResponseData(
                 mt_status=MTStatus.INTERNAL_SERVER_ERROR)
-        if not response_data.data:
+        if response_data.data is None:
             response_data.data = response_data.mt_status.message
         return Response(data={
             'status': response_data.mt_status.mt_code,

@@ -374,15 +374,15 @@ class MeetingRoomView(MTAuthView):
 
 class TeamMeetingRoomView(MTAuthView):
     def get(self, request):
-        '''
+        """
         @api {get} /team/rooms/ 获取团队内所有会议室信息
         @apiName get_team_rooms_information
         @apiGroup Room
 
-        @apiSuccess {String[]} 会议室信息
+        @apiSuccess {String} information 会议室信息
 
         @apiError TEAM_NOT_EXIST
-        '''
+        """
         user = request.user
         response_data = ResponseData()
         try:

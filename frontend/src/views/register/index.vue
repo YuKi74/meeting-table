@@ -81,7 +81,7 @@ import {
     PASSWORD_MIN_LENGTH,
     PASSWORD_MAX_LENGTH,
 } from '../../constants/user';
-import Errors from '../../requests/errors';
+import { defaultErrorHandler } from '../../requests/errors';
 import router from '../../router';
 
 export default {
@@ -176,18 +176,12 @@ export default {
             const form = this.ruleForm;
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
-                    register(form.email, form.user_name, form.password)
+                    register(form.email, form.userName, form.password)
                         .then(() => {
                             Message.success('注册成功！正在跳转到登录界面');
                             router.push('/login');
                         })
-                        .catch((data) => {
-                            if (data.error === Errors.ERROR_INPUT) {
-                                Message.error(data.data);
-                            } else {
-                                Message.error(data.error.message);
-                            }
-                        });
+                        .catch(defaultErrorHandler(register));
                 }
             });
         },
