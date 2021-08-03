@@ -114,9 +114,9 @@ class TeamMemberView(MTAuthView):
 
         return self.respond(response_data)
 
-    def delete(self, request):
+    def delete(self, request, member_id):
         """
-        @api {delete} /team/member/  团队创建者移出团队内成员
+        @api {delete} /team/member/：member_id/  团队创建者移出团队内成员
         @apiName delete_team_member
         @apiGroup Team
 
@@ -133,8 +133,6 @@ class TeamMemberView(MTAuthView):
         try:
             services.has_team(user, response_data)
             services.is_creator(user, response_data)
-            member_id = self.check_and_get(
-                request.data, 'member_id', response_data)
             member = services.belong_to_team(
                 member_id, user.team, response_data)
             services.delete_member(member)
@@ -254,7 +252,7 @@ class TeamMemberQuitView(MTAuthView):
 class TeamInformationView(MTAuthView):
     def get(self, request, uuid):
         """
-        @api {get} /team/:uuid 获取团队信息
+        @api {get} /team/:uuid/ 获取团队信息
         @apiName get_team_information
         @apiGroup Team
 
@@ -277,7 +275,7 @@ class TeamInformationView(MTAuthView):
 class MeetingRoomView(MTAuthView):
     def post(self, request):
         """
-        @api {post} /room/ 创建会议室
+        @api {post} /team/room/ 创建会议室
         @apiName create_new_room
         @apiGroup Room
 
@@ -299,7 +297,7 @@ class MeetingRoomView(MTAuthView):
 
     def patch(self, request):
         """
-        @api {patch} /room/ 创建人编辑会议室信息
+        @api {patch} /team/room/ 创建人编辑会议室信息
         @apiName update_room_information
         @apiGroup Room
 
@@ -327,7 +325,7 @@ class MeetingRoomView(MTAuthView):
 
     def get(self, request, uuid):
         """
-        @api {get} /room/ 获取会议室信息
+        @api {get} /team/room/:uuid/ 获取会议室信息
         @apiName update_room_information
         @apiGroup Room
 
@@ -349,9 +347,9 @@ class MeetingRoomView(MTAuthView):
 
         return self.respond(response_data)
 
-    def delete(self, request):
+    def delete(self, request, id):
         """
-        @api {delete} /room/ 创建人删除会议室
+        @api {delete} /team/room/<int:id>/ 创建人删除会议室
         @apiName delete_room
         @apiGroup Room
 
@@ -365,7 +363,6 @@ class MeetingRoomView(MTAuthView):
         user = request.user
         response_data = ResponseData()
         try:
-            id = self.check_and_get(request.data, 'id', response_data)
             room = services.is_room_creator(user, id, response_data)
             room.delete()
         except:
@@ -378,7 +375,7 @@ class MeetingRoomView(MTAuthView):
 class TeamMeetingRoomView(MTAuthView):
     def get(self, request):
         '''
-        @api {get} /rooms/ 获取团队内所有会议室信息
+        @api {get} /team/rooms/ 获取团队内所有会议室信息
         @apiName get_team_rooms_information
         @apiGroup Room
 
