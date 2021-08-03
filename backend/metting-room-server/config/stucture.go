@@ -37,6 +37,7 @@ type redisConfig struct {
 }
 
 type appConfig struct {
-	Port     int    `mapstructure:"port" yaml:"port"`
-	FilePath string `mapstructure:"filepath" yaml:"filepath"`
+	Port        int    `mapstructure:"port" yaml:"port"`
+	FilePath    string `mapstructure:"filepath" yaml:"filepath"`
+	StoragePath string `mapstructure:"storagepath" yaml:"storagepath"`
 }

@@ -25,3 +25,4 @@ redis:
 appconfig:
   port: 7000
   filepath: /files
+  storagepath: /storage

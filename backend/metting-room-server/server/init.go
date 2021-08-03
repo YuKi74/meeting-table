@@ -2,27 +2,16 @@ package server
 
 import (
 	"mt/logger"
-	"net/http"
-
-	"github.com/gorilla/websocket"
+	"mt/server/structure"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
-var manager = roomManager{
-	Rooms:      make(map[int64]*room),
-	Register:   make(chan *ConnectionStruct),
-	Unregister: make(chan *room),
+var manager = structure.RoomManager{
+	Rooms:      make(map[int64]*structure.Room),
+	Register:   make(chan *structure.ConnectionStruct),
+	Unregister: make(chan *structure.Room),
 }
 
 func init() {
 	logger.Logger.Debug("启动连接层服务...")
-	go manager.start()
+	go manager.Start()
 }
