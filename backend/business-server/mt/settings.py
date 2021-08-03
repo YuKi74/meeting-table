@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from .config import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,10 +70,10 @@ WSGI_APPLICATION = 'mt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'USER': 'root',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'NAME': 'mt'
+        'USER': config.mysql_config.user,
+        'PASSWORD': config.mysql_config.password,
+        'HOST': config.mysql_config.host,
+        'NAME': config.mysql_config.name
     }
 }
 
@@ -120,10 +121,8 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/files/'
-MEDIA_ROOT = '/files/'
-
-LOG_PATH = '/var/log/mt/business-server'
+MEDIA_URL = config.app_config.file_path
+MEDIA_ROOT = config.app_config.file_path
 
 LOGGING = {
     'version': 1,
@@ -144,7 +143,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'simple',
-            'filename': os.path.join(LOG_PATH, 'info.log'),
+            'filename': os.path.join(config.app_config.log_path, 'info.log'),
             'when': 'midnight',
             'interval': 1,
             'delay': True,
@@ -154,7 +153,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'simple',
-            'filename': os.path.join(LOG_PATH, 'debug.log'),
+            'filename': os.path.join(config.app_config.log_path, 'debug.log'),
             'when': 'midnight',
             'interval': 1,
             'delay': True,
