@@ -115,8 +115,10 @@
             </div>
             <div class="slider" v-show="currentStyle.name === '线宽'">
                 <a-slider
+                    ref="strokeWidth"
                     vertical
                     v-model="strokeWidth"
+                    @afterChange="chooseStrokeWidth"
                     :max="STROKE_MAX_WIDTH"
                     :min="STROKE_MIN_WIDTH"
                     :step="STROKE_WIDTH_STEP"
@@ -152,9 +154,10 @@
             </div>
             <div class="slider" v-show="currentStyle.name === '字号'">
                 <a-slider
-                    ref="slider"
+                    ref="fontSize"
                     vertical
                     v-model="fontSize"
+                    @afterChange="chooseFontSize"
                     :max="FONT_MAX_SIZE"
                     :min="FONT_MIN_SIZE"
                     :step="FONT_SIZE_STEP"
@@ -313,7 +316,7 @@ export default {
                 },
             ],
             currentTool: { name: '移动', icon: 'drag' },
-            currentStyle: { name: '聊天框', icon: 'message' },
+            currentStyle: { name: '线色', icon: 'highlight' },
             currentStrokeColor: { color: 'black' },
             currentFillColor: { color: 'black' },
             strokeWidth: 5,
@@ -334,6 +337,7 @@ export default {
             const file = this.$refs.upload.files[0];
         },
         chooseTool(tool) {
+            this.$emit('tool-change', tool.name);
             this.currentTool = tool;
             if (tool.name === '文件') {
                 this.$refs.upload.click();
@@ -343,13 +347,24 @@ export default {
             this.currentStyle = style;
         },
         chooseStrokeColor(color) {
+            this.$emit('stroke-color-change', color.color);
             this.currentStrokeColor = color;
         },
         chooseFillColor(color) {
+            this.$emit('fill-color-change', color.color);
             this.currentFillColor = color;
         },
+        chooseStrokeWidth() {
+            this.$emit('stroke-width-change', this.strokeWidth);
+            this.$refs.strokeWidth.blur();
+        },
         chooseTextColor(color) {
+            this.$emit('text-color-change', color.color);
             this.currentTextColor = color;
+        },
+        chooseFontSize() {
+            this.$emit('font-size-change', this.fontSize);
+            this.$refs.fontSize.blur();
         },
     },
 };

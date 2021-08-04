@@ -1,6 +1,7 @@
 import Board from './Board';
 import {
     DRAG_RATIO,
+    MAX_SCALE,
     MESSAGE_DURATION,
     MIN_SCALE,
     ORIGIN_SCALE,
@@ -19,12 +20,9 @@ Board.prototype.moveStage = function (deltaX, deltaY, dragRatio) {
 
 Board.prototype.scaleStage = function (deltaScale) {
     const previousScale = this.stage.scale().x;
-    let currentScale;
-    if (previousScale > -deltaScale) {
-        currentScale = previousScale + deltaScale;
-    } else {
-        currentScale = MIN_SCALE;
-    }
+    let currentScale = previousScale + deltaScale;
+    currentScale = currentScale > MIN_SCALE ? currentScale : MIN_SCALE;
+    currentScale = currentScale < MAX_SCALE ? currentScale : MAX_SCALE;
     this.stage.scale({
         x: currentScale,
         y: currentScale,

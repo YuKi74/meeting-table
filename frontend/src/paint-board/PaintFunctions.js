@@ -8,7 +8,7 @@ Board.prototype.startPen = function (x, y, strokeColor, strokeWidth) {
         strokeWidth: strokeWidth,
         draggable: true,
     });
-    this.layer.add(pen);
+    this.drawLayer.add(pen);
     return pen;
 };
 
@@ -26,7 +26,7 @@ Board.prototype.drawLine = function (
         strokeWidth: strokeWidth,
         draggable: true,
     });
-    this.layer.add(line);
+    this.drawLayer.add(line);
     return line;
 };
 
@@ -49,7 +49,7 @@ Board.prototype.drawRect = function (
         fill: fillColor,
         draggable: true,
     });
-    this.layer.add(rect);
+    this.drawLayer.add(rect);
     return rect;
 };
 
@@ -62,7 +62,7 @@ Board.prototype.drawEllipse = function (
     strokeWidth,
     fillColor
 ) {
-    const ellipse = new Konva.Rect({
+    const ellipse = new Konva.Ellipse({
         x: xCenter,
         y: yCenter,
         width: width,
@@ -72,7 +72,7 @@ Board.prototype.drawEllipse = function (
         fill: fillColor,
         draggable: true,
     });
-    this.layer.add(ellipse);
+    this.drawLayer.add(ellipse);
     return ellipse;
 };
 
