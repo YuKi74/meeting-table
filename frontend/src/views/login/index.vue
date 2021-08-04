@@ -47,6 +47,7 @@ import {
 } from '../../constants/user';
 import { defaultErrorHandler } from '../../requests/errors';
 import Cookies from 'js-cookie';
+import router from '../../router';
 
 export default {
     name: 'Home',
@@ -105,7 +106,7 @@ export default {
                         .then((data) => {
                             Cookies.set('token', data.data.token);
                             Message.success('登录成功');
-                            // TODO 跳转到团队界面
+                            router.push('/team');
                         })
                         .catch(defaultErrorHandler(login));
                 }

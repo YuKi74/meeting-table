@@ -16,7 +16,7 @@
                 type="primary"
                 shape="circle"
                 size="large"
-                v-if="islogin"
+                v-if="isLogin()"
             >
                 {{ selfname[0] }}
             </a-button>
@@ -25,6 +25,7 @@
                 type="primary"
                 shape="circle"
                 size="large"
+                @click="Login"
                 v-else
             >
                 登录
@@ -34,9 +35,15 @@
 </template>
 
 <script>
-import { Card, Button, Icon } from 'ant-design-vue';
+import { Card, Button, Icon, Message } from 'ant-design-vue';
+import { getTeaminfo, submitApplication } from '../../requests/team';
+import { getUserinfo } from '../../requests/user';
+import router from '../../router';
+import Cookies from 'js-cookie';
+import { defaultErrorHandler } from '../../requests/errors';
 
 export default {
+    props: ['uuid'],
     components: {
         Card,
         AButton: Button,
@@ -44,18 +51,38 @@ export default {
     },
     data() {
         return {
-            islogin: true,
             selfname: 'name',
             name: '',
             description: '',
         };
     },
     mounted: function () {
-        // TODO 获取团队信息
+        this.isLogin();
+        getTeaminfo(this.uuid)
+            .then((data) => {
+                this.name = data.data.name;
+                this.description = data.data.introduction;
+            })
+            .catch(defaultErrorHandler(getTeaminfo));
+        getUserinfo()
+            .then((data) => {
+                this.selfname = data.data.name;
+            })
+            .catch(defaultErrorHandler(getUserinfo));
     },
     methods: {
+        isLogin() {
+            return Cookies.get('token') !== undefined;
+        },
+        Login() {
+            router.push('/login');
+        },
         attendRequest() {
-            // TODO 申请加入
+            submitApplication(this.uuid)
+                .then(() => {
+                    Message.success('请求已发送！');
+                })
+                .catch(defaultErrorHandler(submitApplication));
         },
     },
 };

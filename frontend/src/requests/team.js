@@ -95,6 +95,20 @@ handleApplication.errors = [
     Errors.RECORD_NOT_FOUND,
 ];
 
+//申请人提交加入团队申请
+const submitApplication = function (applyId) {
+    return request.post('/team/join/', {
+        uuid: applyId,
+    });
+};
+
+submitApplication.errors = [
+    Errors.TEAM_NOT_EXIST,
+    Errors.FORBIDDEN,
+    Errors.MISSING_PARAMETER,
+    Errors.ERROR_INPUT,
+];
+
 export {
     updateTeam,
     createTeam,
@@ -105,4 +119,5 @@ export {
     removeMember,
     getApplyList,
     handleApplication,
+    submitApplication,
 };

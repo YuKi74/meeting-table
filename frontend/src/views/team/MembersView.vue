@@ -3,7 +3,7 @@
         <layout class="layout">
             <layout-sider class="sider">
                 <team-detail class="team-detail" :uuid="uuid"></team-detail>
-                <member-list class="member-list"></member-list>
+                <member-list class="member-list" :uuid="uuid"></member-list>
             </layout-sider>
             <layout>
                 <layout-content>

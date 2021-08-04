@@ -39,6 +39,7 @@ import { defaultErrorHandler } from '../../requests/errors';
 Vue.use(Modal);
 
 export default {
+    props: ['uuid'],
     components: {
         AList: List,
         AAvatar: Avatar,

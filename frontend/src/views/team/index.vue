@@ -3,28 +3,53 @@
         <component :is="currentView" :uuid="uuid" />
     </div>
 </template>
-
 <script>
-// TODO 移除此注释
-// eslint-disable-next-line no-unused-vars
 import MembersView from './MembersView.vue';
 import VisitorsView from './VisitorsView.vue';
+import { getUserinfo } from '../../requests/user';
+import Cookies from 'js-cookie';
+import router from '../../router';
+import { defaultErrorHandler } from '../../requests/errors';
 
 export default {
-    beforeCreate: function () {
+    mounted: function () {
         if (this.$route.params.uuid) {
-            this.uuid = this.$route.params.uuid;
-            // TODO 判断登录状态以及是否是该团队成员，决定要显示的视图
+            if (!Cookies.get('token')) {
+                router.push('/login');
+            } else {
+                getUserinfo()
+                    .then((data) => {
+                        this.uuid = data.data.team_uuid;
+                        if (this.uuid === this.$route.params.uuid) {
+                            this.currentView = MembersView;
+                        } else {
+                            this.uuid = this.$route.params.uuid;
+                            this.currentView = VisitorsView;
+                        }
+                    })
+                    .catch(defaultErrorHandler(getUserinfo));
+            }
         } else {
-            // TODO 判断登录状态，决定要显示的视图以及是否路由到创建页面
+            if (Cookies.get('token') === undefined) {
+                router.push('/login');
+            } else {
+                getUserinfo()
+                    .then((data) => {
+                        this.uuid = data.data.team_uuid;
+                        if (this.uuid === null) router.push('/team/create');
+                        else this.currentView = MembersView;
+                    })
+                    .catch(defaultErrorHandler(getUserinfo));
+            }
         }
     },
     data() {
         return {
             uuid: '',
-            currentView: VisitorsView,
+            currentView: '',
         };
     },
+    methods: {},
 };
 </script>
 
