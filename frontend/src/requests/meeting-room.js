@@ -18,10 +18,8 @@ const getMeetingRooms = function () {
 getMeetingRooms.errors = [Errors.TEAM_NOT_EXIST];
 
 //获取会议室信息
-const getMeetingRoomInfo = function (mtuuid) {
-    return request.get('/team/room/', {
-        uuid: mtuuid,
-    });
+const getMeetingRoomInfo = function (uuid) {
+    return request.get(`/team/room/${uuid}/`);
 };
 
 getMeetingRoomInfo.errors = [Errors.RECORD_NOT_FOUND, Errors.FORBIDDEN];

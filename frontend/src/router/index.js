@@ -33,6 +33,10 @@ const routes = [
         component: () => import('../views/team'),
     },
     {
+        path: '/meeting-room/:uuid',
+        component: () => import('../views/meeting-room'),
+    },
+    {
         path: '*',
         name: '404',
         // TODO 指定到404页面
