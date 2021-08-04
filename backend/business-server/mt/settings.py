@@ -167,3 +167,7 @@ LOGGING = {
         }
     },
 }
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'mt.errors.exception_handler'
+}
