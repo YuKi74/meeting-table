@@ -41,12 +41,12 @@
                                     </form-model-item>
                                     <form-model-item
                                         label="团队简介"
-                                        prop="description"
+                                        prop="introduction"
                                     >
                                         <a-input
-                                            v-model="form.description"
+                                            v-model="form.introduction"
                                             type="textarea"
-                                            :default-value="form.description"
+                                            :default-value="form.introduction"
                                             :autosize="{ minRows: 4 }"
                                         />
                                     </form-model-item>
@@ -54,7 +54,7 @@
                             </div>
                         </modal>
                     </div>
-                    <p>{{ form.description }}</p>
+                    <p>{{ form.introduction }}</p>
                     <div class="share-and-dissolve">
                         <a-button type="danger" @click="success">分享</a-button>
                         <a-button
@@ -128,11 +128,11 @@ export default {
             wrapperCol: { span: 14 },
             data: {
                 name: '',
-                description: '',
+                introduction: '',
             },
             form: {
                 name: '',
-                description: '',
+                introduction: '',
             },
             rules: {
                 name: [
@@ -148,7 +148,7 @@ export default {
                         trigger: 'change',
                     },
                 ],
-                description: [
+                introduction: [
                     {
                         required: true,
                         message: '请输入团队简介',
@@ -219,7 +219,7 @@ export default {
             this.visible = true;
         },
         handleOk() {
-            updateTeam(this.form.name, this.form.description)
+            updateTeam(this.form.name, this.form.introduction)
                 .then(() => {
                     Message.success('修改成功');
                     this.visible = false;
