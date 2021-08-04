@@ -45,5 +45,5 @@ func (manager *RoomManager) addRoom(roomID int64) {
 	}
 	manager.Rooms[roomID] = r
 	go r.start()
-	logger.Logger.Infof("启动新会议室: %s", roomID)
+	logger.Logger.Infof("启动新会议室: %d", roomID)
 }

@@ -8,6 +8,7 @@ import (
 	"mt/utils/redis"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func ConnectionHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,4 +46,5 @@ func ConnectionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	server.AddUser(userID, roomID, w, r)
+	<-time.After(3 * time.Second)
 }

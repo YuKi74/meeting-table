@@ -40,7 +40,7 @@ func (r *Room) start() {
 		if err != nil {
 			logger.Logger.Errorf("储存会议室数据失败: %s", err)
 		}
-		logger.Logger.Infof("会议室: %s 中没有，自动关闭", r.ID)
+		logger.Logger.Infof("会议室: %d 中没有用户，自动关闭", r.ID)
 	}()
 
 	for {
@@ -50,7 +50,7 @@ func (r *Room) start() {
 				r.Users[user.ID].stop()
 			}
 			r.Users[user.ID] = user
-			logger.Logger.Infof("会议室: %s 加入新用户: %s", r.ID, user.ID)
+			logger.Logger.Infof("会议室: %d 加入新用户: %d", r.ID, user.ID)
 			user.Send <- r.Storage.Bytes()
 		case user := <-r.Unregister:
 			delete(r.Users, user.ID)

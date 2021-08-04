@@ -44,7 +44,7 @@ func (u *User) start() {
 }
 
 func (u *User) stop() bool {
-	logger.Logger.Infof("用户: %s 断开连接", u.ID)
+	logger.Logger.Infof("用户: %d 断开连接", u.ID)
 	if u.Socket.Close() != nil {
 		return false
 	}
