@@ -25,7 +25,7 @@
                 type="primary"
                 shape="circle"
                 size="large"
-                @click="Login"
+                @click="login"
                 v-else
             >
                 登录
@@ -74,7 +74,7 @@ export default {
         isLogin() {
             return Cookies.get('token') !== undefined;
         },
-        Login() {
+        login() {
             router.push('/login');
         },
         attendRequest() {
