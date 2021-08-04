@@ -28,8 +28,11 @@ func (manager *RoomManager) Start() {
 func (manager *RoomManager) addRoom(roomID int64) {
 	storage, err := handler.RestoreStorage(roomID)
 	if err != nil {
-		logger.Logger.Debugf("恢复会议室数据失败", err)
-		return
+		logger.Logger.Errorf("恢复会议室数据失败: %s", err)
+		storage = &handler.Storage{
+			RoomID: roomID,
+			Data:   make([]*handler.Data, 0),
+		}
 	}
 	r := &Room{
 		ID:         roomID,
@@ -42,4 +45,5 @@ func (manager *RoomManager) addRoom(roomID int64) {
 	}
 	manager.Rooms[roomID] = r
 	go r.start()
+	logger.Logger.Infof("启动新会议室: %s", roomID)
 }

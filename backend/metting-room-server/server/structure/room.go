@@ -1,6 +1,7 @@
 package structure
 
 import (
+	"mt/logger"
 	"mt/server/handler"
 	"net/http"
 )
@@ -18,6 +19,7 @@ type Room struct {
 func (r *Room) addUser(userID int64, writer http.ResponseWriter, request *http.Request) {
 	coon, err := upgrader.Upgrade(writer, request, nil)
 	if err != nil {
+		logger.Logger.Errorf("连接升级失败: %s", err)
 		return
 	}
 	u := &User{
@@ -34,6 +36,11 @@ func (r *Room) addUser(userID int64, writer http.ResponseWriter, request *http.R
 func (r *Room) start() {
 	defer func() {
 		r.Manager.Unregister <- r
+		err := r.Storage.Store()
+		if err != nil {
+			logger.Logger.Errorf("储存会议室数据失败: %s", err)
+		}
+		logger.Logger.Infof("会议室: %s 中没有，自动关闭", r.ID)
 	}()
 
 	for {
@@ -43,6 +50,8 @@ func (r *Room) start() {
 				r.Users[user.ID].stop()
 			}
 			r.Users[user.ID] = user
+			logger.Logger.Infof("会议室: %s 加入新用户: %s", r.ID, user.ID)
+			user.Send <- r.Storage.Bytes()
 		case user := <-r.Unregister:
 			delete(r.Users, user.ID)
 			if len(r.Users) == 0 {

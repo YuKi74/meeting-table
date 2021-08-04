@@ -9,6 +9,7 @@ type Data struct {
 }
 
 func parseMessage(message []byte) (data *Data, err error) {
+	data = &Data{}
 	err = json.Unmarshal(message, data)
 	return
 }
