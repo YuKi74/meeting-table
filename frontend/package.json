@@ -16,6 +16,7 @@
     "babel-jest": "^27.0.6",
     "babel-plugin-import": "^1.13.3",
     "core-js": "^3.6.5",
+    "jest-sonar": "^0.2.12",
     "js-cookie": "^3.0.0",
     "konva": "^8.1.1",
     "less-loader": "^6.0.0",

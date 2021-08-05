@@ -1,4 +1,8 @@
 module.exports = {
+    reporters: ['default', ['jest-sonar', {
+        reportedFilePath: 'relative',
+        relativeRootDir: '../'
+      }]],
     preset: '@vue/cli-plugin-unit-jest',
     moduleFileExtensions: [
         'js',
