@@ -46,6 +46,8 @@ unit_test_and_sonar:
     only:
         refs:
             - merge_requests
+    before_script:
+        - python3 backend/business-server/manage.py migrate
     script:
         - cd frontend && npm run test:unit
         - cd ../backend/business-server && coverage run manage.py test && coverage xml
