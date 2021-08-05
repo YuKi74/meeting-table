@@ -19,6 +19,7 @@
     "konva": "^8.1.1",
     "less-loader": "^6.0.0",
     "vue": "^2.6.11",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-jest": "^3.0.7",
     "vue-pdf": "^4.3.0",
     "vue-router": "^3.2.0"

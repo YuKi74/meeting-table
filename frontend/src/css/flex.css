@@ -64,3 +64,14 @@
 .cross-axis-baseline {
     align-items: baseline;
 }
+
+/* 个体交叉轴起点对齐 */
+.self-cross-axis-start{
+    align-self: flex-start;
+}
+
+/* 个体交叉轴终点对齐 */
+.self-cross-axis-end{
+    align-self: flex-end;
+}
+
