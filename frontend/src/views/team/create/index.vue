@@ -1,36 +1,25 @@
 <template>
-    <div>
-        <div class="create-card" v-show="!isFormShow">
-            <card class="card" :bordered="false">
-                <a-button
-                    id="btn"
-                    type="link"
-                    icon="plus-circle"
-                    :size="size"
-                    @click="showForm"
-                />
-                <p class="create-title">创建团队</p>
-                <p class="create-content">创建团队，开始Meeting Table之旅</p>
-            </card>
-            <card class="card" :bordered="false">
-                <a-button
-                    id="btn"
-                    type="link"
-                    icon="form"
-                    :size="size"
-                    @click="showModal"
-                />
-
-                <p class="create-title">申请加入</p>
-                <p class="create-content">加入已有团队，体验会议协作</p>
-            </card>
-        </div>
-        <create-form v-show="isFormShow" />
+    <div class="content flex main-axis-center">
+        <user-detail class="user-detail" />
+        <card
+            class="card card-margin-right"
+            :bordered="false"
+            @click="showForm"
+        >
+            <a-icon class="icon" type="plus-circle" />
+            <p class="create-title">创建团队</p>
+            <p class="create-content">创建团队，开始Meeting Table之旅</p>
+        </card>
+        <card class="card" :bordered="false" @click="showModal">
+            <a-icon class="icon" type="form" />
+            <p class="create-title">申请加入</p>
+            <p class="create-content">加入已有团队，体验会议协作</p>
+        </card>
         <modal
             v-model="visible"
             @ok="onSubmit"
-            title="申请加入"
-            okText="提交"
+            title="加入团队"
+            okText="查看"
             cancelText="取消"
         >
             <form-model ref="ruleForm" :model="form" :rules="rules">
@@ -44,7 +33,7 @@
         </modal>
         <modal
             v-model="formVisible"
-            @ok="onsubmitForm"
+            @ok="onSubmitForm"
             title="创建团队"
             okText="提交"
             cancelText="取消"
@@ -81,7 +70,7 @@
 </template>
 
 <script>
-import { Card, Button, Modal, Input, FormModel, Message } from 'ant-design-vue';
+import { Card, Icon, Modal, Input, FormModel, Message } from 'ant-design-vue';
 import {
     TEAM_NAME_MIN_LENGTH,
     TEAM_NAME_MAX_LENGTH,
@@ -90,15 +79,17 @@ import {
 import { createTeam } from '../../../requests/team';
 import { defaultErrorHandler } from '../../../requests/errors';
 import router from '../../../router';
+import UserDetail from '../../../components/team/UserDetail.vue';
 
 export default {
     components: {
         Card,
-        AButton: Button,
+        AIcon: Icon,
         Modal,
         AInput: Input,
         FormModel,
         FormModelItem: FormModel.Item,
+        UserDetail,
     },
     data() {
         let handleUrl = (rule, value, callback) => {
@@ -109,7 +100,6 @@ export default {
             }
         };
         return {
-            size: 'large',
             formVisible: false,
             visible: false,
             form: {
@@ -177,14 +167,18 @@ export default {
         onSubmit() {
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
-                    window.open(this.form.link, '_self');
+                    const url = this.form.link.slice(
+                        this.form.link.indexOf('/team/'),
+                        this.form.link.length
+                    );
+                    this.$router.push(url);
                 }
             });
         },
         onSubmitForm() {
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
-                    createTeam(this.form.name, this.form.description)
+                    createTeam(this.teamForm.name, this.teamForm.description)
                         .then(() => {
                             Message.success('创建成功');
                             router.push('/team');
@@ -198,43 +192,49 @@ export default {
 </script>
 
 <style scoped>
+.user-detail {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+}
+.content {
+    background-color: var(--background);
+    min-width: 100vw;
+    min-height: 100vh;
+}
 .card {
     width: 380px;
     background-color: var(--white);
     border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .card:hover {
+    cursor: pointer;
     transform: translateY(-5px);
     transition: 300ms;
 }
-.create-card {
-    display: flex;
-    justify-content: space-around;
-    background: #f1f3f8;
-    padding: 200px 280px;
-    min-height: 100vh;
-    width: 100%;
-    text-align: center;
+.card-margin-right {
+    margin-right: 50px;
 }
 .create-title {
     font-size: 24px;
     font-weight: 900;
     margin-bottom: 10px;
-    width: 100%;
     text-align: center;
 }
 .create-content {
     font-size: 16px;
-    width: 100%;
     text-align: center;
 }
-#btn {
-    color: #ffcc5f;
-    width: 230px;
-    height: 230px;
+.icon {
+    color: var(--primary-color-1);
     font-size: 100px;
-    padding: 50px;
-    padding-top: 70px;
-    padding-bottom: 0;
+    height: 230px;
+    min-width: 230px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <popover placement="leftTop">
+        <popover placement="bottomRight">
             <template slot="content">
                 <div class="content">
                     <div class="title flex main-axis-around">
@@ -200,5 +200,9 @@ export default {
 }
 .logout {
     margin: 10px 0;
+}
+.icon {
+    height: 40px;
+    width: 40px;
 }
 </style>

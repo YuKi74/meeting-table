@@ -5,23 +5,23 @@
         class="board"
     >
         <a-list-item slot="renderItem" slot-scope="item, index">
-            <div class="box" v-if="item === roomAddCard">
+            <div class="box shadow" v-if="item === roomAddCard">
                 <div class="create flex main-axis-center" @click="addConfirm">
                     <a-icon
                         type="plus-circle"
                         :style="plusClass"
                         class="plus"
-                        @click="addConfirm"
+                        @click.stop="addConfirm"
                     />
                 </div>
             </div>
-            <div class="box" v-else>
+            <div class="box shadow" v-else>
                 <a-card
                     :title="item.name"
                     :number="index"
                     class="card"
                     :bodyStyle="bodyStyle"
-                    @click="enter"
+                    @click="enter(item.uuid)"
                 >
                     <a
                         slot="extra"
@@ -31,8 +31,13 @@
                     >
                         删除
                     </a>
-                    <div class="pic-container">
-                        <img :src="thumbnail" class="pic" />
+                    <div class="pic-container flex main-axis-center">
+                        <a-icon
+                            type="calendar"
+                            theme="twoTone"
+                            two-tone-color="#b4c8ff"
+                            class="icon"
+                        />
                     </div>
                 </a-card>
             </div>
@@ -59,12 +64,8 @@ export default {
         ACard: Card,
         AIcon: Icon,
     },
-    created: function () {
-        // TODO 获取会议室列表
-    },
     data() {
         return {
-            thumbnail: '',
             plusClass: {
                 color: 'var(--white)',
                 fontSize: '50px',
@@ -82,30 +83,36 @@ export default {
         },
     },
     mounted() {
-        getMeetingRooms()
-            .then((data) => {
-                this.meetingRooms = data.data;
-            })
-            .catch(defaultErrorHandler(getMeetingRooms));
+        this.refreshMeetingRooms();
     },
     methods: {
+        refreshMeetingRooms() {
+            getMeetingRooms()
+                .then((data) => {
+                    this.meetingRooms = data.data;
+                })
+                .catch(defaultErrorHandler(getMeetingRooms));
+        },
         addConfirm() {
             const inputNode = this.$createElement(Input);
-            Modal.info({
+            const that = this;
+            Modal.confirm({
                 title: '请输入会议室主题',
                 content: inputNode,
                 okText: '创建',
                 cancelText: '返回',
                 onOk() {
-                    inputNode.componentInstance.confirm();
-                    // TODO 在子组件Input的confirm函数中 发送创建会议室请求
+                    inputNode.componentInstance.confirm(() => {
+                        that.refreshMeetingRooms();
+                    });
                 },
             });
         },
-        enter() {
-            //TODO 进入对应会议室
+        enter(uuid) {
+            window.location.href = `/meeting-room/${uuid}`;
         },
         deleteComfirm(id) {
+            const that = this;
             Modal.confirm({
                 title: '确定要删除此会议室吗？',
                 content: '点击“确认”后, 此会议室将会被删除',
@@ -115,6 +122,7 @@ export default {
                     deleteMeetingRoom(id)
                         .then(() => {
                             Message.success('删除成功');
+                            that.refreshMeetingRooms();
                         })
                         .catch(defaultErrorHandler(deleteMeetingRoom));
                 },
@@ -187,5 +195,8 @@ export default {
 .box:hover {
     transform: translateY(-5px);
     transition: 300ms;
+}
+.icon {
+    font-size: 100px;
 }
 </style>

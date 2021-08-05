@@ -15,6 +15,7 @@
                         placeholder="请输入密码"
                         v-model="form.password"
                         :visibilityToggle="true"
+                        @keyup.enter="submitLogin"
                     />
                 </form-model-item>
                 <div class="blank-space"></div>

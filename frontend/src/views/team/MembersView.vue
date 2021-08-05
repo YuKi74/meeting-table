@@ -1,33 +1,38 @@
 <template>
-    <div class="background">
-        <layout class="layout">
-            <layout-sider class="sider">
-                <team-detail class="team-detail" :uuid="uuid"></team-detail>
-                <member-list class="member-list" :uuid="uuid"></member-list>
+    <layout class="layout">
+        <layout-header class="header flex main-axis-between">
+            <team-detail
+                :uuid="uuid"
+                :is-creator="team.is_creator"
+            ></team-detail>
+            <div class="flex">
+                <popover placement="bottomRight" v-if="team.is_creator">
+                    <div class="apply-list-content" slot="content">
+                        <apply-list class="apply-list"></apply-list>
+                    </div>
+                    <a-button
+                        icon="notification"
+                        type="primary"
+                        class="apply-list-button"
+                        shape="circle"
+                    />
+                </popover>
+                <user-detail class="user-detail"></user-detail>
+            </div>
+        </layout-header>
+        <layout>
+            <layout-sider class="sider" width="250">
+                <member-list
+                    class="member-list"
+                    :uuid="uuid"
+                    :is-creator="team.is_creator"
+                ></member-list>
             </layout-sider>
-            <layout>
-                <layout-content>
-                    <meeting-list class="meeting-list"></meeting-list>
-                </layout-content>
-                <layout-sider width="70px">
-                    <user-detail class="user-detail"></user-detail>
-                    <popover placement="leftTop">
-                        <template slot="content">
-                            <div class="apply-list-content">
-                                <apply-list class="apply-list"></apply-list>
-                            </div>
-                        </template>
-                        <a-button
-                            icon="notification"
-                            type="primary"
-                            class="apply-list-button"
-                            shape="circle"
-                        ></a-button>
-                    </popover>
-                </layout-sider>
-            </layout>
+            <layout-content class="content">
+                <meeting-list class="meeting-list"></meeting-list>
+            </layout-content>
         </layout>
-    </div>
+    </layout>
 </template>
 
 <script>
@@ -37,6 +42,8 @@ import MeetingRoomList from '../../components/team/MeetingRoomList.vue';
 import TeamDetail from '../../components/team/TeamDetail.vue';
 import MemberList from '../../components/team/MemberList.vue';
 import UserDetail from '../../components/team/UserDetail.vue';
+import { getTeaminfo } from '../../requests/team';
+import { defaultErrorHandler } from '../../requests/errors';
 export default {
     components: {
         ApplyList: ApplyMessageList,
@@ -44,6 +51,7 @@ export default {
         TeamDetail,
         MemberList,
         Layout,
+        LayoutHeader: Layout.Header,
         LayoutSider: Layout.Sider,
         LayoutContent: Layout.Content,
         UserDetail,
@@ -51,42 +59,46 @@ export default {
         AButton: Button,
     },
     props: ['uuid'],
+    data() {
+        return {
+            team: {},
+        };
+    },
+    mounted: function () {
+        getTeaminfo(this.uuid)
+            .then((data) => {
+                this.team = data.data;
+            })
+            .catch(defaultErrorHandler(getTeaminfo));
+    },
 };
 </script>
 
 <style scoped>
-.background {
-    background-color: var(--background);
+.layout {
     width: 100%;
     min-height: 100vh;
-    text-align: center;
-}
-.layout {
-    min-height: 100vh;
-}
-.sider {
-    background-color: var(--background);
-}
-.team-detail {
-    margin-top: 15px;
-}
-.member-list {
-    margin-top: 40px;
-    margin-left: 20px;
 }
 .header {
-    height: 80px;
+    width: 100%;
+    background-color: #273868;
 }
-.meeting-list {
-    /* margin: 110px; */
+.sider {
+    background-color: var(--white);
+    border-right: solid 2px var(--secondary-color-2);
 }
-.user-detail {
-    margin-top: 20px;
+.content {
+    padding: 20px;
+    background-color: var(--background);
 }
 .apply-list-button {
-    margin-top: 20px;
+    width: 40px;
+    height: 40px;
 }
-.apply-list {
+.apply-list-content {
     width: 300px;
+}
+.user-detail {
+    margin-left: 20px;
 }
 </style>

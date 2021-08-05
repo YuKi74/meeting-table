@@ -1,81 +1,79 @@
 <template>
     <div>
         <popover placement="bottomLeft" arrow-point-at-center>
-            <template slot="content">
-                <div class="content">
-                    <div class="title">
-                        <p class="form.name">{{ data.name }}</p>
-                        <a-button class="edit" icon="edit" @click="showModal" />
-                        <modal
-                            title="编辑团队信息"
-                            okText="确认"
-                            cancelText="取消"
-                            :visible="visible"
-                            :confirm-loading="confirmLoading"
-                            @ok="handleOk"
-                            @cancel="handleCancel"
-                        >
-                            <div class="create-table">
-                                <form-model
-                                    ref="ruleForm"
-                                    :model="form"
-                                    :rules="rules"
-                                    :label-col="labelCol"
-                                    :wrapper-col="wrapperCol"
-                                    layout="vertical"
+            <div class="content flex flex-col" slot="content">
+                <div class="title">
+                    <p class="form.name">{{ data.name }}</p>
+                    <a-button class="edit" icon="edit" @click="showModal" />
+                    <modal
+                        title="编辑团队信息"
+                        okText="确认"
+                        cancelText="取消"
+                        :visible="visible"
+                        :confirm-loading="confirmLoading"
+                        @ok="handleOk"
+                        @cancel="handleCancel"
+                    >
+                        <div class="create-table">
+                            <form-model
+                                ref="ruleForm"
+                                :model="form"
+                                :rules="rules"
+                                :label-col="labelCol"
+                                :wrapper-col="wrapperCol"
+                                layout="vertical"
+                            >
+                                <form-model-item
+                                    ref="name"
+                                    label="团队名称"
+                                    prop="name"
                                 >
-                                    <form-model-item
-                                        ref="name"
-                                        label="团队名称"
-                                        prop="name"
-                                    >
-                                        <a-input
-                                            :default-value="form.name"
-                                            v-model="form.name"
-                                            @blur="
-                                                () => {
-                                                    $refs.name.onFieldBlur();
-                                                }
-                                            "
-                                        />
-                                    </form-model-item>
-                                    <form-model-item
-                                        label="团队简介"
-                                        prop="introduction"
-                                    >
-                                        <a-input
-                                            v-model="form.introduction"
-                                            type="textarea"
-                                            :default-value="form.introduction"
-                                            :autosize="{ minRows: 4 }"
-                                        />
-                                    </form-model-item>
-                                </form-model>
-                            </div>
-                        </modal>
-                    </div>
-                    <p>{{ form.introduction }}</p>
-                    <div class="share-and-dissolve">
-                        <a-button type="danger" @click="success">分享</a-button>
-                        <a-button
-                            class="dissolve"
-                            type="primary"
-                            @click="showDeleteConfirm"
-                            v-if="isCreater"
-                        >
-                            解散
-                        </a-button>
-                        <a-button
-                            class="dissolve"
-                            type="primary"
-                            @click="showDeleteConfirm"
-                            v-else
-                        >
-                            退出
-                        </a-button>
-                    </div>
+                                    <a-input
+                                        :default-value="form.name"
+                                        v-model="form.name"
+                                        @blur="
+                                            () => {
+                                                $refs.name.onFieldBlur();
+                                            }
+                                        "
+                                    />
+                                </form-model-item>
+                                <form-model-item
+                                    label="团队简介"
+                                    prop="introduction"
+                                >
+                                    <a-input
+                                        v-model="form.introduction"
+                                        type="textarea"
+                                        :default-value="form.introduction"
+                                        :autosize="{ minRows: 4 }"
+                                    />
+                                </form-model-item>
+                            </form-model>
+                        </div>
+                    </modal>
                 </div>
-            </template>
+                <p class="self-cross-axis-start">{{ form.introduction }}</p>
+                <div class="share-and-dissolve">
+                    <a-button type="danger" @click="success">分享</a-button>
+                    <a-button
+                        class="dissolve"
+                        type="primary"
+                        @click="showDeleteConfirm"
+                        v-if="isCreator"
+                    >
+                        解散
+                    </a-button>
+                    <a-button
+                        class="dissolve"
+                        type="primary"
+                        @click="showDeleteConfirm"
+                        v-else
+                    >
+                        退出
+                    </a-button>
+                </div>
+            </div>
             <a-button class="icon" type="primary" shape="circle">
                 {{ form.name.charAt(0) }}
             </a-button>
@@ -109,7 +107,7 @@ import router from '../../router';
 Vue.use(Modal);
 
 export default {
-    props: ['uuid'],
+    props: ['uuid', 'is-creator'],
     components: {
         Popover,
         AButton: Button,
@@ -120,8 +118,6 @@ export default {
     },
     data: function () {
         return {
-            // 判断是否为创建者
-            isCreater: true,
             visible: false,
             confirmLoading: false,
             labelCol: { span: 4 },
@@ -174,7 +170,7 @@ export default {
     methods: {
         success() {
             let input = document.createElement('input'); // js创建一个input输入框
-            input.value = 'https://antdv.com/components/modal-cn/'; // 将需要复制的文本赋值到创建的input输入框中，this.ruleForm.url这个是我要复制的内容
+            input.value = window.location.host + '/team/' + this.uuid; // 将需要复制的文本赋值到创建的input输入框中，this.ruleForm.url这个是我要复制的内容
             document.body.appendChild(input); // 将输入框暂时创建到实例里面
             input.select(); // 选中输入框中的内容
             document.execCommand('Copy'); // 执行复制操作
@@ -236,8 +232,8 @@ export default {
 <style scoped>
 .icon {
     font-size: 16px;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
 }
 .title {
     display: flex;
@@ -249,10 +245,7 @@ export default {
     flex-shrink: 0;
 }
 .content {
-    display: flex;
-    flex-wrap: wrap;
     width: 250px;
-    justify-content: center;
 }
 .name {
     color: var(--black);

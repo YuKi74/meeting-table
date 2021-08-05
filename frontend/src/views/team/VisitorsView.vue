@@ -11,15 +11,7 @@
                     申请加入
                 </a-button>
             </card>
-            <a-button
-                class="btn"
-                type="primary"
-                shape="circle"
-                size="large"
-                v-if="isLogin()"
-            >
-                {{ selfname[0] }}
-            </a-button>
+            <user-detail class="user-detail" v-if="isLogin" />
             <a-button
                 class="btn"
                 type="primary"
@@ -41,6 +33,7 @@ import { getUserinfo } from '../../requests/user';
 import router from '../../router';
 import Cookies from 'js-cookie';
 import { defaultErrorHandler } from '../../requests/errors';
+import UserDetail from '../../components/team/UserDetail.vue';
 
 export default {
     props: ['uuid'],
@@ -48,16 +41,18 @@ export default {
         Card,
         AButton: Button,
         Icon,
+        UserDetail,
     },
     data() {
         return {
+            isLogin: false,
             selfname: 'name',
             name: '',
             description: '',
         };
     },
     mounted: function () {
-        this.isLogin();
+        this.isLogin = Cookies.get('token') !== undefined;
         getTeaminfo(this.uuid)
             .then((data) => {
                 this.name = data.data.name;
@@ -71,9 +66,6 @@ export default {
             .catch(defaultErrorHandler(getUserinfo));
     },
     methods: {
-        isLogin() {
-            return Cookies.get('token') !== undefined;
-        },
         login() {
             router.push('/login');
         },
@@ -123,6 +115,11 @@ export default {
     height: 160px;
     font-size: 100px;
     padding: 30px;
+}
+.user-detail {
+    position: absolute;
+    right: 30px;
+    top: 30px;
 }
 .btn {
     letter-spacing: -2px;

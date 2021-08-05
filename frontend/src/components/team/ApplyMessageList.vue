@@ -73,17 +73,26 @@ export default {
         };
     },
     mounted() {
-        getApplyList()
-            .then((data) => {
-                this.data = data.data;
-            })
-            .catch(defaultErrorHandler(getApplyList));
+        this.refreshApplyList();
     },
     methods: {
-        handleCheckButton(id, is) {
-            handleApplication(id, is)
+        refreshApplyList() {
+            getApplyList()
+                .then((data) => {
+                    this.data = data.data;
+                })
+                .catch(defaultErrorHandler(getApplyList));
+        },
+        handleCheckButton(id, isAdmit) {
+            const that = this;
+            handleApplication(id, isAdmit)
                 .then(() => {
-                    Message.success('申请已同意');
+                    if (isAdmit) {
+                        Message.success('申请已同意');
+                    } else {
+                        Message.success('申请已拒绝');
+                    }
+                    that.refreshApplyList();
                 })
                 .catch(defaultErrorHandler(handleApplication));
         },

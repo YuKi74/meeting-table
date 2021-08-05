@@ -14,30 +14,28 @@ import { defaultErrorHandler } from '../../requests/errors';
 export default {
     mounted: function () {
         if (this.$route.params.uuid) {
+            this.uuid = this.$route.params.uuid;
+            getUserinfo()
+                .then((data) => {
+                    if (data.data.team_uuid === this.$route.params.uuid) {
+                        this.currentView = MembersView;
+                    } else {
+                        this.currentView = VisitorsView;
+                    }
+                })
+                .catch(defaultErrorHandler(getUserinfo));
+        } else {
             if (!Cookies.get('token')) {
                 router.push('/login');
             } else {
                 getUserinfo()
                     .then((data) => {
                         this.uuid = data.data.team_uuid;
-                        if (this.uuid === this.$route.params.uuid) {
-                            this.currentView = MembersView;
+                        if (!this.uuid) {
+                            router.push('/team/create');
                         } else {
-                            this.uuid = this.$route.params.uuid;
-                            this.currentView = VisitorsView;
+                            this.currentView = MembersView;
                         }
-                    })
-                    .catch(defaultErrorHandler(getUserinfo));
-            }
-        } else {
-            if (Cookies.get('token') === undefined) {
-                router.push('/login');
-            } else {
-                getUserinfo()
-                    .then((data) => {
-                        this.uuid = data.data.team_uuid;
-                        if (this.uuid === null) router.push('/team/create');
-                        else this.currentView = MembersView;
                     })
                     .catch(defaultErrorHandler(getUserinfo));
             }

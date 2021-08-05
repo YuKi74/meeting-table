@@ -44,13 +44,13 @@ export default {
         };
     },
     methods: {
-        confirm() {
+        confirm(onSuccess) {
             this.$refs.form.validate((valid) => {
                 if (this.confirmHintMessage(valid)) {
                     createMeetingRoom(this.form.content)
                         .then(() => {
                             Message.success('创建成功');
-                            // TODO 跳转至会议室界面
+                            onSuccess();
                         })
                         .catch(defaultErrorHandler(createMeetingRoom));
                 }
