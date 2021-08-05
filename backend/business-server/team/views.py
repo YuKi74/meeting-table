@@ -1,4 +1,4 @@
-from mt.views import MTAuthView, ResponseData
+from mt.views import MTAuthView, ResponseData, MTView
 from team import services
 from team.serializers import MeetingRoomSerializer
 
@@ -249,7 +249,7 @@ class TeamMemberQuitView(MTAuthView):
         return self.respond(response_data)
 
 
-class TeamInformationView(MTAuthView):
+class TeamInformationView(MTView):
     def get(self, request, uuid):
         """
         @api {get} /team/:uuid/ 获取团队信息

@@ -120,12 +120,16 @@ def solve_application(application_id, is_admitted, response_data):
     application.save()
 
 
-def post_application(user_id, uuid, response_data):
+def post_application(user_id, uuid, response_data: ResponseData):
     try:
         team = Team.objects.get(uuid=uuid)
     except Team.DoesNotExist as err:
         response_data.mt_status = MTStatus.TEAM_NOT_EXIST
         raise Team.DoesNotExist() from err
+    if Application.objects.filter(user=user_id, team=team.id, status=Application.Status.PENDING):
+        response_data.data = "当前用户已提交申请"
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        raise ValidationError
     application_serializer = ApplicationSerializer(data={
         'user': user_id,
         'team': team.id
