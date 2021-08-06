@@ -124,45 +124,6 @@
                     :step="STROKE_WIDTH_STEP"
                 />
             </div>
-            <div class="color-board" v-show="currentStyle.name === '文本颜色'">
-                <div
-                    class="color-box"
-                    v-for="(textColor, index) in colorList"
-                    :key="'textColor' + index"
-                >
-                    <a-icon
-                        v-if="textColor.color === 'transparent'"
-                        type="pushpin"
-                        :class="{
-                            clicked: currentTextColor.color === textColor.color,
-                        }"
-                        class="color-button font-size-22 black-text"
-                        @click="chooseTextColor(textColor)"
-                    />
-                    <a-icon
-                        v-else
-                        type="pushpin"
-                        theme="filled"
-                        :style="textColor"
-                        :class="{
-                            clicked: currentTextColor.color === textColor.color,
-                        }"
-                        class="color-button font-size-22"
-                        @click="chooseTextColor(textColor)"
-                    />
-                </div>
-            </div>
-            <div class="slider" v-show="currentStyle.name === '字号'">
-                <a-slider
-                    ref="fontSize"
-                    vertical
-                    v-model="fontSize"
-                    @afterChange="chooseFontSize"
-                    :max="FONT_MAX_SIZE"
-                    :min="FONT_MIN_SIZE"
-                    :step="FONT_SIZE_STEP"
-                />
-            </div>
         </div>
         <input
             v-show="false"
@@ -180,9 +141,6 @@ import {
     STROKE_MIN_WIDTH,
     STROKE_MAX_WIDTH,
     STROKE_WIDTH_STEP,
-    FONT_MIN_SIZE,
-    FONT_MAX_SIZE,
-    FONT_SIZE_STEP,
 } from '../../constants/meeting-room';
 
 export default {
@@ -230,10 +188,6 @@ export default {
                     icon: 'loading-3-quarters',
                 },
                 {
-                    name: '文本框',
-                    icon: 'file-text',
-                },
-                {
                     name: '设置',
                     icon: 'setting',
                 },
@@ -277,14 +231,6 @@ export default {
                     name: '线宽',
                     icon: 'bold',
                 },
-                {
-                    name: '文本颜色',
-                    icon: 'font-colors',
-                },
-                {
-                    name: '字号',
-                    icon: 'font-size',
-                },
             ],
             colorList: [
                 {
@@ -320,14 +266,9 @@ export default {
             currentStrokeColor: { color: 'black' },
             currentFillColor: { color: 'black' },
             strokeWidth: 5,
-            currentTextColor: { color: 'black' },
-            fontSize: 36,
             STROKE_MIN_WIDTH,
             STROKE_MAX_WIDTH,
             STROKE_WIDTH_STEP,
-            FONT_MIN_SIZE,
-            FONT_MAX_SIZE,
-            FONT_SIZE_STEP,
         };
     },
     methods: {
@@ -357,14 +298,6 @@ export default {
         chooseStrokeWidth() {
             this.$emit('stroke-width-change', this.strokeWidth);
             this.$refs.strokeWidth.blur();
-        },
-        chooseTextColor(color) {
-            this.$emit('text-color-change', color.color);
-            this.currentTextColor = color;
-        },
-        chooseFontSize() {
-            this.$emit('font-size-change', this.fontSize);
-            this.$refs.fontSize.blur();
         },
     },
 };
@@ -403,7 +336,7 @@ export default {
     margin-left: 5px;
     margin-top: 40px;
     width: 48px;
-    height: 208px;
+    height: 130px;
     padding: 8px;
     background-color: #ffffff;
     flex-direction: column;
@@ -421,7 +354,7 @@ export default {
 }
 .left-board {
     width: 48px;
-    height: 555px;
+    height: 520px;
     padding: 8px;
     background-color: #ffffff;
     flex-direction: column;

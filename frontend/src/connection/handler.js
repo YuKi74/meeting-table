@@ -13,17 +13,24 @@ Connection.prototype.getOpenHandler = function () {
     return heartBeat;
 };
 
-Connection.prototype.packMessageHandler = function (messageHandler) {
+Connection.prototype.packMessageHandler = function (board) {
     return function (event) {
         if (event.data === 'pong') {
             return;
         }
-        if (messageHandler) {
-            messageHandler(JSON.parse(event.data));
+        if (board.messageHandler) {
+            const datas = JSON.parse(event.data);
+            if (datas.length === undefined) {
+                board.messageHandler.call(board, datas);
+            } else if (datas.length) {
+                datas.forEach((data) => {
+                    board.messageHandler.call(board, data);
+                });
+            }
         }
     };
 };
 
-Connection.prototype.errorHandler = function () {
+Connection.prototype.closeHandler = function () {
     message.warn('与服务器的连接已断开，请刷新窗口重新连接！', 0);
 };

@@ -2,6 +2,7 @@ import requests
 from django.core.files.uploadedfile import UploadedFile
 from mt.config import config
 from mt.errors import HasTeam
+from mt.redis import redis
 from mt.status import MTStatus
 from mt.views import ResponseData
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -259,3 +260,11 @@ def file_transfer(room_id, record: MeetingRoomFiles, response_data):
     else:
         response_data.mt_status = MTStatus.ERROR_INPUT
         raise ValidationError
+def get_user_by_token(token):
+    if not token:
+        return None
+    id= redis.get(token)
+    if id is None:
+        return None
+    else:
+        return User.objects.get(id=id)

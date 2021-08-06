@@ -169,18 +169,19 @@ export default {
     },
     methods: {
         success() {
-            let input = document.createElement('input'); // js创建一个input输入框
-            input.value = window.location.host + '/team/' + this.uuid; // 将需要复制的文本赋值到创建的input输入框中，this.ruleForm.url这个是我要复制的内容
-            document.body.appendChild(input); // 将输入框暂时创建到实例里面
-            input.select(); // 选中输入框中的内容
-            document.execCommand('Copy'); // 执行复制操作
-            document.body.removeChild(input); // 最后删除实例中临时创建的input输入框，完成复制操作
+            let input = document.createElement('input');
+            input.value =
+                'http://' + window.location.host + '/team/' + this.uuid;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('Copy');
+            document.body.removeChild(input);
             Message.success('分享链接已复制到剪贴板');
         },
         showDeleteConfirm() {
             const that = this;
-            const title = this.provideTitleAndMessage(this.isCreater).title;
-            const message = this.provideTitleAndMessage(this.isCreater).message;
+            const title = this.provideTitleAndMessage(this.isCreator).title;
+            const message = this.provideTitleAndMessage(this.isCreator).message;
             Modal.confirm({
                 title: title,
                 content: message,
@@ -188,7 +189,7 @@ export default {
                 cancelText: '取消',
                 iconType: 'exclamation-circle',
                 onOk() {
-                    if (that.isCreater === true) {
+                    if (that.isCreator) {
                         dissolveTeam()
                             .then(() => {
                                 router.push('/team/create');
@@ -204,9 +205,9 @@ export default {
                 },
             });
         },
-        provideTitleAndMessage(creater) {
-            let title = creater ? '确认要解散团队吗' : '确认要退出团队吗';
-            let message = creater
+        provideTitleAndMessage(creator) {
+            let title = creator ? '确认要解散团队吗' : '确认要退出团队吗';
+            let message = creator
                 ? '解散后不可恢复，且所有会议室文件都会丢失'
                 : '';
             return { title, message };

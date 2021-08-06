@@ -11,8 +11,6 @@ cache:
 install_node_modules:
     stage: install_node_modules
     only:
-        refs:
-            - merge_requests
         changes:
             - frontend/package.json
     script:
@@ -22,8 +20,6 @@ install_node_modules:
 install_python_modules:
     stage: install_python_modules
     only:
-        refs:
-            - merge_requests
         changes:
             - backend/business-server/requirements.txt
     script:
@@ -31,9 +27,6 @@ install_python_modules:
 
 eslint_and_pylint:
     stage: eslint_and_pylint
-    only:
-        refs:
-            - merge_requests
     script:
         - cd frontend
         - npm run lint
@@ -43,9 +36,6 @@ eslint_and_pylint:
 
 unit_test_and_sonar:
     stage: unit_test_and_sonar
-    only:
-        refs:
-            - merge_requests
     before_script:
         - python3 backend/business-server/manage.py migrate
     script:

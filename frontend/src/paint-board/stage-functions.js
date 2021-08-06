@@ -1,4 +1,4 @@
-import Board from './Board';
+import Board from './board';
 import {
     DRAG_RATIO,
     MAX_SCALE,

@@ -1,7 +1,9 @@
-import Board from './Board';
+import Board from './board';
 
-import './InitializeStage';
-import './StageFunctions';
-import './PaintFunctions';
+import './initialize-stage';
+import './stage-functions';
+import './paint-functions';
+import './connection-handler';
+import './paint-handlers';
 
 export default Board;

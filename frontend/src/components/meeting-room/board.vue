@@ -6,8 +6,6 @@
             @stroke-color-change="getStrokeColor"
             @fill-color-change="getFillColor"
             @stroke-width-change="getStrokeWidth"
-            @text-color-change="getTextColor"
-            @font-size-change="getFontSize"
         ></toolbar>
         <div class="board" ref="board"></div>
     </div>
@@ -16,6 +14,8 @@
 <script>
 import Board from '../../paint-board';
 import Toolbar from './Toolbar.vue';
+import { getUserinfo } from '../../requests/user';
+import { defaultErrorHandler } from '../../requests/errors';
 export default {
     components: {
         Toolbar,
@@ -26,7 +26,12 @@ export default {
         };
     },
     mounted: function () {
-        this.board = new Board(this.$refs.board);
+        getUserinfo()
+            .then((data) => {
+                this.board = new Board(this.$refs.board, data.data.id);
+                this.$emit('complete-init', this.board);
+            })
+            .catch(defaultErrorHandler(getUserinfo));
     },
     methods: {
         getTool: function (name) {
@@ -52,12 +57,6 @@ export default {
         getStrokeWidth: function (width) {
             this.board.strokeWidth = width;
         },
-        getTextColor: function (color) {
-            this.board.textColor = color;
-        },
-        getFontSize: function (size) {
-            this.board.fontSize = size;
-        },
     },
 };
 </script>
@@ -75,7 +74,6 @@ export default {
     top: 10px;
     z-index: 1;
 }
-
 .board {
     width: 100%;
     height: 100%;

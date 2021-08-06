@@ -13,7 +13,7 @@
             <a-list-item-meta
                 :v-bind="index"
                 class="description"
-                :description="item.email"
+                :description="item.email.slice(0, 17)"
             >
                 <div class="name font-normall" slot="title">
                     {{ item.name }}
@@ -21,7 +21,6 @@
                 <a-avatar :size="30" slot="avatar" icon="user" class="avatar" />
             </a-list-item-meta>
             <a-button
-                slot="actions"
                 class="remove font-small"
                 @click="removeConfirm(item.id)"
                 size="small"
@@ -103,7 +102,7 @@ export default {
     color: rgb(2, 2, 2);
 }
 .list-item {
-    width: 100%;
+    width: 250px;
 }
 .remove {
     margin: 10px;

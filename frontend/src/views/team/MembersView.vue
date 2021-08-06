@@ -1,12 +1,9 @@
 <template>
     <layout class="layout">
         <layout-header class="header flex main-axis-between">
-            <team-detail
-                :uuid="uuid"
-                :is-creator="team.is_creator"
-            ></team-detail>
+            <team-detail :uuid="uuid" :is-creator="isCreator" />
             <div class="flex">
-                <popover placement="bottomRight" v-if="team.is_creator">
+                <popover placement="bottomRight" v-if="isCreator">
                     <div class="apply-list-content" slot="content">
                         <apply-list class="apply-list"></apply-list>
                     </div>
@@ -21,12 +18,12 @@
             </div>
         </layout-header>
         <layout>
-            <layout-sider class="sider" width="250">
+            <layout-sider class="sider" width="265">
                 <member-list
                     class="member-list"
                     :uuid="uuid"
-                    :is-creator="team.is_creator"
-                ></member-list>
+                    :is-creator="isCreator"
+                />
             </layout-sider>
             <layout-content class="content">
                 <meeting-list class="meeting-list"></meeting-list>
@@ -61,13 +58,13 @@ export default {
     props: ['uuid'],
     data() {
         return {
-            team: {},
+            isCreator: false,
         };
     },
     mounted: function () {
         getTeaminfo(this.uuid)
             .then((data) => {
-                this.team = data.data;
+                this.isCreator = data.data.is_creator;
             })
             .catch(defaultErrorHandler(getTeaminfo));
     },

@@ -1,4 +1,5 @@
-from mt.views import MTAuthView, ResponseData, MTView, MTServerView
+from mt.views import MTAuthView, MTServerView, MTView, ResponseData
+from rest_framework.request import Request
 from team import services
 from team.serializers import MeetingRoomFileSerializer, MeetingRoomSerializer
 
@@ -249,7 +250,7 @@ class TeamMemberQuitView(MTAuthView):
 
 
 class TeamInformationView(MTView):
-    def get(self, request, uuid):
+    def get(self, request: Request, uuid):
         """
         @api {get} /team/:uuid/ 获取团队信息
         @apiName get_team_information
@@ -261,8 +262,9 @@ class TeamInformationView(MTView):
         """
 
         response_data = ResponseData()
-        user = request.user
         try:
+            token = request.META.get('HTTP_TOKEN')
+            user = services.get_user_by_token(token)
             services.get_team_detail(user, uuid, response_data)
         except:
             # TODO log error
