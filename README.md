@@ -53,3 +53,8 @@ docker-compose -f docker-compose-dev.yaml up -d
 - 注意commit的频率，不要一次commit修改好几个功能，也不要修改一两行就commit一次，commit message使用英文，必须是完整句，描述清晰。最好是完成一个部分或者功能时commit一次。
 
 - 提交的代码必须是格式化的代码，符合代码规范的代码。
+
+---
+## 项目开发文档
+
+- https://www.yuque.com/books/share/a2855e09-49a4-43e1-bdce-e6c5dec055e6?# 《MeetingTable技术文档》
