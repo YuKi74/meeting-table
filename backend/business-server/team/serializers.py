@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from .models import Application, MeetingRoom, Team
+from .models import Application, MeetingRoom, MeetingRoomFiles, Team
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ('id','applicant_name', 'applicant_email')
+        fields = ('id', 'applicant_name', 'applicant_email')
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -36,4 +36,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
 class MeetingRoomSerializer(ModelSerializer):
     class Meta:
         model = MeetingRoom
+        fields = '__all__'
+
+
+class MeetingRoomFileSerializer(ModelSerializer):
+    class Meta:
+        model = MeetingRoomFiles
         fields = '__all__'

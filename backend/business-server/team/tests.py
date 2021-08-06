@@ -63,14 +63,13 @@ class TeamTestCase(TestCase):
                           creator=self.user3,
                           response_data=response_data)
 
-        # response_data = ResponseData()
-        # # TODO 检查数据库字段限制
-        # self.assertRaises(ValidationError,
-        #                   services.create_team,
-        #                   name='teamname2',
-        #                   introduction='tooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongintroductionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn',
-        #                   creator=self.user3,
-        #                   response_data=response_data)
+        response_data = ResponseData()
+        self.assertRaises(ValidationError,
+                          services.create_team,
+                          name='teamname2',
+                          introduction='tooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongintroductionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn',
+                          creator=self.user3,
+                          response_data=response_data)
 
         response_data = ResponseData()
         services.create_team(
@@ -94,12 +93,12 @@ class TeamTestCase(TestCase):
                           {'name': 'toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongnamemmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm'},
                           response_data=response_data)
 
-        # response_data = ResponseData()
-        # self.assertRaises(ValidationError,
-        #                   services.update_team,
-        #                   self.team2,
-        #                   {'introduction': 'tooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongintroductionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn'},
-        #                   response_data=response_data)
+        response_data = ResponseData()
+        self.assertRaises(ValidationError,
+                          services.update_team,
+                          self.team2,
+                          {'introduction': 'tooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongintroductionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn'},
+                          response_data=response_data)
 
         response_data = ResponseData()
         services.update_team(

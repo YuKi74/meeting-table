@@ -22,3 +22,6 @@ class MTStatus:
     # 用户请求数据部分
     FORBIDDEN = Status(100, '当前用户没有权限', HTTP_403_FORBIDDEN)
     TEAM_NOT_EXIST = Status(101, '当前团队不存在', HTTP_400_BAD_REQUEST)
+
+    # 会议室服务器部分
+    SERVER_FORBIDDEN = Status(102, '会议室服务器未通过验证', HTTP_403_FORBIDDEN)

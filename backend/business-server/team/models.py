@@ -39,4 +39,6 @@ class MeetingRoom(models.Model):
 class MeetingRoomFiles(models.Model):
     id = models.BigAutoField(primary_key=True)
     meetingRoom = models.ForeignKey(to=MeetingRoom, on_delete=models.CASCADE)
-    files = models.FileField()
+    name = models.CharField(max_length=32)
+    files = models.FileField(upload_to='')
+    time = models.DateField(auto_now_add=True)

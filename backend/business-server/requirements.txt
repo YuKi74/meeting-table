@@ -4,3 +4,4 @@ djangorestframework==3.12.4
 redis==3.5.3
 pyyaml==5.4.1
 coverage==5.5
+requests==2.26.0

@@ -11,12 +11,12 @@ class Authentication(BaseAuthentication):
         try:
             token = request.META.get('HTTP_TOKEN')
             if not token:
-                raise AuthenticationFailed('未携带token或未登录')
+                raise AuthenticationFailed('未携带token或未登录', 401)
             id = redis.get(token)
             if id is None:
-                raise AuthenticationFailed('token过期或未登录')
+                raise AuthenticationFailed('token过期或未登录', 401)
             else:
                 user = User.objects.get(id=id)
                 return user, token
         except User.DoesNotExist:
-            raise AuthenticationFailed('当前用户不存在')
+            raise AuthenticationFailed('当前用户不存在', 401)

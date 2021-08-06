@@ -1,11 +1,14 @@
+import requests
+from django.core.files.uploadedfile import UploadedFile
+from mt.config import config
 from mt.errors import HasTeam
 from mt.status import MTStatus
 from mt.views import ResponseData
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from team.models import Application, MeetingRoom, Team
+from team.models import Application, MeetingRoom, MeetingRoomFiles, Team
 from team.serializers import (ApplicantSerializer, ApplicationSerializer,
-                              MeetingRoomSerializer, TeamInformationSerializer,
-                              TeamSerializer)
+                              MeetingRoomFileSerializer, MeetingRoomSerializer,
+                              TeamInformationSerializer, TeamSerializer)
 from user.models import User
 from user.serializers import UserSerializerWithoutPassword
 
@@ -171,7 +174,7 @@ def is_room_creator(user: User, room_id, response_data: ResponseData):
     return room
 
 
-def is_room_exist(uuid, response_data: ResponseData):
+def check_room_by_uuid(uuid, response_data: ResponseData):
     try:
         room = MeetingRoom.objects.get(uuid=uuid)
     except MeetingRoom.DoesNotExist as err:
@@ -181,9 +184,78 @@ def is_room_exist(uuid, response_data: ResponseData):
     return room
 
 
+def check_room_by_id(id, response_data: ResponseData):
+    try:
+        MeetingRoom.objects.get(id=id)
+    except MeetingRoom.DoesNotExist as err:
+        response_data.mt_status = MTStatus.RECORD_NOT_FOUND
+        response_data.data = '当前会议室不存在'
+        raise MeetingRoom.DoesNotExist from err
+
+
 def get_room_information(user: User, room: MeetingRoom, response_data: ResponseData):
     if user.team_id == room.team_id:
         response_data.data = MeetingRoomSerializer(room).data
     else:
         response_data.mt_status = MTStatus.FORBIDDEN
         raise PermissionDenied
+
+
+def is_file_uploaded(request, response_data: ResponseData):
+    file: UploadedFile = request.FILES.get('file')
+    if file is None:
+        response_data.data = "未上传文件"
+        response_data.mt_status = MTStatus.MISSING_PARAMETER
+        raise ValidationError
+    else:
+        return file
+
+
+def upload_file(room_id: int, file: UploadedFile, name, response_data: ResponseData):
+    data = {'meeting_room_id': room_id}
+    check_upload_url = 'http://'+config.app_config.meeting_room_server+'/new_file'
+    request = requests.get(url=check_upload_url, params=data)
+    if request.status_code != 200:
+        response_data.mt_status = MTStatus.FORBIDDEN
+        response_data.data = "当前会议室处于无人状态"
+        raise PermissionDenied
+    file_serializer = MeetingRoomFileSerializer(data={
+        'name': name,
+        'meetingRoom': room_id,
+        'files': file,
+    })
+    if file_serializer.is_valid():
+        file_serializer.save()
+    else:
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        raise ValidationError
+
+
+def is_file_record_exist(id: int, response_data: ResponseData):
+    try:
+        file_record = MeetingRoomFiles.objects.get(id=id)
+    except MeetingRoomFiles.DoesNotExist as err:
+        response_data.data = "当前会议室不存在此文件"
+        response_data.mt_status = MTStatus.RECORD_NOT_FOUND
+        raise MeetingRoomFiles.DoesNotExist from err
+    return file_record
+
+
+def file_transfer(room_id, record: MeetingRoomFiles, response_data):
+    data = {'meeting_room_id': room_id}
+    check_upload_url = 'http://'+config.app_config.meeting_room_server+'/new_file'
+    request = requests.get(url=check_upload_url, params=data)
+    if request.status_code != 200:
+        response_data.mt_status = MTStatus.FORBIDDEN
+        response_data.data = "当前会议室处于无人状态"
+        raise PermissionDenied
+    new_record_serializer = MeetingRoomFileSerializer(data={
+        'meetingRoom': room_id,
+        'name': record.name,
+        'files': record.files
+    })
+    if new_record_serializer.is_valid():
+        new_record_serializer.save()
+    else:
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        raise ValidationError

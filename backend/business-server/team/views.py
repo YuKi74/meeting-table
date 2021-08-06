@@ -1,8 +1,8 @@
-from mt.views import MTAuthView, ResponseData, MTView
+from mt.views import MTAuthView, ResponseData, MTView, MTServerView
 from team import services
-from team.serializers import MeetingRoomSerializer
+from team.serializers import MeetingRoomFileSerializer, MeetingRoomSerializer
 
-from .models import MeetingRoom, Team
+from .models import MeetingRoom, MeetingRoomFiles, Team
 
 
 class TeamView(MTAuthView):
@@ -101,7 +101,6 @@ class TeamMemberView(MTAuthView):
 
         @apiError TEAM_NOT_EXIST
         """
-        # TODO 看一下返回值类型
 
         user = request.user
         response_data = ResponseData()
@@ -339,7 +338,7 @@ class MeetingRoomView(MTAuthView):
         user = request.user
         response_data = ResponseData()
         try:
-            room = services.is_room_exist(uuid, response_data)
+            room = services.check_room_by_uuid(uuid, response_data)
             services.get_room_information(user, room, response_data)
         except:
             # TODO log error
@@ -393,4 +392,100 @@ class TeamMeetingRoomView(MTAuthView):
             # TODO log error
             pass
 
+        return self.respond(response_data)
+
+
+class FileView(MTServerView):
+    def post(self, request, uuid):
+        """
+        @api {post} /team/file/:uuid/ 在会议室内上传文件
+        @apiName upload_file
+        @apiGroup Room
+
+        @apiParam {Number} uuid 会议室uuid
+
+        @apiError
+        """
+        response_data = ResponseData()
+        try:
+            room = services.check_room_by_uuid(uuid, response_data)
+            file = services.is_file_uploaded(request, response_data)
+            services.upload_file(room.id, file, file.name, response_data)
+        except:
+            # TODO log error
+            pass
+
+        return self.respond(response_data)
+
+    def get(self, request, uuid):
+        """
+        @api {get} /team/file/:uuid/ 查看会议室内所有文件
+        @apiName get_room_files
+        @apiGroup File
+
+        @apiSuccess {String} data 所有会议室内文件信息
+
+        @apiError RECORD_NOT_FOUND
+        """
+        response_data = ResponseData()
+        try:
+            room = services.check_room_by_uuid(uuid, response_data)
+            response_data.data = MeetingRoomFileSerializer(
+                MeetingRoomFiles.objects.filter(meetingRoom=room), many=True).data
+
+        except:
+            # TODO log error
+            pass
+        return self.respond(response_data)
+
+
+class FileTransferView(MTAuthView):
+    # TODO 记得改为MTServerView，测试文件删除逻辑对不对
+    def delete(self, request, id):
+        """
+        @api {delete} /team/file/:id/ 会议室服务器删除会议室内文件,id为会议室文件记录
+        @apiName delete_file
+        @apiGroup File
+
+        @apiError RECORD_NOT_FOUND
+        """
+        response_data = ResponseData()
+        try:
+            file_record = services.is_file_record_exist(id, response_data)
+            file = file_record.files
+            if MeetingRoomFiles.objects.filter(files=file).count() == 1:
+                file.delete(save=True)
+            file_record.delete()
+        except:
+            # TODO log err
+            pass
+        return self.respond(response_data)
+
+    def post(self, request):
+        """
+        @api {post} /team/file/ 从某个会议室转移文件到另一个会议室
+        @apiName transfer_file
+        @apiGroup File
+
+        @apiParam {Number} room_id 会议室id
+        @apiParam {Number} file_record_id 文件记录id
+
+        @apiError MISSING_PARAMETER
+        @apiError ERROR_INPUT
+        @apiError RECORD_NOT_FOUND
+        @apiError FORBIDDEN
+        """
+        response_data = ResponseData()
+        try:
+            room_id = self.check_and_get(
+                request.data, 'room_id', response_data)
+            services.check_room_by_id(room_id, response_data)
+            file_record_id = self.check_and_get(
+                request.data, 'file_record_id', response_data)
+            record = services.is_file_record_exist(
+                file_record_id, response_data)
+            services.file_transfer(room_id, record, response_data)
+        except:
+            # TODO log err
+            pass
         return self.respond(response_data)

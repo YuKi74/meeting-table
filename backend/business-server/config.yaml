@@ -1,7 +1,6 @@
 app_config:
     log_path: /var/log/mt/business-server
     meeting_room_server: 127.0.0.1:7000
-    meeting_room_server_url: /ws
     file_path: /files/
 
 mysql_config:

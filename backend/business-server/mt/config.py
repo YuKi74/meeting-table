@@ -15,7 +15,6 @@ class AppConfig:
     def __init__(self, **config):
         self.log_path = config['log_path']
         self.meeting_room_server = config['meeting_room_server']
-        self.meeting_room_server_url = config['meeting_room_server_url']
         self.file_path = config['file_path']
 
 
