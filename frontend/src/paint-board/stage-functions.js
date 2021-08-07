@@ -16,6 +16,7 @@ Board.prototype.moveStage = function (deltaX, deltaY, dragRatio) {
     stagePosition.x += deltaX * dragRatio;
     stagePosition.y += deltaY * dragRatio;
     this.stage.position(stagePosition);
+    this.onBoardMove();
 };
 
 Board.prototype.scaleStage = function (deltaScale) {
@@ -44,12 +45,12 @@ Board.prototype.scaleStage = function (deltaScale) {
     });
 };
 
-Board.prototype.getStagePosition = function () {
-    const stagePosition = this.stage.position();
+Board.prototype.getStagePosition = function (pos) {
+    if (!pos) {
+        pos = this.stage.getPointerPosition();
+    }
     const scale = this.stage.scale().x;
-    const stageX =
-        (this.stage.getPointerPosition().x - stagePosition.x) / scale;
-    const stageY =
-        (this.stage.getPointerPosition().y - stagePosition.y) / scale;
+    const stageX = (pos.x - this.stage.position().x) / scale;
+    const stageY = (pos.y - this.stage.position().y) / scale;
     return { x: stageX, y: stageY };
 };

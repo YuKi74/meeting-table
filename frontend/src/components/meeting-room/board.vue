@@ -1,13 +1,25 @@
 <template>
-    <div class="content">
+    <div class="content" ref="page">
         <toolbar
             class="toolbar"
             @tool-change="getTool"
             @stroke-color-change="getStrokeColor"
             @fill-color-change="getFillColor"
             @stroke-width-change="getStrokeWidth"
+            ref="toolbar"
         ></toolbar>
         <div class="board" ref="board"></div>
+        <component-container
+            v-for="(component, id, index) in components"
+            :key="index"
+            :connection="connection"
+            :style="component.style"
+            :id="id"
+            :component="component.node"
+            class="component"
+            @mousedown="onMouseDown"
+            @close="onClose"
+        />
     </div>
 </template>
 
@@ -16,22 +28,83 @@ import Board from '../../paint-board';
 import Toolbar from './Toolbar.vue';
 import { getUserinfo } from '../../requests/user';
 import { defaultErrorHandler } from '../../requests/errors';
+import ComponentContainer from './ComponentContainer.vue';
+import {
+    calcStyle,
+    isComponent,
+    getComponent,
+    restoreComponent,
+} from '../../components-utils';
 export default {
+    props: ['connection'],
     components: {
         Toolbar,
+        ComponentContainer,
     },
     data() {
         return {
             board: {},
+            lastX: 0,
+            lastY: 0,
+            selectedComponent: null,
+            moved: false,
+            components: {},
         };
     },
     mounted: function () {
         getUserinfo()
             .then((data) => {
-                this.board = new Board(this.$refs.board, data.data.id);
-                this.$emit('complete-init', this.board);
+                this.board = new Board(
+                    this.$refs.board,
+                    data.data.id,
+                    this.onBoardMove
+                );
+                this.board.registerMessageHandler(this.connection);
+                this.connection.addMessageHandler(
+                    (data) => {
+                        return data.Type === 'component';
+                    },
+                    this.handleComponentCreate,
+                    this
+                );
+                this.connection.addMessageHandler(
+                    (data) => {
+                        return data.Type === 'component_move';
+                    },
+                    this.handleComponentMove,
+                    this
+                );
+                this.connection.addMessageHandler(
+                    (data) => {
+                        return data.Type === 'component_delete';
+                    },
+                    this.handleComponentDelete,
+                    this
+                );
+                this.connection.start();
             })
             .catch(defaultErrorHandler(getUserinfo));
+        window.addEventListener('mousedown', (event) => {
+            if (
+                event.target.tagName === 'CANVAS' &&
+                isComponent(this.board.tool)
+            ) {
+                this.createComponent(event.clientX, event.clientY);
+                this.$refs.toolbar.reset();
+            }
+        });
+        window.addEventListener('mousemove', (event) => {
+            if (this.selectedComponent) {
+                this.moved = true;
+                this.onDrag(event.clientX, event.clientY);
+            }
+        });
+        window.addEventListener('mouseup', (event) => {
+            if (this.selectedComponent && this.moved) {
+                this.onDragEnd(event.clientX, event.clientY);
+            }
+            this.moved = false;
+        });
     },
     methods: {
         getTool: function (name) {
@@ -57,6 +130,98 @@ export default {
         getStrokeWidth: function (width) {
             this.board.strokeWidth = width;
         },
+        onMouseDown: function (id, x, y) {
+            this.selectedComponent = id;
+            this.lastX = x;
+            this.lastY = y;
+        },
+        onDrag: function (x, y) {
+            calcStyle(
+                this.components[this.selectedComponent].style,
+                this.board,
+                x - this.lastX,
+                y - this.lastY
+            );
+            this.lastX = x;
+            this.lastY = y;
+        },
+        onDragEnd: function (x, y) {
+            const component = this.components[this.selectedComponent];
+            if (!component) {
+                return;
+            }
+            calcStyle(
+                component.style,
+                this.board,
+                x - this.lastX,
+                y - this.lastY
+            );
+            this.lastX = x;
+            this.lastY = y;
+            const data = {
+                x: component.style.x,
+                y: component.style.y,
+            };
+            this.connection.send({
+                Type: 'component_move',
+                Target: this.selectedComponent,
+                Data: data,
+            });
+            this.selectedComponent = null;
+        },
+        onClose: function (id) {
+            this.$delete(this.components, id);
+            this.selectedComponent = null;
+            this.moved = false;
+            this.connection.send({
+                Type: 'component_delete',
+                Target: id,
+                Data: '',
+            });
+        },
+        onBoardMove: function () {
+            Object.keys(this.components).forEach((id) => {
+                calcStyle(this.components[id].style, this.board);
+            });
+        },
+        createComponent: function (x, y) {
+            const id = this.board.tool + '_' + new Date().getTime();
+            const component = getComponent(this.board, x, y);
+            if (!component) {
+                return;
+            }
+            this.$set(this.components, id, component);
+            const data = {
+                x: component.style.x,
+                y: component.style.y,
+                content: component.content,
+            };
+            this.connection.send({
+                Type: 'component',
+                Target: id,
+                Data: data,
+            });
+        },
+        handleComponentCreate: function (data) {
+            if (Object.keys(this.components).includes(data.Target)) {
+                return;
+            }
+            const component = restoreComponent(data, this.board);
+            this.$set(this.components, data.Target, component);
+        },
+        handleComponentMove: function (data) {
+            if (!this.components[data.Target]) {
+                return;
+            }
+            this.components[data.Target].style.x = parseFloat(data.Data.x);
+            this.components[data.Target].style.y = parseFloat(data.Data.y);
+            calcStyle(this.components[data.Target].style, this.board);
+        },
+        handleComponentDelete: function (data) {
+            this.$delete(this.components, data.Target);
+            this.selectedComponent = null;
+            this.moved = false;
+        },
     },
 };
 </script>
@@ -67,17 +232,23 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    user-select: none;
 }
 .toolbar {
     position: absolute;
     left: 10px;
     top: 10px;
-    z-index: 1;
+    z-index: 2;
 }
 .board {
     width: 100%;
     height: 100%;
     overflow: hidden;
     background-color: lightgray;
+}
+.component {
+    position: absolute;
+    z-index: 1;
+    transform-origin: 0 0 0;
 }
 </style>

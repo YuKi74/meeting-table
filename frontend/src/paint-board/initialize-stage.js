@@ -86,6 +86,12 @@ const initStageEventListener = function (board) {
         dragStart(evt, board);
     });
 
+    stage.on('dragmove', function (evt) {
+        if (evt.target === stage) {
+            board.onBoardMove();
+        }
+    });
+
     stage.on('dragend', function (evt) {
         dragEnd(evt, board);
     });
@@ -100,14 +106,14 @@ const initStageEventListener = function (board) {
 };
 
 const initContainer = function (board) {
-    board.container.addEventListener('gesturestart', (e) => {
+    window.addEventListener('gesturestart', (e) => {
         e.preventDefault();
         board.startScale = board.stage.scale().x;
         const deltaScale = board.startScale * e.scale - board.stage.scale().x;
         board.scaleStage(deltaScale);
     });
 
-    board.container.addEventListener('gesturechange', (e) => {
+    window.addEventListener('gesturechange', (e) => {
         e.preventDefault();
         const deltaScale = board.startScale * e.scale - board.stage.scale().x;
         board.scaleStage(deltaScale);

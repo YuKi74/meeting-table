@@ -50,9 +50,12 @@
 <script>
 import { Input, Spin } from 'ant-design-vue';
 import { TIME_INTERVAL } from '../../constants/meeting-room';
+import { getUserinfo } from '../../requests/user';
+import { defaultErrorHandler } from '../../requests/errors';
 export default {
+    props: ['connection', 'id'],
     components: {
-        ATextarea: Input.TextArea,
+        ATextarea: Input,
         ASpin: Spin,
     },
     data() {
@@ -67,25 +70,23 @@ export default {
         };
     },
     mounted: function () {
-        // TODO  加载时获取用户名和id
+        getUserinfo()
+            .then((data) => {
+                this.userId = data.data.id;
+                this.userName = data.data.name;
+                this.connection.addMessageHandler(
+                    (data) => {
+                        return this.id === data.Target && data.Type === 'im';
+                    },
+                    this.receive,
+                    this
+                );
+            })
+            .catch(defaultErrorHandler(getUserinfo));
     },
     computed: {
         messagesLength() {
             return this.messages.length;
-        },
-    },
-    watch: {
-        messages: function (val) {
-            this.isPop = true;
-            if (val[val.length - 1] === this.commitList[0]) {
-                this.commitList.shift();
-                this.popContent = '消息发送成功';
-            } else {
-                this.popContent = '您有新的消息';
-            }
-            setTimeout(() => {
-                this.isPop = false;
-            }, TIME_INTERVAL);
         },
     },
     methods: {
@@ -96,13 +97,34 @@ export default {
                 name: this.userName,
                 id: this.userId,
             };
-            this.$emit('update-input', message);
             this.commitList.push(message);
             this.value = '';
             setTimeout(() => {
                 this.$refs.msgboard.scrollTop =
                     this.$refs.msgboard.scrollHeight;
             }, 1);
+            this.connection.send({
+                Type: 'im',
+                Target: this.id,
+                Data: message,
+            });
+        },
+        receive(data) {
+            this.isPop = true;
+            if (data.Data.id === this.userId) {
+                this.commitList.shift();
+                this.popContent = '消息发送成功';
+            } else {
+                this.popContent = '您有新的消息';
+            }
+            this.messages.push(data.Data);
+            setTimeout(() => {
+                this.$refs.msgboard.scrollTop =
+                    this.$refs.msgboard.scrollHeight;
+            }, 1);
+            setTimeout(() => {
+                this.isPop = false;
+            }, TIME_INTERVAL);
         },
     },
 };
@@ -117,18 +139,20 @@ export default {
     flex-direction: column;
     align-items: center;
     border: 5px solid var(--secondary-color-1);
+    background-color: var(--white);
 }
 .msgboard {
     width: 100%;
-    height: 400px;
+    height: 100%;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    padding-top: 3px;
 }
 .msg-container-left {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: flex-start;
 }
 .msg-container-right {
@@ -146,6 +170,7 @@ export default {
     word-break: break-all;
     padding: 10px;
     margin: 20px;
+    margin-top: 0;
     background-color: var(--primary-color-2);
 }
 .chat-right {
@@ -158,6 +183,7 @@ export default {
     word-break: break-all;
     padding: 10px;
     margin: 20px;
+    margin-top: 0;
     background-color: var(--secondary-color-2);
 }
 .fill-left {

@@ -1,5 +1,5 @@
 <template>
-    <div class="back">
+    <div class="back" ref="toolbar">
         <div class="left-board">
             <a-tooltip
                 placement="right"
@@ -163,6 +163,11 @@ export default {
             const slider = slidersHandle[i];
             slider.style.border = 'solid 2px gray';
         }
+        this.$refs.toolbar.addEventListener('wheel', (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        });
     },
     data: () => {
         return {
@@ -298,6 +303,12 @@ export default {
         chooseStrokeWidth() {
             this.$emit('stroke-width-change', this.strokeWidth);
             this.$refs.strokeWidth.blur();
+        },
+        reset() {
+            this.chooseTool({
+                name: '移动',
+                icon: 'drag',
+            });
         },
     },
 };

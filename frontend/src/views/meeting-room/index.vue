@@ -1,6 +1,6 @@
 <template>
     <div>
-        <board class="board" @complete-init="connect"></board>
+        <board class="board" v-if="connection" :connection="connection"></board>
     </div>
 </template>
 
@@ -15,22 +15,27 @@ export default {
     },
     data() {
         return {
-            connection: {},
+            connection: null,
         };
     },
-    methods: {
-        connect: function (board) {
-            getMeetingRoomInfo(this.$route.params.uuid)
-                .then((data) => {
-                    this.connection = new Connection(data.data.id, board);
-                })
-                .catch(defaultErrorHandler(getMeetingRoomInfo));
-        },
+    mounted: function () {
+        getMeetingRoomInfo(this.$route.params.uuid)
+            .then((data) => {
+                this.connection = new Connection(data.data.id);
+            })
+            .catch(defaultErrorHandler(getMeetingRoomInfo));
     },
+    methods: {},
 };
 </script>
 
 <style scoped>
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+}
 .board {
     width: 100vw;
     height: 100vh;

@@ -13,22 +13,49 @@ Connection.prototype.getOpenHandler = function () {
     return heartBeat;
 };
 
-Connection.prototype.packMessageHandler = function (board) {
+Connection.prototype.getMessageHandler = function () {
+    const messageCache = this.messageCache;
+    const messageHandlers = this.messageHandlers;
+    const handleData = function (data) {
+        messageHandlers.forEach((messageHandler) => {
+            if (messageHandler.rule(data)) {
+                messageHandler.handler.call(messageHandler.caller, data);
+                return;
+            }
+        });
+        messageCache.push(data);
+    };
     return function (event) {
         if (event.data === 'pong') {
             return;
         }
-        if (board.messageHandler) {
-            const datas = JSON.parse(event.data);
-            if (datas.length === undefined) {
-                board.messageHandler.call(board, datas);
-            } else if (datas.length) {
-                datas.forEach((data) => {
-                    board.messageHandler.call(board, data);
-                });
-            }
+        const datas = JSON.parse(event.data);
+        if (datas.length === undefined) {
+            handleData(datas);
+        } else if (datas.length) {
+            datas.forEach((data) => {
+                handleData(data);
+            });
         }
     };
+};
+
+Connection.prototype.addMessageHandler = function (rule, handler, caller) {
+    const messageHandler = {
+        rule: rule,
+        handler: handler,
+        caller: caller,
+    };
+    this.messageHandlers.push(messageHandler);
+    for (let i = this.messageCache.length - 1; i >= 0; i--) {
+        const message = this.messageCache[i];
+        if (messageHandler.rule(message)) {
+            this.messageCache = this.messageCache
+                .slice(0, i)
+                .concat(this.messageCache.slice(i + 1));
+            messageHandler.handler.call(messageHandler.caller, message);
+        }
+    }
 };
 
 Connection.prototype.closeHandler = function () {
