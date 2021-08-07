@@ -1,6 +1,6 @@
-from constant.team import (not_exist_application_id, not_exist_room_id,
-                           not_exist_room_uuid, not_exist_team_uuid,
-                           not_exist_user_id)
+from constant.team import (default_password, not_exist_application_id,
+                           not_exist_room_id, not_exist_room_uuid,
+                           not_exist_team_uuid, not_exist_user_id)
 from django.test import TestCase
 from helper.test import (create_application, create_room, create_team,
                          create_user)
@@ -15,7 +15,7 @@ from user.models import User
 from user.serializers import UserSerializerWithoutPassword
 
 from .models import Application, Team
-from .serializers import ApplicantSerializer, TeamInformationSerializer
+from .serializers import ApplicantSerializer
 
 
 class TeamTestCase(TestCase):
@@ -23,7 +23,7 @@ class TeamTestCase(TestCase):
         self.user1 = create_user(
             name='username1',
             email='test1@qq.com',
-            password='123456'
+            password=default_password
         )
         self.team1 = create_team(
             name='teamname1',
@@ -36,7 +36,7 @@ class TeamTestCase(TestCase):
         self.user2 = create_user(
             name='username2',
             email='test2@qq.com',
-            password='123456'
+            password=default_password
         )
 
     def test_has_no_team(self):
@@ -52,7 +52,7 @@ class TeamTestCase(TestCase):
         self.user3 = create_user(
             name='username3',
             email='test3@qq.com',
-            password='123456'
+            password=default_password
         )
 
         response_data = ResponseData()
@@ -80,7 +80,7 @@ class TeamTestCase(TestCase):
         self.assertNotEqual(self.user3.team, None)
 
     def test_update_team(self):
-        self.team2 = create_team(
+        team2 = create_team(
             name='teamname2',
             introduction='test',
             creator=self.user2
@@ -89,39 +89,39 @@ class TeamTestCase(TestCase):
         response_data = ResponseData()
         self.assertRaises(ValidationError,
                           services.update_team,
-                          self.team2,
+                          team2,
                           {'name': 'toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongnamemmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm'},
                           response_data=response_data)
 
         response_data = ResponseData()
         self.assertRaises(ValidationError,
                           services.update_team,
-                          self.team2,
+                          team2,
                           {'introduction': 'tooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolongintroductionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn'},
                           response_data=response_data)
 
         response_data = ResponseData()
         services.update_team(
-            self.team2,
+            team2,
             {'name': 'teamname3',
              'introduction': 'test'},
             response_data=response_data)
-        self.assertEqual(self.team2.name, 'teamname3')
-        self.assertEqual(self.team2.introduction, 'test')
+        self.assertEqual(team2.name, 'teamname3')
+        self.assertEqual(team2.introduction, 'test')
 
         response_data = ResponseData()
         services.update_team(
-            self.team2,
+            team2,
             {'name': 'teamname4'},
             response_data=response_data)
-        self.assertEqual(self.team2.name, 'teamname4')
+        self.assertEqual(team2.name, 'teamname4')
 
         response_data = ResponseData()
         services.update_team(
-            self.team2,
+            team2,
             {'introduction': 'test2'},
             response_data=response_data)
-        self.assertEqual(self.team2.introduction, 'test2')
+        self.assertEqual(team2.introduction, 'test2')
 
 
 class ApplicationProcessTestCase(TestCase):
@@ -129,7 +129,7 @@ class ApplicationProcessTestCase(TestCase):
         self.creator1 = create_user(
             name='username1',
             email='test1@qq.com',
-            password='123456'
+            password=default_password
         )
         self.team1 = create_team(
             name='teamname1',
@@ -141,7 +141,7 @@ class ApplicationProcessTestCase(TestCase):
         self.creator2 = create_user(
             name='username2',
             email='test2@qq.com',
-            password='123456'
+            password=default_password
         )
         self.team2 = create_team(
             name='teamname2',
@@ -153,28 +153,28 @@ class ApplicationProcessTestCase(TestCase):
         self.user1 = create_user(
             name='username3',
             email='test3@qq.com',
-            password='123456'
+            password=default_password
         )
         self.user2 = create_user(
             name='username4',
             email='test4@qq.com',
-            password='123456'
+            password=default_password
         )
 
     def test_solve_application(self):
-        self.application1 = create_application(
+        application1 = create_application(
             user=self.user1,
             team=self.team1
         )
-        self.application2 = create_application(
+        application2 = create_application(
             user=self.user1,
             team=self.team2
         )
-        self.application3 = create_application(
+        application3 = create_application(
             user=self.user2,
             team=self.team1
         )
-        self.application4 = create_application(
+        application4 = create_application(
             user=self.user2,
             team=self.team2
         )
@@ -188,40 +188,40 @@ class ApplicationProcessTestCase(TestCase):
         self.assertEqual(response_data.data, '当前申请记录不存在')
 
         response_data = ResponseData()
-        self.application1.status = Application.Status.ACCEPTED
-        self.application1.save()
+        application1.status = Application.Status.ACCEPTED
+        application1.save()
         self.assertRaises(ValidationError,
                           services.solve_application,
-                          self.application1.id,
+                          application1.id,
                           True,
                           response_data)
         self.assertEqual(response_data.data, '当前申请记录已处理')
-        self.application1.status = Application.Status.PENDING
-        self.application1.save()
+        application1.status = Application.Status.PENDING
+        application1.save()
 
         response_data = ResponseData()
-        services.solve_application(self.application3.id,
+        services.solve_application(application3.id,
                                    False,
                                    response_data)
-        self.assertEqual(Application.objects.get(id=self.application3.id).status,
+        self.assertEqual(Application.objects.get(id=application3.id).status,
                          Application.Status.DENIED)
-        self.assertEqual(Application.objects.get(id=self.application4.id).status,
+        self.assertEqual(Application.objects.get(id=application4.id).status,
                          Application.Status.PENDING)
-        self.application3.status = Application.Status.PENDING
-        self.application1.save()
+        application3.status = Application.Status.PENDING
+        application1.save()
 
         response_data = ResponseData()
-        services.solve_application(self.application1.id,
+        services.solve_application(application1.id,
                                    True,
                                    response_data)
-        self.assertEqual(Application.objects.get(id=self.application1.id).status,
+        self.assertEqual(Application.objects.get(id=application1.id).status,
                          Application.Status.ACCEPTED)
-        self.assertEqual(Application.objects.get(id=self.application2.id).status,
+        self.assertEqual(Application.objects.get(id=application2.id).status,
                          Application.Status.DENIED)
-        self.application1.status = Application.Status.PENDING
-        self.application1.save()
-        self.application2.status = Application.Status.PENDING
-        self.application2.save()
+        application1.status = Application.Status.PENDING
+        application1.save()
+        application2.status = Application.Status.PENDING
+        application2.save()
 
     def test_post_application(self):
         response_data = ResponseData()
@@ -267,11 +267,11 @@ class MeetingRoomTestCase(TestCase):
         self.user1 = create_user(
             name='username1',
             email='test1@qq.com',
-            password='123456')
+            password=default_password)
         self.user2 = create_user(
             name='username2',
             email='test2@qq.com',
-            password='123456')
+            password=default_password)
 
         self.team1 = create_team(
             name='teamname',
@@ -330,38 +330,51 @@ class MeetingRoomTestCase(TestCase):
             self.user1, self.room1.id, response_data)
         self.assertEqual(self.room1, room)
 
-    def test_is_room_exist(self):
+    def test_check_room_by_uuid(self):
         response_data = ResponseData()
         self.assertRaises(MeetingRoom.DoesNotExist,
-                          services.is_room_exist,
+                          services.check_room_by_uuid,
                           not_exist_room_uuid,
                           response_data)
         self.assertEqual(response_data.mt_status, MTStatus.RECORD_NOT_FOUND)
         self.assertEqual(response_data.data, '当前会议室不存在')
 
         response_data = ResponseData()
-        room = services.is_room_exist(self.room1.uuid, response_data)
+        room = services.check_room_by_uuid(self.room1.uuid, response_data)
         self.assertEqual(self.room1, room)
 
+    def test_check_room_by_id(self):
+        response_data = ResponseData()
+        self.assertRaises(MeetingRoom.DoesNotExist,
+                          services.check_room_by_id,
+                          not_exist_room_id,
+                          response_data)
+        self.assertEqual(response_data.mt_status, MTStatus.RECORD_NOT_FOUND)
+        self.assertEqual(response_data.data, '当前会议室不存在')
+
+        response_data = ResponseData()
+        services.check_room_by_id(self.room1.id, response_data)
+        self.assertEqual(response_data.mt_status, MTStatus.OK)
+
     def test_get_room_information(self):
-        self.user3 = create_user(
+        user3 = create_user(
             name='username3',
             email='test3@qq.com',
-            password='123456')
-        self.team2 = create_team(
+            password=default_password)
+        team2 = create_team(
             name='teamname2',
             introduction='testexample',
-            creator=self.user3)
-        self.user3.team = self.team2
-        self.user3.save()
-        self.room3 = create_room(
+            creator=user3)
+        user3.team = team2
+        user3.save()
+        room3 = create_room(
             name='roomname3',
-            team=self.team2,
-            creator=self.user3)
+            team=team2,
+            creator=user3)
 
         response_data = ResponseData()
         self.assertRaises(PermissionDenied,
-                          services.get_room_information, self.user1, self.room3, response_data)
+                          services.get_room_information, self.user1, room3, response_data)
         self.assertEqual(response_data.mt_status, MTStatus.FORBIDDEN)
 
         response_data = ResponseData()
@@ -375,11 +388,11 @@ class TeamMemberTestCase(TestCase):
         self.user1 = create_user(
             name='username1',
             email='test1@qq.com',
-            password='123456')
+            password=default_password)
         self.user2 = create_user(
             name='username2',
             email='test2@qq.com',
-            password='123456')
+            password=default_password)
 
         self.team1 = create_team(
             name='teamname',
@@ -398,12 +411,12 @@ class TeamMemberTestCase(TestCase):
         self.assertEqual(response_data.mt_status, MTStatus.OK)
 
         response_data = ResponseData()
-        self.user3 = create_user(
+        user3 = create_user(
             name='username3',
             email='test3@qq.com',
-            password='123456')
+            password=default_password)
         self.assertRaises(Team.DoesNotExist, services.has_team,
-                          self.user3, response_data)
+                          user3, response_data)
         self.assertEqual(response_data.mt_status, MTStatus.TEAM_NOT_EXIST)
 
     def test_get_team_members(self):
@@ -430,12 +443,12 @@ class TeamMemberTestCase(TestCase):
         self.assertEqual(response_data.data, '当前用户不存在')
 
         response_data = ResponseData()
-        self.user3 = create_user(
+        user3 = create_user(
             name='username3',
             email='test3@qq.com',
-            password='123456')
+            password=default_password)
         self.assertRaises(PermissionDenied, services.belong_to_team,
-                          self.user3.id, self.team1, response_data)
+                          user3.id, self.team1, response_data)
         self.assertEqual(response_data.mt_status, MTStatus.ERROR_INPUT)
         self.assertEqual(response_data.data, '当前用户不属于本团队')
 
@@ -444,6 +457,22 @@ class TeamMemberTestCase(TestCase):
             self.user2.id, self.team1, response_data)
         self.assertEqual(member, self.user2)
 
+    def test_has_data(self):
+        response_data = ResponseData()
+        data = {}
+        self.assertRaises(ValidationError, services.has_data,
+                          data, response_data)
+        self.assertEqual(response_data.mt_status, MTStatus.MISSING_PARAMETER)
+
+        response_data = ResponseData()
+        data = {'key': 'value'}
+        services.has_data(data, response_data)
+        self.assertEqual(response_data.mt_status, MTStatus.OK)
+
     def test_delete_member(self):
-        services.delete_member(self.user2)
-        self.assertEqual(self.user2.team_id, None)
+        user3 = create_user(
+            name='username3',
+            email='test3@qq.com',
+            password=default_password)
+        services.delete_member(user3)
+        self.assertEqual(None, user3.team_id)

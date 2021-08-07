@@ -1,9 +1,13 @@
+from mt.errors import HasTeam
+from mt.logger import logger
 from mt.views import MTAuthView, MTServerView, MTView, ResponseData
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.request import Request
 from team import services
 from team.serializers import MeetingRoomFileSerializer, MeetingRoomSerializer
+from user.models import User
 
-from .models import MeetingRoom, MeetingRoomFiles, Team
+from .models import Application, MeetingRoom, MeetingRoomFiles, Team
 
 
 class TeamView(MTAuthView):
@@ -33,9 +37,8 @@ class TeamView(MTAuthView):
             introduction = self.check_and_get(
                 request.data, 'introduction', response_data)
             services.create_team(name, introduction, creator, response_data)
-        except:
-            # TODO log error
-            pass
+        except (HasTeam, ValidationError) as e:
+            logger.error('url: /team/, method: post, error: %s', e)
         return self.respond(response_data)
 
     def patch(self, request):
@@ -62,10 +65,8 @@ class TeamView(MTAuthView):
                 request.data, 'introduction', response_data)
             self.check_optional_value(request.data, 'name', response_data)
             services.update_team(user.team, request.data, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist, PermissionDenied, ValidationError) as e:
+            logger.error('url: /team/, method: patch, error: %s', e)
         return self.respond(response_data)
 
     def delete(self, request):
@@ -84,10 +85,8 @@ class TeamView(MTAuthView):
             services.has_team(user, response_data)
             services.is_creator(user, response_data)
             Team.objects.get(id=user.team_id).delete()
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist, PermissionDenied) as e:
+            logger.error('url: /team/, method: delete, error: %s', e)
         return self.respond(response_data)
 
 
@@ -108,10 +107,8 @@ class TeamMemberView(MTAuthView):
         try:
             services.has_team(user, response_data)
             services.get_team_members(user.team, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist) as e:
+            logger.error('url: /team/member/, method: get, error: %s', e)
         return self.respond(response_data)
 
     def delete(self, request, member_id):
@@ -136,10 +133,9 @@ class TeamMemberView(MTAuthView):
             member = services.belong_to_team(
                 member_id, user.team, response_data)
             services.delete_member(member)
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist, PermissionDenied, User.DoesNotExist) as e:
+            logger.error(
+                'url: /team/member/：member_id/, method: delete, error: %s', e)
         return self.respond(response_data)
 
     def post(self, request):
@@ -168,10 +164,9 @@ class TeamMemberView(MTAuthView):
                 request.data, 'is_admitted', response_data))
             services.solve_application(
                 application_id, is_admitted, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist, PermissionDenied, Application.DoesNotExist, ValidationError) as e:
+            logger.error(
+                'url: /team/member/, method: post, error: %s', e)
         return self.respond(response_data)
 
 
@@ -196,10 +191,8 @@ class ApplicationView(MTAuthView):
             services.has_no_team(user, response_data)
             uuid = self.check_and_get(request.data, 'uuid', response_data)
             services.post_application(user.id, uuid, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (HasTeam, Team.DoesNotExist, ValidationError) as e:
+            logger.error('url: /team/join/, method: post, error: %s', e)
         return self.respond(response_data)
 
     def get(self, request):
@@ -219,10 +212,8 @@ class ApplicationView(MTAuthView):
             services.has_team(user, response_data)
             services.is_creator(user, response_data)
             services.get_applicants(user.team_id, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist, PermissionDenied) as e:
+            logger.error('url: /team/join/, method: get, error: %s', e)
         return self.respond(response_data)
 
 
@@ -242,10 +233,8 @@ class TeamMemberQuitView(MTAuthView):
             services.has_team(user, response_data)
             user.team_id = None
             user.save()
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist) as e:
+            logger.error('url: /team/quit/, method: post, error: %s', e)
         return self.respond(response_data)
 
 
@@ -266,10 +255,8 @@ class TeamInformationView(MTView):
             token = request.META.get('HTTP_TOKEN')
             user = services.get_user_by_token(token)
             services.get_team_detail(user, uuid, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist) as e:
+            logger.error('url: /team/:uuid/, method: get, error: %s', e)
         return self.respond(response_data)
 
 
@@ -290,10 +277,8 @@ class MeetingRoomView(MTAuthView):
         try:
             name = self.check_and_get(request.data, 'name', response_data, 1)
             services.create_room(user, name, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (ValidationError) as e:
+            logger.error('url: /team/room/, method: post, error: %s', e)
         return self.respond(response_data)
 
     def patch(self, request):
@@ -318,10 +303,8 @@ class MeetingRoomView(MTAuthView):
             room = services.is_room_creator(user, id, response_data)
             room.name = name
             room.save()
-        except:
-            # TODO log error
-            pass
-
+        except (ValidationError, MeetingRoom.DoesNotExist, PermissionDenied) as e:
+            logger.error('url: /team/room/, method: patch, error: %s', e)
         return self.respond(response_data)
 
     def get(self, request, uuid):
@@ -342,19 +325,17 @@ class MeetingRoomView(MTAuthView):
         try:
             room = services.check_room_by_uuid(uuid, response_data)
             services.get_room_information(user, room, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (MeetingRoom.DoesNotExist, PermissionDenied) as e:
+            logger.error('url: /team/room/:uuid/, method: get, error: %s', e)
         return self.respond(response_data)
 
-    def delete(self, request, id):
+    def delete(self, request, room_id):
         """
-        @api {delete} /team/room/<int:id>/ 创建人删除会议室
+        @api {delete} /team/room/:room_id/ 创建人删除会议室
         @apiName delete_room
         @apiGroup Room
 
-        @apiParam {Number} id 会议室id
+        @apiParam {Number} room_id 会议室id
 
         @apiError RECORD_NOT_FOUND
         @apiError FORBIDDEN
@@ -364,12 +345,11 @@ class MeetingRoomView(MTAuthView):
         user = request.user
         response_data = ResponseData()
         try:
-            room = services.is_room_creator(user, id, response_data)
+            room = services.is_room_creator(user, room_id, response_data)
             room.delete()
-        except:
-            # TODO log error
-            pass
-
+        except (MeetingRoom.DoesNotExist, PermissionDenied) as e:
+            logger.error(
+                'url: /team/room/:room_id/, method: delete, error: %s', e)
         return self.respond(response_data)
 
 
@@ -390,10 +370,9 @@ class TeamMeetingRoomView(MTAuthView):
             services.has_team(user, response_data)
             response_data.data = MeetingRoomSerializer(MeetingRoom.objects.filter(
                 team_id=user.team_id), many=True).data
-        except:
-            # TODO log error
-            pass
-
+        except (Team.DoesNotExist) as e:
+            logger.error(
+                'url: /team/rooms/, method: get, error: %s', e)
         return self.respond(response_data)
 
 
@@ -413,10 +392,9 @@ class FileView(MTServerView):
             room = services.check_room_by_uuid(uuid, response_data)
             file = services.is_file_uploaded(request, response_data)
             services.upload_file(room.id, file, file.name, response_data)
-        except:
-            # TODO log error
-            pass
-
+        except (MeetingRoom.DoesNotExist, ValidationError, PermissionDenied) as e:
+            logger.error(
+                'url: /team/file/:uuid/, method: post, error: %s', e)
         return self.respond(response_data)
 
     def get(self, request, uuid):
@@ -434,33 +412,34 @@ class FileView(MTServerView):
             room = services.check_room_by_uuid(uuid, response_data)
             response_data.data = MeetingRoomFileSerializer(
                 MeetingRoomFiles.objects.filter(meetingRoom=room), many=True).data
-
-        except:
-            # TODO log error
-            pass
+        except (MeetingRoom.DoesNotExist) as e:
+            logger.error(
+                'url: /team/file/:uuid/, method: get, error: %s', e)
         return self.respond(response_data)
 
 
-class FileTransferView(MTAuthView):
-    # TODO 记得改为MTServerView，测试文件删除逻辑对不对
-    def delete(self, request, id):
+class FileTransferView(MTServerView):
+    def delete(self, request, record_id):
         """
-        @api {delete} /team/file/:id/ 会议室服务器删除会议室内文件,id为会议室文件记录
+        @api {delete} /team/file/:record_id/ 会议室服务器删除会议室内文件
         @apiName delete_file
         @apiGroup File
+
+        @apiParam {Number} record_id 会议室文件记录id
 
         @apiError RECORD_NOT_FOUND
         """
         response_data = ResponseData()
         try:
-            file_record = services.is_file_record_exist(id, response_data)
+            file_record = services.is_file_record_exist(
+                record_id, response_data)
             file = file_record.files
             if MeetingRoomFiles.objects.filter(files=file).count() == 1:
                 file.delete(save=True)
             file_record.delete()
-        except:
-            # TODO log err
-            pass
+        except (MeetingRoomFiles.DoesNotExist) as e:
+            logger.error(
+                'url: /team/file/:record_id/, method: delete, error: %s', e)
         return self.respond(response_data)
 
     def post(self, request):
@@ -470,7 +449,7 @@ class FileTransferView(MTAuthView):
         @apiGroup File
 
         @apiParam {Number} room_id 会议室id
-        @apiParam {Number} file_record_id 文件记录id
+        @apiParam {Number} record_id 文件记录id
 
         @apiError MISSING_PARAMETER
         @apiError ERROR_INPUT
@@ -482,12 +461,12 @@ class FileTransferView(MTAuthView):
             room_id = self.check_and_get(
                 request.data, 'room_id', response_data)
             services.check_room_by_id(room_id, response_data)
-            file_record_id = self.check_and_get(
-                request.data, 'file_record_id', response_data)
+            record_id = self.check_and_get(
+                request.data, 'record_id', response_data)
             record = services.is_file_record_exist(
-                file_record_id, response_data)
+                record_id, response_data)
             services.file_transfer(room_id, record, response_data)
-        except:
-            # TODO log err
-            pass
+        except (ValidationError, MeetingRoom.DoesNotExist, PermissionDenied, MeetingRoomFiles.DoesNotExist) as e:
+            logger.error(
+                'url: /team/file/, method: post, error: %s', e)
         return self.respond(response_data)

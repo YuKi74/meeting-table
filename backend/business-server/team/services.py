@@ -214,7 +214,7 @@ def is_file_uploaded(request, response_data: ResponseData):
 
 def upload_file(room_id: int, file: UploadedFile, name, response_data: ResponseData):
     data = {'meeting_room_id': room_id}
-    check_upload_url = 'http://'+config.app_config.meeting_room_server+'/new_file'
+    check_upload_url = 'http://' + config.app_config.meeting_room_server + '/new_file'
     request = requests.get(url=check_upload_url, params=data)
     if request.status_code != 200:
         response_data.mt_status = MTStatus.FORBIDDEN
@@ -244,7 +244,7 @@ def is_file_record_exist(id: int, response_data: ResponseData):
 
 def file_transfer(room_id, record: MeetingRoomFiles, response_data):
     data = {'meeting_room_id': room_id}
-    check_upload_url = 'http://'+config.app_config.meeting_room_server+'/new_file'
+    check_upload_url = 'http://' + config.app_config.meeting_room_server + '/new_file'
     request = requests.get(url=check_upload_url, params=data)
     if request.status_code != 200:
         response_data.mt_status = MTStatus.FORBIDDEN
@@ -260,10 +260,12 @@ def file_transfer(room_id, record: MeetingRoomFiles, response_data):
     else:
         response_data.mt_status = MTStatus.ERROR_INPUT
         raise ValidationError
+
+
 def get_user_by_token(token):
     if not token:
         return None
-    id= redis.get(token)
+    id = redis.get(token)
     if id is None:
         return None
     else:
