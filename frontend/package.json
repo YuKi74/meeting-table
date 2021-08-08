@@ -20,6 +20,8 @@
     "js-cookie": "^3.0.0",
     "konva": "^8.1.1",
     "less-loader": "^6.0.0",
+    "monaco-editor": "^0.17.0",
+    "monaco-editor-webpack-plugin": "^4.1.1",
     "vue": "^2.6.11",
     "vue-infinite-scroll": "^2.0.2",
     "vue-jest": "^3.0.7",
