@@ -103,6 +103,7 @@ export default {
             if (this.selectedComponent && this.moved) {
                 this.onDragEnd(event.clientX, event.clientY);
             }
+            this.selectedComponent = null;
             this.moved = false;
         });
     },
