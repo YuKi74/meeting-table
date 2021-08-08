@@ -3,6 +3,7 @@ package structure
 import (
 	"mt/logger"
 	"mt/server/handler"
+	textoperation "mt/text-operation"
 )
 
 type RoomManager struct {
@@ -30,8 +31,10 @@ func (manager *RoomManager) addRoom(roomID int64) {
 	if err != nil {
 		logger.Logger.Errorf("恢复会议室数据失败: %s", err)
 		storage = &handler.Storage{
-			RoomID: roomID,
-			Data:   make([]*handler.Data, 0),
+			RoomID:     roomID,
+			Data:       make([]*handler.Data, 0),
+			DataMap:    make(map[string]*handler.Data),
+			Operations: make(map[string]*textoperation.TextOperation),
 		}
 	}
 	r := &Room{

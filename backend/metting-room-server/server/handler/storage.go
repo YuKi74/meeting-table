@@ -5,15 +5,19 @@ import (
 	"io/ioutil"
 	"mt/config"
 	"mt/logger"
+	textoperation "mt/text-operation"
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 )
 
 type Storage struct {
-	RoomID int64
-	Data   []*Data
+	RoomID     int64
+	Data       []*Data
+	DataMap    map[string]*Data
+	Operations map[string][]textoperation.Operation
 }
 
 func (storage *Storage) Start() {
@@ -36,7 +40,7 @@ func (storage *Storage) Bytes() (data []byte) {
 }
 
 func (storage *Storage) Store() (err error) {
-	data, err := json.Marshal(storage)
+	data, err := json.Marshal(storage.Data)
 	if err != nil {
 		logger.Logger.Errorf("编码storage失败: %s", err)
 		return
@@ -58,8 +62,10 @@ func RestoreStorage(roomID int64) (storage *Storage, err error) {
 	if os.IsNotExist(err) {
 		err = nil
 		storage = &Storage{
-			RoomID: roomID,
-			Data:   make([]*Data, 0),
+			RoomID:     roomID,
+			Data:       make([]*Data, 0),
+			DataMap:    make(map[string]*Data),
+			Operations: make(map[string][]textoperation.Operation),
 		}
 		return
 	}
@@ -67,7 +73,32 @@ func RestoreStorage(roomID int64) (storage *Storage, err error) {
 	if err != nil {
 		return
 	}
-	storage = &Storage{}
-	err = json.Unmarshal(data, storage)
+	storageData := make([]*Data, 0)
+	err = json.Unmarshal(data, &storageData)
+	dataMap, operations := parseData(storageData)
+	storage = &Storage{
+		RoomID:     roomID,
+		Data:       storageData,
+		DataMap:    dataMap,
+		Operations: operations,
+	}
+	return
+}
+
+func parseData(data []*Data) (dataMap map[string]*Data, operations map[string][]textoperation.Operation) {
+	dataMap = make(map[string]*Data)
+	operations = make(map[string][]textoperation.Operation)
+	for _, value := range data {
+		if value.Type == Component {
+			dataMap[value.Target] = value
+			if strings.HasPrefix(value.Target, TextTool) || strings.HasPrefix(value.Target, CodeTool) {
+				value.Data.(map[string]interface{})["content"].(map[string]interface{})["version"] = 0
+				operations[value.Target] = make([]textoperation.Operation, 0)
+			}
+		} else if value.Type == Paint {
+			paintData := value.Data.([]interface{})
+			dataMap[paintData[0].(string)] = value
+		}
+	}
 	return
 }
