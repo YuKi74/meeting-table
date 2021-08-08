@@ -385,7 +385,10 @@ class FileView(MTServerView):
 
         @apiParam {Number} uuid 会议室uuid
 
-        @apiError
+        @apiError RECORD_NOT_FOUND
+        @apiError MISSING_PARAMETER
+        @apiError FORBIDDEN
+        @apiError ERROR_INPUT
         """
         response_data = ResponseData()
         try:
