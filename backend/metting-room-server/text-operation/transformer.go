@@ -56,7 +56,7 @@ func Transform(operation1, operation2 Operation) (operation1Prime, operation2Pri
 		}
 
 		var minl int
-		n1, n2 := op1.(int), op2.(int)
+		n1, n2 := parseInt(op1), parseInt(op2)
 		if isRetain(op1) && isRetain(op2) {
 			if n1 > n2 {
 				minl = n2
@@ -143,11 +143,17 @@ func isRetain(op interface{}) bool {
 	if value, ok := op.(int); ok {
 		return value > 0
 	}
+	if value, ok := op.(float64); ok {
+		return value > 0
+	}
 	return false
 }
 
 func isDelete(op interface{}) bool {
 	if value, ok := op.(int); ok {
+		return value < 0
+	}
+	if value, ok := op.(float64); ok {
 		return value < 0
 	}
 	return false
@@ -158,14 +164,22 @@ func (operation *Operation) Apply(content string) (newContent string) {
 	strIndex := 0
 	for _, op := range operation.Ops {
 		if isRetain(op) {
-			n := op.(int)
+			n := parseInt(op)
 			newContent += content[strIndex : strIndex+n]
 			strIndex += n
 		} else if isInsert(op) {
 			newContent += op.(string)
 		} else {
-			strIndex -= op.(int)
+			strIndex -= parseInt(op)
 		}
 	}
 	return
+}
+
+func parseInt(value interface{}) int {
+	if v, ok := value.(int); ok {
+		return v
+	}
+	v := value.(float64)
+	return int(v)
 }

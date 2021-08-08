@@ -34,7 +34,7 @@ func (manager *RoomManager) addRoom(roomID int64) {
 			RoomID:     roomID,
 			Data:       make([]*handler.Data, 0),
 			DataMap:    make(map[string]*handler.Data),
-			Operations: make(map[string]*textoperation.TextOperation),
+			Operations: make(map[string][]textoperation.Operation),
 		}
 	}
 	r := &Room{

@@ -119,6 +119,13 @@ const initContainer = function (board) {
         board.scaleStage(deltaScale);
     });
 
+    window.addEventListener('wheel', (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            board.scaleStage(-e.deltaY / WHEEL_TO_SCALE);
+        }
+    });
+
     board.container.addEventListener('wheel', (e) => {
         e.preventDefault();
         if (e.ctrlKey) {

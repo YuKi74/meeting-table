@@ -1,5 +1,6 @@
 import chat from '../components/meeting-room/chat.vue';
 import mindmap from '../components/meeting-room/MindMap.vue';
+import doc from '../components/meeting-room/doc.vue';
 
 const calcStyle = function (style, board, deltaX = 0, deltaY = 0) {
     const pos = board.stage.position();
@@ -37,8 +38,8 @@ const getComponent = function (board, x, y) {
             y: pos.y,
             width: Components[board.tool].width,
             height: Components[board.tool].height,
-            content: '',
         },
+        content: Components[board.tool].content,
     };
     calcStyle(component.style, board);
     return component;
@@ -56,8 +57,8 @@ const restoreComponent = function (data, board) {
             y: data.Data.y,
             width: Components[name].width,
             height: Components[name].height,
-            content: data.Data.content,
         },
+        content: data.Data.content,
     };
     calcStyle(component.style, board);
     return component;
@@ -70,10 +71,21 @@ const Components = {
         node: chat,
         width: '350px',
         height: '350px',
+        content: [],
     },
     思维导图: {
         node: mindmap,
         width: '500px',
         height: '500px',
+        content: '',
+    },
+    创意纸: {
+        node: doc,
+        width: '500px',
+        height: '300px',
+        content: {
+            content: '',
+            version: 0,
+        },
     },
 };

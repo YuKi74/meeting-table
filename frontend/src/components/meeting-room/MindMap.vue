@@ -1,10 +1,12 @@
 <template>
     <mindmap
         v-model="data"
-        height="800"
+        width="2000"
+        height="2000"
         @updateNodeName="sender"
         :showUndo="false"
         :keyboard="false"
+        class="mindmap"
     ></mindmap>
 </template>
 
@@ -53,4 +55,9 @@ export default {
     },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.mindmap {
+    transform: scale(0.25, 0.25);
+    transform-origin: 0 0 0;
+}
+</style>

@@ -53,7 +53,7 @@ import { TIME_INTERVAL } from '../../constants/meeting-room';
 import { getUserinfo } from '../../requests/user';
 import { defaultErrorHandler } from '../../requests/errors';
 export default {
-    props: ['connection', 'id'],
+    props: ['connection', 'id', 'content'],
     components: {
         ATextarea: Input,
         ASpin: Spin,
@@ -70,6 +70,7 @@ export default {
         };
     },
     mounted: function () {
+        this.messages = this.content;
         getUserinfo()
             .then((data) => {
                 this.userId = data.data.id;
@@ -92,6 +93,9 @@ export default {
     methods: {
         enter(e) {
             e.preventDefault();
+            if (this.value === '') {
+                return;
+            }
             let message = {
                 message: this.value,
                 name: this.userName,
