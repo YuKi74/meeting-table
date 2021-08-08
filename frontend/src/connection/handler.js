@@ -23,7 +23,7 @@ Connection.prototype.getMessageHandler = function () {
                 return;
             }
         });
-        messageCache.push(data);
+        messageCache.unshift(data);
     };
     return function (event) {
         if (event.data === 'pong') {
