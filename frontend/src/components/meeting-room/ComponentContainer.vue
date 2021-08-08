@@ -15,6 +15,7 @@
             :is="component"
             :connection="connection"
             :id="id"
+            :content="content"
             class="component shadow"
         />
     </div>
@@ -22,7 +23,7 @@
 
 <script>
 export default {
-    props: ['component', 'id', 'connection'],
+    props: ['component', 'id', 'connection', 'content'],
     data() {
         return {
             isHover: false,

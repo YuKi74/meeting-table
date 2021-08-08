@@ -1,4 +1,5 @@
 import chat from '../components/meeting-room/chat.vue';
+import mindmap from '../components/meeting-room/MindMap.vue';
 
 const calcStyle = function (style, board, deltaX = 0, deltaY = 0) {
     const pos = board.stage.position();
@@ -25,43 +26,36 @@ const isComponent = function (name) {
 };
 
 const getComponent = function (board, x, y) {
-    let node, width, height, content;
     const pos = board.getStagePosition({ x, y });
-    switch (board.tool) {
-        case '聊天框':
-            node = chat;
-            width = '350px';
-            height = '500px';
-            content = '';
-            break;
-        default:
-            return;
+    if (!Object.keys(Components).includes(board.tool)) {
+        return;
     }
     const component = {
-        node,
-        style: { x: pos.x, y: pos.y, width, height, content },
+        node: Components[board.tool].node,
+        style: {
+            x: pos.x,
+            y: pos.y,
+            width: Components[board.tool].width,
+            height: Components[board.tool].height,
+            content: '',
+        },
     };
     calcStyle(component.style, board);
     return component;
 };
 
 const restoreComponent = function (data, board) {
-    let node, width, height;
     const name = data.Target.slice(0, data.Target.indexOf('_'));
-    switch (name) {
-        case '聊天框':
-            node = chat;
-            width = '350px';
-            height = '500px';
-            break;
+    if (!Object.keys(Components).includes(name)) {
+        return;
     }
     const component = {
-        node,
+        node: Components[name].node,
         style: {
             x: data.Data.x,
             y: data.Data.y,
-            width,
-            height,
+            width: Components[name].width,
+            height: Components[name].height,
             content: data.Data.content,
         },
     };
@@ -70,3 +64,16 @@ const restoreComponent = function (data, board) {
 };
 
 export { calcStyle, isComponent, getComponent, restoreComponent };
+
+const Components = {
+    聊天框: {
+        node: chat,
+        width: '350px',
+        height: '350px',
+    },
+    思维导图: {
+        node: mindmap,
+        width: '500px',
+        height: '500px',
+    },
+};

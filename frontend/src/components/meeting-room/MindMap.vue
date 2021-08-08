@@ -1,5 +1,11 @@
 <template>
-    <mindmap v-model="data" height="800"></mindmap>
+    <mindmap
+        v-model="data"
+        height="800"
+        @updateNodeName="sender"
+        :showUndo="false"
+        :keyboard="false"
+    ></mindmap>
 </template>
 
 <script>
@@ -7,19 +13,43 @@ import mindmap from '@hellowuxin/mindmap';
 
 export default {
     components: { mindmap },
-    // props: ['data'],
-    // TODO 从服务器不断获取data
+    props: ['content', 'connection', 'id'],
     data: () => ({
         data: [
             {
                 name: '双击进行编辑',
             },
         ],
+        delButton: null,
     }),
-    watch: {
-        data() {
-            // TODO data每次更新上传一次data
+    methods: {
+        receive(data) {
+            this.data = data.Data;
         },
+        sender() {
+            this.connection.send({
+                Type: 'mindmap',
+                Target: this.id,
+                Data: this.data,
+            });
+        },
+    },
+    mounted: function () {
+        if (this.content !== '') {
+            this.data = this.content;
+        }
+        this.delButton = document.getElementById('menu').firstChild;
+        this.delButton.addEventListener('click', () => {
+            this.sender();
+        });
+
+        this.connection.addMessageHandler(
+            (data) => {
+                return this.id === data.Target && data.Type === 'mindmap';
+            },
+            this.receive,
+            this
+        );
     },
 };
 </script>

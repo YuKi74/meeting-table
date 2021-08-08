@@ -16,6 +16,7 @@
             :style="component.style"
             :id="id"
             :component="component.node"
+            :content="component.content"
             class="component"
             @mousedown="onMouseDown"
             @close="onClose"
