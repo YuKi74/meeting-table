@@ -5,8 +5,8 @@
                 <div class="content">
                     <div class="title flex main-axis-around">
                         <div>
-                            <div class="name">{{ data.name }}</div>
-                            <div class="email">{{ data.email }}</div>
+                            <div class="name">{{ showList.name }}</div>
+                            <div>{{ showList.email }}</div>
                         </div>
                         <a-button class="edit" icon="edit" @click="showModal" />
                         <modal
@@ -35,11 +35,6 @@
                                         <a-input
                                             :default-value="form.name"
                                             v-model="form.name"
-                                            @blur="
-                                                () => {
-                                                    $refs.name.onFieldBlur();
-                                                }
-                                            "
                                         />
                                     </form-model-item>
                                     <form-model-item
@@ -114,14 +109,12 @@ export default {
     },
     data() {
         return {
+            tempStorage: '',
             visible: false,
             confirmLoading: false,
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
-            data: {
-                name: '',
-                email: '',
-            },
+            showList: {},
             form: {
                 name: '',
                 password: '',
@@ -159,7 +152,8 @@ export default {
     mounted() {
         getUserinfo()
             .then((data) => {
-                this.data = data.data;
+                console.log(data);
+                this.showList = JSON.parse(JSON.stringify(data.data));
                 this.form = data.data;
             })
             .catch(defaultErrorHandler(getUserinfo));
@@ -180,18 +174,19 @@ export default {
         },
         showModal() {
             this.visible = true;
+            this.tempStorage = JSON.parse(JSON.stringify(this.form));
         },
         handleOk() {
             updateUser(this.form.name, this.form.password)
                 .then(() => {
                     Message.success('修改成功');
-                    this.bus.$emit('refreshUserDetail');
                     this.visible = false;
                 })
                 .catch(defaultErrorHandler(updateUser));
         },
         handleCancel() {
             this.visible = false;
+            this.form = this.tempStorage;
         },
     },
 };

@@ -18,6 +18,7 @@
         <modal
             v-model="visible"
             @ok="onSubmit"
+            @cancel="onCancel"
             title="加入团队"
             okText="查看"
             cancelText="取消"
@@ -34,12 +35,13 @@
         <modal
             v-model="formVisible"
             @ok="onSubmitForm"
+            @cancel="onCancelForm"
             title="创建团队"
             okText="提交"
             cancelText="取消"
         >
             <form-model
-                ref="ruleForm"
+                ref="teamRuleForm"
                 :model="teamForm"
                 :rules="formRules"
                 layout="vertical"
@@ -48,11 +50,6 @@
                     <a-input
                         class="input"
                         v-model="teamForm.name"
-                        @blur="
-                            () => {
-                                $refs.name.onFieldBlur();
-                            }
-                        "
                         placeholder="请输入团队名称"
                     />
                 </form-model-item>
@@ -100,6 +97,8 @@ export default {
             }
         };
         return {
+            temporaryForm: '',
+            temporaryTeam: '',
             formVisible: false,
             visible: false,
             form: {
@@ -160,9 +159,11 @@ export default {
         },
         showModal() {
             this.visible = true;
+            this.temporaryForm = JSON.parse(JSON.stringify(this.form));
         },
         showForm() {
             this.formVisible = true;
+            this.temporaryTeam = JSON.parse(JSON.stringify(this.teamForm));
         },
         onSubmit() {
             this.$refs.ruleForm.validate((valid) => {
@@ -175,8 +176,12 @@ export default {
                 }
             });
         },
+        onCancel() {
+            this.visible = false;
+            this.form = this.temporaryForm;
+        },
         onSubmitForm() {
-            this.$refs.ruleForm.validate((valid) => {
+            this.$refs.teamRuleForm.validate((valid) => {
                 if (valid) {
                     createTeam(this.teamForm.name, this.teamForm.description)
                         .then(() => {
@@ -186,6 +191,10 @@ export default {
                         .catch(defaultErrorHandler(createTeam));
                 }
             });
+        },
+        onCancelForm() {
+            this.formVisible = false;
+            this.teamForm = this.temporaryTeam;
         },
     },
 };
