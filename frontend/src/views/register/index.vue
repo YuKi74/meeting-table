@@ -178,8 +178,8 @@ export default {
                 if (valid) {
                     register(form.email, form.userName, form.password)
                         .then(() => {
-                            Message.success('注册成功！正在跳转到登录界面');
-                            router.push('/login');
+                            Message.success('注册成功！正在跳转到首页');
+                            router.push('/team');
                         })
                         .catch(defaultErrorHandler(register));
                 }

@@ -64,6 +64,7 @@ export default {
     },
     data() {
         return {
+            isAggree: true,
             data: [],
             headStyle: {
                 'font-size': '20px',
@@ -89,6 +90,7 @@ export default {
                 .then(() => {
                     if (isAdmit) {
                         Message.success('申请已同意');
+                        this.bus.$emit('aggreeApplication');
                     } else {
                         Message.success('申请已拒绝');
                     }

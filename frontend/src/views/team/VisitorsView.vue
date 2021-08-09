@@ -107,7 +107,7 @@ export default {
 .content {
     font-size: 16px;
     width: 100%;
-    text-align: start;
+    text-align: center;
 }
 .icon {
     color: #ffcc5f;
@@ -120,6 +120,8 @@ export default {
     position: absolute;
     right: 30px;
     top: 30px;
+    width: 50px;
+    height: 50px;
 }
 .btn {
     letter-spacing: -2px;

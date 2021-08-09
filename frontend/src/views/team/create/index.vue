@@ -193,6 +193,8 @@ export default {
 
 <style scoped>
 .user-detail {
+    width: 50px;
+    height: 50px;
     position: fixed;
     top: 40px;
     right: 40px;
@@ -204,6 +206,7 @@ export default {
 }
 .card {
     width: 380px;
+    height: 430px;
     background-color: var(--white);
     border-radius: var(--border-radius);
     display: flex;

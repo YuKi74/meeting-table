@@ -3,17 +3,19 @@
         <layout-header class="header flex main-axis-between">
             <team-detail :uuid="uuid" :is-creator="isCreator" />
             <div class="flex">
-                <popover placement="bottomRight" v-if="isCreator">
-                    <div class="apply-list-content" slot="content">
-                        <apply-list class="apply-list"></apply-list>
-                    </div>
-                    <a-button
-                        icon="notification"
-                        type="primary"
-                        class="apply-list-button"
-                        shape="circle"
-                    />
-                </popover>
+                <div v-if="isCreator">
+                    <popover placement="bottomRight">
+                        <div class="apply-list-content" slot="content">
+                            <apply-list class="apply-list"></apply-list>
+                        </div>
+                        <a-button
+                            icon="notification"
+                            type="primary"
+                            class="apply-list-button"
+                            shape="circle"
+                        />
+                    </popover>
+                </div>
                 <user-detail class="user-detail"></user-detail>
             </div>
         </layout-header>
@@ -97,5 +99,7 @@ export default {
 }
 .user-detail {
     margin-left: 20px;
+    width: 40px;
+    height: 40px;
 }
 </style>

@@ -1,7 +1,6 @@
-const Board = function (container, userID, onBoardMove) {
+const Board = function (container, userID) {
     this.container = container;
     this.userID = userID;
-    this.onBoardMove = onBoardMove;
     this.initStage();
 };
 

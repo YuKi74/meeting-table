@@ -4,10 +4,9 @@
             <template slot="content">
                 <div class="content">
                     <div class="title flex main-axis-around">
-                        <avatar>{{ data.name[0] }}</avatar>
                         <div>
                             <div class="name">{{ data.name }}</div>
-                            <div>{{ data.email }}</div>
+                            <div class="email">{{ data.email }}</div>
                         </div>
                         <a-button class="edit" icon="edit" @click="showModal" />
                         <modal
@@ -84,7 +83,6 @@ import {
     Modal,
     FormModel,
     Input,
-    Avatar,
     Message,
 } from 'ant-design-vue';
 import Vue from 'vue';
@@ -108,7 +106,6 @@ export default {
         FormModel,
         FormModelItem: FormModel.Item,
         AInput: Input,
-        Avatar,
     },
     data() {
         return {
@@ -195,14 +192,38 @@ export default {
 </script>
 
 <style scoped>
-.content {
-    width: 200px;
-}
 .logout {
     margin: 10px 0;
 }
 .icon {
-    height: 40px;
-    width: 40px;
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+.name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.email {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.edit {
+    margin-left: 10px;
+}
+.name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.email {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.edit {
+    margin-left: 10px;
 }
 </style>

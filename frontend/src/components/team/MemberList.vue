@@ -2,7 +2,7 @@
     <a-list
         item-layout="horizontal"
         :data-source="data"
-        class="box flex main-axis-between"
+        class="box"
         :split="true"
     >
         <a-list-item
@@ -27,7 +27,7 @@
                 type="primary"
                 v-show="isShow(item.id)"
             >
-                踢出
+                移除
             </a-button>
         </a-list-item>
     </a-list>
@@ -64,6 +64,9 @@ export default {
                 this.myId = data.data.id;
             })
             .catch(defaultErrorHandler(getUserinfo));
+        this.bus.$on('aggreeApplication', () => {
+            this.refreshMembers();
+        });
     },
     methods: {
         refreshMembers() {
@@ -80,7 +83,7 @@ export default {
             const that = this;
             Modal.confirm({
                 title: '确定要移除此成员吗？',
-                content: '点击“确认”后, 此成员将被移出此会议室',
+                content: '点击“确认”后, 此成员将被移出此团队',
                 okText: '确认',
                 cancelText: '取消',
                 onOk() {
@@ -97,7 +100,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .description {
     color: rgb(2, 2, 2);
 }
@@ -108,7 +111,10 @@ export default {
     margin: 10px;
 }
 .name {
-    width: 100%;
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: bold;
     text-align: left;
 }
@@ -117,10 +123,16 @@ export default {
     background-color: var(--white);
     width: 100%;
     padding-left: 10px;
-    max-height: 600px;
+    max-height: calc(100vh - 64px);
 }
 .ant-list-item-meta-avatar {
     margin-right: 5px;
+}
+.ant-list-item-meta-description {
+    width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .avatar {
     background-color: var(--secondary-color-1);
