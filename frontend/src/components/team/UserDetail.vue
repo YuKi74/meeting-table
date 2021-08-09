@@ -185,6 +185,7 @@ export default {
             updateUser(this.form.name, this.form.password)
                 .then(() => {
                     Message.success('修改成功');
+                    this.bus.$emit('refreshUserDetail');
                     this.visible = false;
                 })
                 .catch(defaultErrorHandler(updateUser));
