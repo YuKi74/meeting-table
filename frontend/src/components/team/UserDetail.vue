@@ -69,7 +69,7 @@
                     </div>
                 </div>
             </template>
-            <a-button class="icon" type="danger" shape="circle">
+            <a-button class="icon" :type="buttonType" shape="circle">
                 {{ form.name[0] }}
             </a-button>
         </popover>
@@ -99,6 +99,11 @@ import router from '../../router';
 Vue.use(Modal);
 
 export default {
+    props: {
+        buttonType: {
+            default: 'primary',
+        },
+    },
     components: {
         Popover,
         AButton: Button,
