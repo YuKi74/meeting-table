@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import Errors from './errors';
 import request from './requests';
 
@@ -24,6 +25,28 @@ const getMeetingRoomInfo = function (uuid) {
 
 getMeetingRoomInfo.errors = [Errors.RECORD_NOT_FOUND, Errors.FORBIDDEN];
 
+//获取会议室文件
+const getMeetingRoomFile = function (uuid) {
+    return request.get(`/team/file/${uuid}/`);
+};
+
+getMeetingRoomFile.errors = [Errors.RECORD_NOT_FOUND];
+
+//从某个会议室转移文件到另一个会议室
+const importOtherMeetingRoomFile = function (roomId, recordId) {
+    return request.post('/team/file/', {
+        record_id: recordId,
+        room_id: roomId,
+    });
+};
+
+importOtherMeetingRoomFile.errors = [
+    Errors.MISSING_PARAMETER,
+    Errors.ERROR_INPUT,
+    Errors.RECORD_NOT_FOUND,
+    Errors.FORBIDDEN,
+];
+
 //删除会议室
 const deleteMeetingRoom = function (id) {
     return request.delete(`/team/room/${id}/`);
@@ -41,4 +64,6 @@ export {
     deleteMeetingRoom,
     getMeetingRoomInfo,
     getMeetingRooms,
+    getMeetingRoomFile,
+    importOtherMeetingRoomFile,
 };
