@@ -70,6 +70,12 @@ export default {
             })
             .catch(defaultErrorHandler(getTeaminfo));
     },
+    methods: {
+        refreshList() {
+            console.log(1);
+            this.bus.$emit('refresh');
+        },
+    },
 };
 </script>
 
