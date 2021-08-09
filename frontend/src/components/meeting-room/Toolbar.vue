@@ -125,13 +125,6 @@
                 />
             </div>
         </div>
-        <input
-            v-show="false"
-            type="file"
-            accept=".pdf"
-            ref="upload"
-            @change="getInput()"
-        />
     </div>
 </template>
 
@@ -277,17 +270,9 @@ export default {
         };
     },
     methods: {
-        getInput() {
-            // TODO 上传文件
-            // eslint-disable-next-line no-unused-vars
-            const file = this.$refs.upload.files[0];
-        },
         chooseTool(tool) {
             this.$emit('tool-change', tool.name);
             this.currentTool = tool;
-            if (tool.name === '文件') {
-                this.$refs.upload.click();
-            }
         },
         chooseStyle(style) {
             this.currentStyle = style;

@@ -16,6 +16,24 @@ createTeam.errors = [
     Errors.FORBIDDEN,
 ];
 
+//向会议室上传文件
+const uploadFile = function (file, uuid) {
+    const data = new FormData();
+    data.append('file', file);
+    return request.post(`/team/file/${uuid}/`, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
+
+uploadFile.errors = [
+    Errors.RECORD_NOT_FOUND,
+    Errors.MISSING_PARAMETER,
+    Errors.FORBIDDEN,
+    Errors.ERROR_INPUT,
+];
+
 //获取团队信息
 const getTeaminfo = function (uuid) {
     return request.get(`/team/${uuid}/`);
@@ -120,4 +138,5 @@ export {
     getApplyList,
     handleApplication,
     submitApplication,
+    uploadFile,
 };

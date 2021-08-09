@@ -198,6 +198,16 @@ export default {
                 y: component.style.y,
                 content: component.content,
             };
+            if (
+                this.board.tool === '文件' ||
+                this.board.tool === '从其他会议室导入文件'
+            ) {
+                this.components[id].content = {
+                    x: component.style.x,
+                    y: component.style.y,
+                };
+                return;
+            }
             this.connection.send({
                 Type: 'component',
                 Target: id,

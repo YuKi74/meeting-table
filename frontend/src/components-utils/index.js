@@ -1,7 +1,7 @@
 import chat from '../components/meeting-room/chat.vue';
 import mindmap from '../components/meeting-room/MindMap.vue';
 import doc from '../components/meeting-room/doc.vue';
-
+import pdf from '../components/meeting-room/pdf.vue';
 const calcStyle = function (style, board, deltaX = 0, deltaY = 0) {
     const pos = board.stage.position();
     const scale = board.stage.scale().x;
@@ -87,5 +87,17 @@ const Components = {
             content: '',
             version: 0,
         },
+    },
+    文件: {
+        node: pdf,
+        width: '500px',
+        height: '700px',
+        content: '',
+    },
+    从其他会议室导入文件: {
+        node: pdf,
+        width: '500px',
+        height: '700px',
+        content: '',
     },
 };

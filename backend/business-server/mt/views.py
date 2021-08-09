@@ -5,7 +5,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from team.auth import ServerAuthentification
 from user.auth import Authentication
 
 from .status import MTStatus, Status
@@ -73,10 +72,3 @@ class MTAuthView(MTView):
     带身份验证的MTView
     """
     authentication_classes = [Authentication]
-
-
-class MTServerView(MTView):
-    """
-    会议室服务器的MTView
-    """
-    authentication_classes = [ServerAuthentification]

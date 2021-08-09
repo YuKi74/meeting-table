@@ -17,7 +17,7 @@
                             <template slot="content">
                                 <div class="content">
                                     <embed
-                                        class="content"
+                                        class="pdf"
                                         :src="getUrl(listItem.files)"
                                     />
                                 </div>
@@ -61,7 +61,6 @@ export default {
     mounted() {
         getMeetingRooms()
             .then((data) => {
-                console.log(data);
                 this.meetingRoom = data.data;
                 for (let index in data.data) {
                     if (index === '0') {
@@ -71,7 +70,6 @@ export default {
                         );
                     }
                 }
-                console.log(this.meetingRoom);
             })
             .catch(defaultErrorHandler(getMeetingRooms));
     },
@@ -84,16 +82,14 @@ export default {
     },
     methods: {
         getUrl(files) {
-            return 'http://localhost/api' + files;
+            return '/api' + files;
         },
         isActive(key) {
-            console.log(key);
             this.refreshFileInformation(this.meetingRoom[key].uuid, key);
         },
         refreshFileInformation(uuid, index) {
             getMeetingRoomFile(uuid)
                 .then((fileData) => {
-                    console.log(fileData.data);
                     this.$set(
                         this.meetingRoom[index],
                         'fileList',
@@ -104,20 +100,23 @@ export default {
         },
         importFile(roomId, recordId) {
             importOtherMeetingRoomFile(roomId, recordId)
-                .then(() => {
+                .then((data) => {
                     Message.success('导入成功');
+                    this.$emit('importFile', data.data);
                 })
-                .catch((data) => {
-                    console.log(data);
-                });
+                .catch(defaultErrorHandler(importOtherMeetingRoomFile));
         },
     },
 };
 </script>
 <style scoped>
 .content {
-    min-width: 1000px;
-    min-height: 500px;
+    width: 200px;
+    height: 300px;
+}
+.pdf {
+    height: 100%;
+    width: 100%;
 }
 .fileName {
     color: rgb(126, 125, 125);

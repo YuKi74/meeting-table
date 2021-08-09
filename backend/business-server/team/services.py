@@ -226,7 +226,9 @@ def upload_file(room_id: int, file: UploadedFile, name, response_data: ResponseD
         'files': file,
     })
     if file_serializer.is_valid():
-        file_serializer.save()
+        record = file_serializer.save()
+        response_data.data = record.files.name
+
     else:
         response_data.mt_status = MTStatus.ERROR_INPUT
         raise ValidationError
@@ -257,6 +259,7 @@ def file_transfer(room_id, record: MeetingRoomFiles, response_data):
     })
     if new_record_serializer.is_valid():
         new_record_serializer.save()
+        response_data.data = record.files.name
     else:
         response_data.mt_status = MTStatus.ERROR_INPUT
         raise ValidationError
@@ -265,8 +268,8 @@ def file_transfer(room_id, record: MeetingRoomFiles, response_data):
 def get_user_by_token(token):
     if not token:
         return None
-    id = redis.get(token)
-    if id is None:
+    user_id = redis.get(token)
+    if user_id is None:
         return None
     else:
-        return User.objects.get(id=id)
+        return User.objects.get(id=user_id)

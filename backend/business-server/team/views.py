@@ -1,6 +1,6 @@
 from mt.errors import HasTeam
 from mt.logger import logger
-from mt.views import MTAuthView, MTServerView, MTView, ResponseData
+from mt.views import MTAuthView, MTView, ResponseData
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.request import Request
 from team import services
@@ -376,7 +376,7 @@ class TeamMeetingRoomView(MTAuthView):
         return self.respond(response_data)
 
 
-class FileView(MTServerView):
+class FileView(MTAuthView):
     def post(self, request, uuid):
         """
         @api {post} /team/file/:uuid/ 在会议室内上传文件
@@ -421,7 +421,7 @@ class FileView(MTServerView):
         return self.respond(response_data)
 
 
-class FileTransferView(MTServerView):
+class FileTransferView(MTAuthView):
     def delete(self, request, record_id):
         """
         @api {delete} /team/file/:record_id/ 会议室服务器删除会议室内文件
