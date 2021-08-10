@@ -54,7 +54,7 @@ export default {
         );
         if (this.content) {
             setTimeout(() => {
-                this.data = this.content;
+                this.data = JSON.parse(JSON.stringify(this.content));
             }, 0);
         }
     },

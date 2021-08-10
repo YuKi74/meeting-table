@@ -64,7 +64,6 @@ const initVariables = function (board) {
 };
 
 const initStageEventListener = function (board) {
-    const origin = window.location.protocol + '//' + window.location.host;
     const stage = board.stage;
 
     stage.on('mousedown', function (evt) {
@@ -98,14 +97,14 @@ const initStageEventListener = function (board) {
     });
 
     window.addEventListener('keydown', (evt) => {
-        if (evt.origin !== origin) {
+        if (evt.origin) {
             return;
         }
         onKeyDown(evt, board);
     });
 
     window.addEventListener('keyup', (evt) => {
-        if (evt.origin !== origin) {
+        if (evt.origin) {
             return;
         }
         onKeyUp(evt, board);
@@ -113,9 +112,8 @@ const initStageEventListener = function (board) {
 };
 
 const initContainer = function (board) {
-    const origin = window.location.protocol + '//' + window.location.host;
     window.addEventListener('gesturestart', (e) => {
-        if (e.origin !== origin) {
+        if (e.origin) {
             return;
         }
         e.preventDefault();
@@ -125,7 +123,7 @@ const initContainer = function (board) {
     });
 
     window.addEventListener('gesturechange', (e) => {
-        if (e.origin !== origin) {
+        if (e.origin) {
             return;
         }
         e.preventDefault();
@@ -134,7 +132,7 @@ const initContainer = function (board) {
     });
 
     window.addEventListener('wheel', (e) => {
-        if (e.origin !== origin) {
+        if (e.origin) {
             return;
         }
         if (e.ctrlKey) {

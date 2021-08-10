@@ -10,8 +10,8 @@
         ></toolbar>
         <div class="board" ref="board"></div>
         <component-container
-            v-for="(component, id, index) in components"
-            :key="index"
+            v-for="(component, id) in components"
+            :key="id"
             :connection="connection"
             :style="component.style"
             :id="id"
@@ -53,7 +53,6 @@ export default {
         };
     },
     mounted: function () {
-        const origin = window.location.protocol + '//' + window.location.host;
         getUserinfo()
             .then((user) => {
                 this.board = new Board(
@@ -87,33 +86,31 @@ export default {
             })
             .catch(defaultErrorHandler(getUserinfo));
         window.addEventListener('mousedown', (event) => {
-            if (event.origin !== origin) {
+            if (event.origin) {
                 return;
             }
-
             if (
                 event.target.tagName === 'CANVAS' &&
                 isComponent(this.board.tool)
             ) {
                 this.createComponent(event.clientX, event.clientY);
+                this.board.blur();
                 this.$refs.toolbar.reset();
             }
         });
         window.addEventListener('mousemove', (event) => {
-            if (event.origin !== origin) {
+            if (event.origin) {
                 return;
             }
-
             if (this.selectedComponent) {
                 this.moved = true;
                 this.onDrag(event.clientX, event.clientY);
             }
         });
         window.addEventListener('mouseup', (event) => {
-            if (event.origin !== origin) {
+            if (event.origin) {
                 return;
             }
-
             if (this.selectedComponent && this.moved) {
                 this.onDragEnd(event.clientX, event.clientY);
             }

@@ -44,7 +44,7 @@
             </div>
         </div>
         <p v-if="isPop">{{ popContent }}</p>
-        <a-textarea id="input" :rows="1" v-model="value" @pressEnter="enter" />
+        <a-textarea :rows="1" v-model="value" @pressEnter="enter" />
     </div>
 </template>
 <script>
@@ -70,7 +70,8 @@ export default {
         };
     },
     mounted: function () {
-        this.messages = this.content;
+        this.messages = JSON.parse(JSON.stringify(this.content));
+        console.log(this.id);
         getUserinfo()
             .then((user) => {
                 this.userId = user.data.id;

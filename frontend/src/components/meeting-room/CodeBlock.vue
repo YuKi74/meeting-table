@@ -121,10 +121,12 @@ export default {
                 },
             },
             opts: {
-                value: '', // 输入的代码
-                readOnly: false, // 是否可编辑
-                language: 'javascript', // 语言类型
-                theme: 'vs-dark', // 编辑器主题
+                value: '',
+                theme: 'vs-dark',
+                roundedSelection: false,
+                autoIndent: true,
+                unusualLineTerminators: 'off',
+                language: 'javascript',
             },
         };
     },

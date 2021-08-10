@@ -48,7 +48,6 @@ export default {
             })
             .catch(defaultErrorHandler(getMeetingRoomInfo));
         getVideoToken(this.$route.params.uuid).then((data) => {
-            console.log(data);
             this.token = data.data;
         });
     },

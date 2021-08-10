@@ -54,3 +54,7 @@ Board.prototype.getStagePosition = function (pos) {
     const stageY = (pos.y - this.stage.position().y) / scale;
     return { x: stageX, y: stageY };
 };
+
+Board.prototype.blur = function () {
+    this.transformer.nodes([]);
+};

@@ -41,7 +41,7 @@ export default {
                 autoIndent: true,
                 unusualLineTerminators: 'off',
             },
-            monacoEditor: {},
+            monacoEditor: null,
 
             isCompositionInput: false,
             CompositionEvtQueue: [],
@@ -51,8 +51,8 @@ export default {
     },
     watch: {
         opts: {
-            handler(opts) {
-                this.monacoEditor.updateOptions(opts);
+            handler() {
+                this.init();
             },
             deep: true,
         },
@@ -171,18 +171,20 @@ export default {
         },
         init() {
             let editorOptions = this.opts ? this.opts : this.defaultOpts;
-
-            this.monacoEditor = monaco.editor.create(
-                this.$refs.container,
-                editorOptions
-            );
-
-            this.monacoEditor.setValue(this.content.content);
+            const oldValue = this.monacoEditor
+                ? this.monacoEditor.getValue()
+                : this.content.content;
+            this.$refs.container.innerHTML = '';
+            const div = document.createElement('div');
+            div.style.height = '100%';
+            div.style.width = '100%';
+            this.$refs.container.appendChild(div);
+            this.monacoEditor = monaco.editor.create(div, editorOptions);
+            this.monacoEditor.setValue(oldValue);
 
             this.monacoEditor.onDidChangeModelContent(this.changeModelContent);
             this.monacoEditor.onDidCompositionStart(this.compositionStart);
             this.monacoEditor.onDidCompositionEnd(this.compositionEnd);
-
             this.monacoEditor.onDidAttemptReadOnlyEdit(
                 this.attemptReadOnlyEdit
             );

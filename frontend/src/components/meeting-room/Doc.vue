@@ -62,9 +62,11 @@ export default {
     },
     methods: {
         startComposition: function () {
+            this.textHandler.startCompositionInput();
             this.isInputComposition = true;
         },
         endComposition: function () {
+            this.textHandler.finishCompositionInput();
             this.isInputComposition = false;
             this.createOperation(this.lastEvt);
         },
