@@ -1,0 +1,235 @@
+<template>
+    <div
+        ref="container"
+        class="monaco-editor"
+        :style="`height: ${height}px`"
+    ></div>
+</template>
+<script>
+import * as monaco from 'monaco-editor';
+import TextHandler from '../../text-cooperation/handler';
+import Operation, { regular } from '../../text-cooperation/operation';
+export default {
+    name: 'AcMonaco',
+    props: {
+        opts: {
+            type: Object,
+            default() {
+                return {};
+            },
+        },
+        height: {
+            type: Number,
+            default: 300,
+        },
+        connection: {
+            type: Object,
+        },
+        id: {
+            type: String,
+        },
+        content: {
+            type: Object,
+        },
+    },
+    data() {
+        return {
+            defaultOpts: {
+                value: '',
+                theme: 'vs-dark',
+                roundedSelection: false,
+                autoIndent: true,
+                unusualLineTerminators: 'off',
+            },
+            monacoEditor: {},
+
+            isCompositionInput: false,
+            CompositionEvtQueue: [],
+            textHandler: {},
+            isReadOnly: false,
+        };
+    },
+    watch: {
+        opts: {
+            handler(opts) {
+                this.monacoEditor.updateOptions(opts);
+            },
+            deep: true,
+        },
+    },
+    mounted() {
+        this.textHandler = new TextHandler(
+            this.content.version,
+            this.onChange,
+            (data) => {
+                this.connection.send({
+                    Type: 'code',
+                    Target: this.id,
+                    Data: data,
+                });
+            },
+            () => {
+                this.isReadOnly = true;
+                this.monacoEditor.updateOptions({ readOnly: true });
+            }
+        );
+        this.connection.addMessageHandler(
+            (data) => {
+                return data.Type === 'code' && data.Target === this.id;
+            },
+            (data) => {
+                const operation = data.Data;
+                this.textHandler.receiveBuffer.push(
+                    new Operation(
+                        operation.BaseLength,
+                        operation.TargetLength,
+                        operation.Ops
+                    )
+                );
+            },
+            this
+        );
+        this.init();
+        this.textHandler.start();
+    },
+    destroyed: function () {
+        this.textHandler.close();
+    },
+    methods: {
+        init() {
+            let editorOptions = this.opts ? this.opts : this.defaultOpts;
+
+            this.monacoEditor = monaco.editor.create(
+                this.$refs.container,
+                editorOptions
+            );
+
+            this.monacoEditor.setValue(this.content.content);
+
+            this.monacoEditor.onDidChangeModelContent((evt) => {
+                if (this.isReadOnly) {
+                    this.isReadOnly = false;
+                    this.monacoEditor.updateOptions({ readOnly: false });
+                    return;
+                }
+                if (this.isCompositionInput) {
+                    this.CompositionEvtQueue.push(evt);
+                    return;
+                }
+
+                let length = this.monacoEditor.getValue().length;
+                for (let i = 0; i < evt.changes.length; i++) {
+                    length =
+                        length -
+                        evt.changes[i].text.length +
+                        evt.changes[i].rangeLength;
+                }
+                for (let i = 0; i < evt.changes.length; i++) {
+                    const start = evt.changes[i].rangeOffset;
+                    const insert = evt.changes[i].text;
+                    const del =
+                        evt.changes[i].rangeLength === 0
+                            ? 0
+                            : -evt.changes[i].rangeLength;
+                    const end = length + del - start;
+                    length += insert.length + del;
+
+                    const ops = [start, insert, del, end];
+                    this.textHandler.sendBuffer.push(regular(ops));
+                }
+            });
+            this.monacoEditor.onDidCompositionStart(() => {
+                this.CompositionEvtQueue.length = 0;
+                this.isCompositionInput = true;
+                this.textHandler.startCompositionInput();
+            });
+            this.monacoEditor.onDidCompositionEnd(() => {
+                this.textHandler.finishCompositionInput();
+                let length = this.monacoEditor.getValue().length;
+                const firstEvt = this.CompositionEvtQueue[0];
+                const lastEvt =
+                    this.CompositionEvtQueue[
+                        this.CompositionEvtQueue.length - 1
+                    ];
+                for (let i = 0; i < lastEvt.changes.length; i++) {
+                    length =
+                        length -
+                        lastEvt.changes[i].text.length +
+                        firstEvt.changes[i].rangeLength;
+                }
+                for (let i = 0; i < lastEvt.changes.length; i++) {
+                    const start = firstEvt.changes[i].rangeOffset;
+                    const insert = lastEvt.changes[i].text;
+                    const del =
+                        firstEvt.changes[i].rangeLength === 0
+                            ? 0
+                            : -firstEvt.changes[i].rangeLength;
+                    const end = length + del - start;
+                    length += insert.length + del;
+
+                    if (!insert && !del) {
+                        continue;
+                    }
+
+                    const ops = [start, insert, del, end];
+                    this.textHandler.sendBuffer.push(regular(ops));
+                }
+
+                this.CompositionEvtQueue.length = 0;
+                this.isCompositionInput = false;
+            });
+
+            this.monacoEditor.onDidAttemptReadOnlyEdit(() => {
+                const overlayMessages = document.getElementsByClassName(
+                    'monaco-editor-overlaymessage'
+                );
+                overlayMessages.forEach((overlayMessage) => {
+                    overlayMessage.style.display = 'none';
+                    overlayMessage.style.visibility = 'hidden';
+                });
+            });
+        },
+        onChange: function (operation) {
+            const oldPosition = this.monacoEditor.getPosition();
+            const oldValue = this.monacoEditor.getValue();
+            let lineNumber = 1;
+            let column = 1;
+            let oldOffset = 0;
+            for (let i = 0; i < oldValue.length; i++) {
+                if (oldValue[i] === '\n') {
+                    lineNumber++;
+                    column = 1;
+                } else {
+                    column++;
+                }
+                if (
+                    lineNumber === oldPosition.lineNumber &&
+                    column === oldPosition.column
+                ) {
+                    oldOffset = i + 1;
+                    break;
+                }
+            }
+            const applyResult = operation.apply(oldValue, oldOffset);
+            const newValue = applyResult[0];
+            const newOffset = applyResult[1];
+            lineNumber = 1;
+            column = 1;
+            for (let i = 0; i < newOffset; i++) {
+                if (newValue[i] === '\n') {
+                    lineNumber++;
+                    column = 1;
+                } else {
+                    column++;
+                }
+            }
+            this.monacoEditor.setValue(newValue);
+            this.monacoEditor.setPosition({
+                lineNumber,
+                column,
+            });
+        },
+    },
+};
+</script>
+<style scoped></style>

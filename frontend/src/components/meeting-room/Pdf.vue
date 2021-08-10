@@ -28,10 +28,10 @@
 
 <script>
 import { Button, Icon } from 'ant-design-vue';
-import pdf from 'vue-pdf';
 import { uploadFile } from '../../requests/team';
 import { defaultErrorHandler } from '../../requests/errors';
 import ImportFile from './ImportFileView.vue';
+import Pdf from 'vue-pdf';
 export default {
     props: ['id', 'connection', 'content'],
     name: 'Pdf',
@@ -39,8 +39,8 @@ export default {
         AButton: Button,
         AButtonGroup: Button,
         AIcon: Icon,
-        pdf,
         ImportFile,
+        Pdf,
     },
     data() {
         return {

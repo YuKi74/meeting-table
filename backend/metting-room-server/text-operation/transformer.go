@@ -2,6 +2,7 @@ package textoperation
 
 import (
 	"errors"
+	"unicode/utf8"
 )
 
 func Transform(operation1, operation2 Operation) (operation1Prime, operation2Prime Operation, err error) {
@@ -31,14 +32,14 @@ func Transform(operation1, operation2 Operation) (operation1Prime, operation2Pri
 		if isInsert(op1) {
 			str := op1.(string)
 			operation1Prime.insert(str)
-			operation2Prime.retain(len(str))
+			operation2Prime.retain(utf8.RuneCountInString(str))
 			op1 = ops1[i1]
 			i1++
 			continue
 		}
 		if isInsert(op2) {
 			str := op2.(string)
-			operation1Prime.retain(len(str))
+			operation1Prime.retain(utf8.RuneCountInString(str))
 			operation2Prime.insert(str)
 			op2 = ops2[i2]
 			i2++
@@ -159,19 +160,30 @@ func isDelete(op interface{}) bool {
 	return false
 }
 
-func (operation *Operation) Apply(content string) (newContent string) {
+func (operation *Operation) Apply(content string) (newContent string, err error) {
+	if utf8.RuneCountInString(content) != operation.BaseLength {
+		err = errors.New("内容长度必须等于Operation的BaseLength！")
+		return
+	}
 	newContent = ""
 	strIndex := 0
 	for _, op := range operation.Ops {
 		if isRetain(op) {
 			n := parseInt(op)
-			newContent += content[strIndex : strIndex+n]
+			if strIndex+n > utf8.RuneCountInString(content) {
+				err = errors.New("Retain操作超过了字符串的长度。")
+				return
+			}
+			newContent += string([]rune(content)[strIndex : strIndex+n])
 			strIndex += n
 		} else if isInsert(op) {
 			newContent += op.(string)
 		} else {
 			strIndex -= parseInt(op)
 		}
+	}
+	if strIndex != utf8.RuneCountInString(content) {
+		err = errors.New("此Operation并不适用于此字符串。")
 	}
 	return
 }

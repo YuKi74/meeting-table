@@ -1,7 +1,9 @@
-import chat from '../components/meeting-room/chat.vue';
-import mindmap from '../components/meeting-room/MindMap.vue';
-import doc from '../components/meeting-room/doc.vue';
-import pdf from '../components/meeting-room/pdf.vue';
+import Chat from '../components/meeting-room/Chat.vue';
+import MindMap from '../components/meeting-room/MindMap.vue';
+import Doc from '../components/meeting-room/Doc.vue';
+import CodeBlock from '../components/meeting-room/CodeBlock.vue';
+import Pdf from '../components/meeting-room/Pdf.vue';
+
 const calcStyle = function (style, board, deltaX = 0, deltaY = 0) {
     const pos = board.stage.position();
     const scale = board.stage.scale().x;
@@ -68,19 +70,19 @@ export { calcStyle, isComponent, getComponent, restoreComponent };
 
 const Components = {
     聊天框: {
-        node: chat,
+        node: Chat,
         width: '350px',
         height: '350px',
         content: [],
     },
     思维导图: {
-        node: mindmap,
+        node: MindMap,
         width: '500px',
         height: '500px',
         content: '',
     },
     创意纸: {
-        node: doc,
+        node: Doc,
         width: '500px',
         height: '300px',
         content: {
@@ -89,15 +91,24 @@ const Components = {
         },
     },
     文件: {
-        node: pdf,
+        node: Pdf,
         width: '500px',
         height: '700px',
         content: '',
     },
     从其他会议室导入文件: {
-        node: pdf,
+        node: Pdf,
         width: '500px',
         height: '700px',
         content: '',
+    },
+    代码块: {
+        node: CodeBlock,
+        width: '500px',
+        height: '300px',
+        content: {
+            content: '',
+            version: 0,
+        },
     },
 };

@@ -1,5 +1,7 @@
 package textoperation
 
+import "unicode/utf8"
+
 type Operation struct {
 	BaseLength   int
 	TargetLength int
@@ -10,7 +12,7 @@ func (operation *Operation) insert(op string) {
 	if op == "" {
 		return
 	}
-	operation.TargetLength += len(op)
+	operation.TargetLength += utf8.RuneCountInString(op)
 	ops := operation.Ops
 	if len(ops) > 0 && isInsert(ops[len(ops)-1]) {
 		ops[len(ops)-1] = ops[len(ops)-1].(string) + op

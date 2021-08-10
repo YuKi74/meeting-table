@@ -85,7 +85,7 @@ Operation.prototype['delete'] = function (n) {
     return this;
 };
 
-Operation.prototype.apply = function (str) {
+Operation.prototype.apply = function (str, oldOffset) {
     let newStr = [];
     let j = 0;
     let strIndex = 0;
@@ -101,7 +101,30 @@ Operation.prototype.apply = function (str) {
             strIndex -= op;
         }
     }
-    return newStr.join('');
+    strIndex = 0;
+    let newOffset = 0;
+    for (let i = 0, l = ops.length; i < l; i++) {
+        let op = ops[i];
+        if (isRetain(op)) {
+            strIndex += op;
+            if (strIndex > oldOffset) {
+                newOffset += oldOffset - (strIndex - op);
+                break;
+            } else {
+                newOffset += op;
+            }
+        } else if (isDelete(op)) {
+            strIndex -= op;
+            if (strIndex > oldOffset) {
+                break;
+            }
+        } else if (isInsert(op)) {
+            newOffset += op.length;
+        } else {
+            throw new Error('未知operation: ' + JSON.stringify(op));
+        }
+    }
+    return [newStr.join(''), newOffset];
 };
 
 const transform = function (operation1, operation2) {
@@ -135,10 +158,10 @@ const transform = function (operation1, operation2) {
         }
 
         if (typeof op1 === 'undefined') {
-            throw new Error('两个operation不匹配');
+            throw new Error('两个operation不匹配,第一个Operation太短。');
         }
         if (typeof op2 === 'undefined') {
-            throw new Error('两个operation不匹配');
+            throw new Error('两个operation不匹配,第一个Operation太长。');
         }
 
         let minl;
@@ -219,7 +242,7 @@ const regular = function (ops) {
         } else if (isDelete(op)) {
             o['delete'](op);
         } else {
-            throw new Error('unknown operation: ' + JSON.stringify(op));
+            throw new Error('未知operation: ' + JSON.stringify(op));
         }
     }
     return o;

@@ -32,21 +32,24 @@
         </div>
 
         <div>
-            <monaco
+            <monaco-editor
                 ref="monaco"
                 :opts="opts"
-                @change="changeValue"
                 :height="600"
-            ></monaco>
+                :connection="connection"
+                :id="id"
+                :content="content"
+            />
         </div>
     </div>
 </template>
 <script>
-import monaco from './monacoeditor.vue';
+import MonacoEditor from './MonacoEditor.vue';
 import { Select } from 'ant-design-vue';
 export default {
+    props: ['connection', 'id', 'content'],
     components: {
-        monaco,
+        MonacoEditor,
         ASelect: Select,
         ASelectOption: Select.Option,
     },
@@ -132,10 +135,6 @@ export default {
         changeTheme(val) {
             this.opts.theme = val;
         },
-    },
-    watch: {
-        // TODO 将this.value发送至服务器
-        // TODO 接收服务器发来的data
     },
 };
 </script>

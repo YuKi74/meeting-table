@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Board from '../../components/meeting-room/board.vue';
+import Board from '../../components/meeting-room/Board.vue';
 import { defaultErrorHandler } from '../../requests/errors';
 import { getMeetingRoomInfo } from '../../requests/meeting-room';
 import Connection from '../../connection';

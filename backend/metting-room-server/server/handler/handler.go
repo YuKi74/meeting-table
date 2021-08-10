@@ -42,8 +42,14 @@ func handlePaintData(data *Data, storage *Storage) []byte {
 		storage.DataMap[paintID] = data
 		storage.Append(data)
 	case Move:
+		if _, ok := storage.DataMap[paintID]; !ok {
+			return []byte("pong")
+		}
 		storage.DataMap[paintID].Data.([]interface{})[1] = paintData[1]
 	case Delete:
+		if _, ok := storage.DataMap[paintID]; !ok {
+			return []byte("pong")
+		}
 		delete(storage.DataMap, paintID)
 		storage.Data = deletePaint(storage.Data, paintID)
 	}
@@ -63,9 +69,15 @@ func handleComponentData(data *Data, storage *Storage) []byte {
 			storage.Operations[data.Target] = make([]textoperation.Operation, 0)
 		}
 	case ComponentMove:
+		if _, ok := storage.DataMap[data.Target]; !ok {
+			return []byte("pong")
+		}
 		storage.DataMap[data.Target].Data.(map[string]interface{})["x"] = data.Data.(map[string]interface{})["x"]
 		storage.DataMap[data.Target].Data.(map[string]interface{})["y"] = data.Data.(map[string]interface{})["y"]
 	case ComponentDelete:
+		if _, ok := storage.DataMap[data.Target]; !ok {
+			return []byte("pong")
+		}
 		delete(storage.DataMap, data.Target)
 		delete(storage.Operations, data.Target)
 		storage.Data = deleteComponent(storage.Data, data.Target)
@@ -87,6 +99,10 @@ func handleTextData(data *Data, storage *Storage) (message []byte) {
 		Ops:          operationMap["Ops"].([]interface{}),
 	}
 	version := int(textData["version"].(float64))
+	if version > len(storage.Operations[data.Target]) {
+		logger.Logger.Error("客户端Versiont: %d, 大于服务端的Version: %d。", len(storage.Operations[data.Target]))
+		return
+	}
 	for _, operation2 := range storage.Operations[data.Target][version:] {
 		operation1Prime, _, err := textoperation.Transform(operation1, operation2)
 		if err != nil {
@@ -97,7 +113,11 @@ func handleTextData(data *Data, storage *Storage) (message []byte) {
 	}
 	storage.Operations[data.Target] = append(storage.Operations[data.Target], operation1)
 	content := storage.DataMap[data.Target].Data.(map[string]interface{})["content"].(map[string]interface{})["content"].(string)
-	content = operation1.Apply(content)
+	content, err := operation1.Apply(content)
+	if err != nil {
+		logger.Logger.Error(err)
+		return
+	}
 	storage.DataMap[data.Target].Data.(map[string]interface{})["content"] = map[string]interface{}{
 		"content": content,
 		"version": len(storage.Operations[data.Target]),
@@ -107,7 +127,7 @@ func handleTextData(data *Data, storage *Storage) (message []byte) {
 		Target: data.Target,
 		Data:   operation1,
 	}
-	message, err := json.Marshal(&returnData)
+	message, err = json.Marshal(&returnData)
 	if err != nil {
 		logger.Logger.Errorf("解析Operation返回数据失败: %s", err)
 	}

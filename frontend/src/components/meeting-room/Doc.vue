@@ -1,6 +1,7 @@
 <template>
     <div>
         <textarea
+            class="text"
             ref="text"
             @compositionstart="startComposition"
             @compositionend="endComposition"
@@ -30,19 +31,18 @@ export default {
     mounted: function () {
         this.textarea = this.$refs.text;
         this.setText(this.content.content);
+        console.log(this.content.version);
         this.textHandler = new TextHandler(
-            this.content.content,
             parseInt(this.content.version),
-            (content) => {
-                this.setText(content);
-            },
+            this.applyChange,
             (data) => {
                 this.connection.send({
                     Type: 'text',
                     Target: this.id,
                     Data: data,
                 });
-            }
+            },
+            () => {}
         );
         this.connection.addMessageHandler(
             (data) => {
@@ -135,15 +135,29 @@ export default {
             } else {
                 this.textarea.value = this.lastValue;
                 return;
-                // alert(evt.inputType);
             }
-
             ops.push(start, insert, del, end);
             this.lastLength = length;
             this.lastValue = this.textarea.value;
             const operation = regular(ops);
             this.textHandler.sendBuffer.push(operation);
         },
+        applyChange: function (operation) {
+            const oldOffset = this.textarea.selectionStart;
+            const applyResult = operation.apply(this.textarea.value, oldOffset);
+            this.setText(applyResult[0]);
+            const newOffset = applyResult[1];
+            this.textarea.setSelectionRange(newOffset, newOffset);
+        },
     },
 };
 </script>
+
+<style scoped>
+.text {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border: none;
+}
+</style>
