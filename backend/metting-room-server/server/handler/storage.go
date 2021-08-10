@@ -46,7 +46,7 @@ func (storage *Storage) Store() (err error) {
 		return
 	}
 	filename := path.Join(config.Config.Appconfig.StoragePath, strconv.FormatInt(storage.RoomID, 10))
-	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0666)
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		logger.Logger.Errorf("创建文件失败: %s", err)
 		return

@@ -2,7 +2,7 @@ import Chat from '../components/meeting-room/Chat.vue';
 import MindMap from '../components/meeting-room/MindMap.vue';
 import Doc from '../components/meeting-room/Doc.vue';
 import CodeBlock from '../components/meeting-room/CodeBlock.vue';
-import Pdf from '../components/meeting-room/Pdf.vue';
+import File from '../components/meeting-room/File.vue';
 
 const calcStyle = function (style, board, deltaX = 0, deltaY = 0) {
     const pos = board.stage.position();
@@ -91,13 +91,13 @@ const Components = {
         },
     },
     文件: {
-        node: Pdf,
+        node: File,
         width: '500px',
         height: '700px',
         content: '',
     },
     从其他会议室导入文件: {
-        node: Pdf,
+        node: File,
         width: '500px',
         height: '700px',
         content: '',

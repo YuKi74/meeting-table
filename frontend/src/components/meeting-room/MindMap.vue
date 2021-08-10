@@ -6,6 +6,9 @@
         @updateNodeName="sender"
         :showUndo="false"
         :keyboard="false"
+        :gps="false"
+        :download="false"
+        :fitView="false"
         class="mindmap"
     ></mindmap>
 </template>
@@ -37,9 +40,6 @@ export default {
         },
     },
     mounted: function () {
-        if (this.content !== '') {
-            this.data = this.content;
-        }
         this.delButton = document.getElementById('menu').firstChild;
         this.delButton.addEventListener('click', () => {
             this.sender();
@@ -52,6 +52,11 @@ export default {
             this.receive,
             this
         );
+        if (this.content) {
+            setTimeout(() => {
+                this.data = this.content;
+            }, 0);
+        }
     },
 };
 </script>

@@ -152,7 +152,6 @@ export default {
     mounted() {
         getUserinfo()
             .then((data) => {
-                console.log(data);
                 this.showList = JSON.parse(JSON.stringify(data.data));
                 this.form = data.data;
             })

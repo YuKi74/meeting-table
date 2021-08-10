@@ -76,7 +76,6 @@ export default {
     mounted() {
         this.refreshApplyList();
         this.bus.$on('refresh', () => {
-            console.log(2);
             this.refreshApplyList();
         });
     },

@@ -22,7 +22,10 @@ func Handle(message []byte, broadcast chan []byte, storage *Storage) {
 		returnData = handleTextData(data, storage)
 	} else if isIMData(data) {
 		returnData = handleIMData(data, storage)
+	} else if isMindMapData(data) {
+		returnData = handleMindMapData(data, storage)
 	}
+
 	if returnData == nil {
 		broadcast <- message
 	} else {
@@ -91,6 +94,9 @@ func isTextData(data *Data) bool {
 
 func handleTextData(data *Data, storage *Storage) (message []byte) {
 	message = []byte("pong")
+	if _, ok := storage.Operations[data.Target]; !ok {
+		return
+	}
 	textData := data.Data.(map[string]interface{})
 	operationMap := textData["operation"].(map[string]interface{})
 	operation1 := textoperation.Operation{
@@ -139,13 +145,27 @@ func isIMData(data *Data) bool {
 }
 
 func handleIMData(data *Data, storage *Storage) []byte {
+	if _, ok := storage.DataMap[data.Target]; !ok {
+		return []byte("pong")
+	}
 	oldMessages := storage.DataMap[data.Target].Data.(map[string]interface{})["content"].([]interface{})
 	newMessages := append(oldMessages, data.Data)
 	if len(newMessages) > 10 {
 		newMessages = newMessages[1:]
 	}
 	storage.DataMap[data.Target].Data.(map[string]interface{})["content"] = newMessages
+	return nil
+}
 
+func isMindMapData(data *Data) bool {
+	return data.Type == MindMap
+}
+
+func handleMindMapData(data *Data, storage *Storage) []byte {
+	if _, ok := storage.DataMap[data.Target]; !ok {
+		return []byte("pong")
+	}
+	storage.DataMap[data.Target].Data.(map[string]interface{})["content"] = data.Data
 	return nil
 }
 

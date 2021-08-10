@@ -31,7 +31,6 @@ export default {
     mounted: function () {
         this.textarea = this.$refs.text;
         this.setText(this.content.content);
-        console.log(this.content.version);
         this.textHandler = new TextHandler(
             parseInt(this.content.version),
             this.applyChange,

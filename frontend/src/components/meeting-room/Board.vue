@@ -249,7 +249,7 @@ export default {
 .toolbar {
     position: absolute;
     left: 10px;
-    top: 10px;
+    top: 70px;
     z-index: 2;
 }
 .board {

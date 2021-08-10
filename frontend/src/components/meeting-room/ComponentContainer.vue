@@ -3,6 +3,7 @@
         @mouseenter="isHover = true"
         @mouseleave="isHover = false"
         ref="container"
+        class="content"
     >
         <div
             :class="{ show: isHover, shadow: isHover, header: true }"
@@ -48,6 +49,9 @@ export default {
 </script>
 
 <style scoped>
+.content {
+    overflow: auto;
+}
 .header {
     position: relative;
     width: 100%;

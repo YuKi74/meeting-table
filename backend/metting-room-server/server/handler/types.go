@@ -10,4 +10,5 @@ const (
 	ComponentDelete = "component_delete"
 	Text            = "text"
 	Code            = "code"
+	MindMap         = "mindmap"
 )

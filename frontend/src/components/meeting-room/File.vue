@@ -34,7 +34,6 @@ import ImportFile from './ImportFileView.vue';
 import Pdf from 'vue-pdf';
 export default {
     props: ['id', 'connection', 'content'],
-    name: 'Pdf',
     components: {
         AButton: Button,
         AButtonGroup: Button,

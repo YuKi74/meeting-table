@@ -72,7 +72,6 @@ export default {
     },
     methods: {
         refreshList() {
-            console.log(1);
             this.bus.$emit('refresh');
         },
     },
