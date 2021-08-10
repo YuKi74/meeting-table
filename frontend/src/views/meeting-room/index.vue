@@ -2,6 +2,13 @@
     <div>
         <meeting-room-top class="header" :name="roomName" />
         <board class="board" v-if="connection" :connection="connection"></board>
+        <mt-video
+            v-if="userId && token"
+            class="video"
+            :roomUuid="$route.params.uuid"
+            :token="token"
+            :userId="userId"
+        />
     </div>
 </template>
 
@@ -11,18 +18,28 @@ import { defaultErrorHandler } from '../../requests/errors';
 import { getMeetingRoomInfo } from '../../requests/meeting-room';
 import Connection from '../../connection';
 import MeetingRoomTop from '../../components/team/MeetingRoomTop.vue';
+import Video from '../../components/meeting-room/Video.vue';
+import { getUserinfo } from '../../requests/user';
 export default {
     components: {
         Board,
+        MtVideo: Video,
         MeetingRoomTop,
     },
     data() {
         return {
             connection: null,
             roomName: '',
+            userId: null,
+            token: null,
         };
     },
     mounted: function () {
+        getUserinfo()
+            .then((data) => {
+                this.userId = data.data.id;
+            })
+            .catch(defaultErrorHandler(getUserinfo));
         getMeetingRoomInfo(this.$route.params.uuid)
             .then((data) => {
                 this.connection = new Connection(data.data.id);
@@ -45,5 +62,11 @@ export default {
 .board {
     width: 100vw;
     height: 100vh;
+}
+.video {
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    z-index: 10;
 }
 </style>
