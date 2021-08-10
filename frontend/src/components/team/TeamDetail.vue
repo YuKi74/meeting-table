@@ -12,7 +12,7 @@
                     />
                     <modal
                         title="编辑团队信息"
-                        okText="确认"
+                        okText="保存"
                         cancelText="取消"
                         :visible="visible"
                         :confirm-loading="confirmLoading"
@@ -210,7 +210,7 @@ export default {
             });
         },
         provideTitleAndMessage(creator) {
-            let title = creator ? '确认要解散团队吗' : '确认要退出团队吗';
+            let title = creator ? '确定要解散团队吗' : '确定要退出团队吗';
             let message = creator
                 ? '解散后不可恢复，且所有会议室文件都会丢失'
                 : '';

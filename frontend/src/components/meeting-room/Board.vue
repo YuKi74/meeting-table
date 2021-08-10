@@ -269,7 +269,7 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: lightgray;
+    background-color: var(--background);
 }
 .component {
     position: absolute;

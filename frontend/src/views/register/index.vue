@@ -38,7 +38,7 @@
                     >
                         <register-input
                             type="password"
-                            placeholder="请确认密码"
+                            placeholder="请确定密码"
                             class="input"
                             v-model="ruleForm.confirmPassword"
                         />
@@ -149,7 +149,7 @@ export default {
                 confirmPassword: [
                     {
                         required: true,
-                        message: '请确认密码',
+                        message: '请确定密码',
                         trigger: 'blur',
                     },
                     {

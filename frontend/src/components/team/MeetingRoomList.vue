@@ -115,8 +115,8 @@ export default {
             const that = this;
             Modal.confirm({
                 title: '确定要删除此会议室吗？',
-                content: '点击“确认”后, 此会议室将会被删除',
-                okText: '确认',
+                content: '点击“确定”后, 此会议室将会被删除',
+                okText: '确定',
                 cancelText: '取消',
                 onOk() {
                     deleteMeetingRoom(id)

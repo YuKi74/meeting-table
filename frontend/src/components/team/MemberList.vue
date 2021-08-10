@@ -82,8 +82,8 @@ export default {
             const that = this;
             Modal.confirm({
                 title: '确定要移除此成员吗？',
-                content: '点击“确认”后, 此成员将被移出此团队',
-                okText: '确认',
+                content: '点击“确定”后, 此成员将被移出此团队',
+                okText: '确定',
                 cancelText: '取消',
                 onOk() {
                     removeMember(id)
