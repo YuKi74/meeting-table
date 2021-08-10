@@ -6,20 +6,16 @@
                 <div class="login flex" @click="login">登录</div>
                 <div class="register flex" @click="register">注册</div>
             </div>
-            <div class="right-top" v-if="isOn">
-                <div class="info flex">
-                    <a-avatar
-                        shape="square"
-                        icon="user"
-                        size="large"
-                        style="background: var(--secondary-color-1)"
-                    />
-                    <div class="box">
-                        <div class="id">{{ name }}</div>
-                        <div class="tip" @click="toTeam">
-                            您已登录，点击进入
-                        </div>
-                    </div>
+            <div class="right-top info flex" v-if="isOn" @click="toTeam">
+                <a-avatar
+                    shape="square"
+                    icon="user"
+                    size="large"
+                    style="background: var(--secondary-color-1)"
+                />
+                <div class="box">
+                    <div class="id">{{ name }}</div>
+                    <div class="tip">您已登录，点击进入</div>
                 </div>
             </div>
         </div>
@@ -99,9 +95,6 @@ export default {
     flex-direction: column;
     margin-left: 10px;
 }
-.box:hover {
-    cursor: pointer;
-}
 .login {
     font-size: 18px;
     font-weight: bold;
@@ -127,6 +120,9 @@ export default {
     width: 200px;
     height: 70px;
     display: flex;
+}
+.right-top:hover {
+    cursor: pointer;
 }
 .picture {
     text-align: center;

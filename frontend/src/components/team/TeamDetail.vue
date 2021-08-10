@@ -4,7 +4,12 @@
             <div class="content flex flex-col" slot="content">
                 <div class="title">
                     <p class="form.name">{{ data.name }}</p>
-                    <a-button class="edit" icon="edit" @click="showModal" />
+                    <a-button
+                        class="edit"
+                        icon="edit"
+                        @click="showModal"
+                        v-show="isCreator"
+                    />
                     <modal
                         title="编辑团队信息"
                         okText="确认"
@@ -31,11 +36,6 @@
                                     <a-input
                                         :default-value="form.name"
                                         v-model="form.name"
-                                        @blur="
-                                            () => {
-                                                $refs.name.onFieldBlur();
-                                            }
-                                        "
                                     />
                                 </form-model-item>
                                 <form-model-item
