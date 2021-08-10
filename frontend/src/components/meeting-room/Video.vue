@@ -91,8 +91,8 @@
         </div>
 
         <div
-            v-for="(item, index) in users"
-            :key="index"
+            v-for="item in users"
+            :key="item"
             ref="players"
             v-show="isStartVideo"
         >
@@ -190,7 +190,10 @@ export default {
             });
             this.rtc.client.on('user-published', async (user, mediaType) => {
                 await this.rtc.client.subscribe(user, mediaType);
-                if (mediaType === 'video') {
+                if (
+                    mediaType === 'video' &&
+                    !this.users.includes(user.uid.toString())
+                ) {
                     const remoteVideoTrack = user.videoTrack;
                     this.users.push(user.uid.toString());
                     setTimeout(() => {
@@ -204,7 +207,7 @@ export default {
             });
             this.rtc.client.on('user-unpublished', (user, mediaType) => {
                 if (mediaType === 'video') {
-                    const userIndex = this.users.indexOf(user.uid);
+                    const userIndex = this.users.indexOf(user.uid.toString());
                     this.users = this.users
                         .slice(0, userIndex)
                         .concat(this.users.slice(userIndex + 1));
@@ -223,7 +226,7 @@ export default {
                     this.rtc.localVideoTrack,
                 ]);
                 setTimeout(() => {
-                    this.rtc.localVideoTrack.play(this.userId);
+                    this.rtc.localVideoTrack.play('' + this.userId);
                 }, 0);
             }
         },
@@ -263,7 +266,7 @@ export default {
         join: async function (isOpen) {
             await this.start(isOpen);
             if (isOpen === true) {
-                this.users.unshift(this.userId);
+                this.users.unshift('' + this.userId);
             } else {
                 this.rtc.localVideoTrack.stop();
                 this.rtc.localAudioTrack.close();
@@ -282,31 +285,33 @@ export default {
                 await this.rtc.client.unpublish(this.rtc.localVideoTrack);
                 this.rtc.localVideoTrack.stop();
                 this.rtc.localVideoTrack.close();
-                const userIndex = this.users.indexOf(this.userId);
+                const userIndex = this.users.indexOf('' + this.userId);
+                console.log(userIndex);
                 this.users = this.users
                     .slice(0, userIndex)
                     .concat(this.users.slice(userIndex + 1));
+                console.log(this.users);
                 notification.open({
                     message: '您已关闭视频',
                 });
             } else {
                 this.isOpenCamera = true;
-                this.users.unshift(this.userId);
+                this.users.unshift('' + this.userId);
                 this.rtc.localVideoTrack =
                     await AgoraRTC.createCameraVideoTrack();
                 setTimeout(() => {
-                    this.rtc.localVideoTrack.play(this.userId);
+                    this.rtc.localVideoTrack.play('' + this.userId);
                 }, 0);
                 notification.open({
                     message: '您已开启视频',
                 });
-                await this.rtc.client.publish([this.rtc.localVideoTrack]);
+                await this.rtc.client.publish(this.rtc.localVideoTrack);
             }
         },
         changeMicrophoneStatus: async function () {
             if (this.isOpenMicrophone === true) {
                 this.isOpenMicrophone = false;
-                await this.rtc.client.unpublish(this.rtc.localAudioTrack);
+                await this.rtc.client.unpublish([this.rtc.localAudioTrack]);
                 this.rtc.localAudioTrack.close();
                 notification.open({
                     message: '您已关闭音频',
