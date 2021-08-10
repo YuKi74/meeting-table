@@ -1,13 +1,13 @@
 version: "3.9"
-services: 
-    mt:
-        build: 
+services:
+    mt_dev:
+        build:
             context: .
             dockerfile: ./docker/Dockerfile.dev
-        volumes: 
+        volumes:
             - "./frontend:/root/frontend"
             - "./backend:/root/backend"
-        ports: 
+        ports:
             - "80:80"
             - "3306:3306"
             - "6379:6379"

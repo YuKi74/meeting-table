@@ -9,6 +9,8 @@ ENV GO111MODULE=on
 ENV GOPROXY=https://goproxy.cn
 
 COPY ./docker/config /root/
+COPY ./backend /root/backend
+COPY ./frontend /root/frontend
 
 RUN \
     # 更换apt-get镜像源
@@ -28,9 +30,18 @@ RUN \
     apt-get install -y nodejs && \
     # 更换npm镜像源
     npm config set registry https://registry.npm.taobao.org/ && \
+    # 打包前端项目
+    cd /root/frontend && \
+    npm install && \
+    npm run build && \
+    # 安装后端依赖
+    cd /root/backend/metting-room-server && \
+    go mod download && \
+    cd /root/backend/business-server && \
+    pip3 install -r /root/backend/business-server/requirements.txt && \
     # 修改Nginx配置
     mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && \
-    mv /root/nginx.conf.dev /etc/nginx/nginx.conf && \
+    mv /root/nginx.conf.prod /etc/nginx/nginx.conf && \
     # 修改Redis配置
     mv /etc/redis/redis.conf /etc/redis/redis.conf.bak && \
     mv /root/redis.conf /etc/redis/redis.conf && \
@@ -38,11 +49,11 @@ RUN \
     mkdir /storage && \
     mkdir /files && \
     # 给予entry执行权限
-    chmod +x /root/entry.dev.sh && \
+    chmod +x /root/entry.prod.sh && \
     # 解决Windows环境下换行符的问题
-    dos2unix /root/entry.dev.sh && \
+    dos2unix /root/entry.prod.sh && \
     dos2unix /root/init-mysql.sh
 
-ENTRYPOINT [ "/root/entry.dev.sh" ]
+ENTRYPOINT [ "/root/entry.prod.sh" ]
 
-EXPOSE 80 3306 6379
+EXPOSE 80
