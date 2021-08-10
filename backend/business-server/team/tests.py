@@ -293,6 +293,24 @@ class MeetingRoomTestCase(TestCase):
             team=self.team1,
             creator=self.user2)
 
+    def test_team_has_room(self):
+        team2 = create_team(
+            name='teamname2',
+            introduction='testexample2',
+            creator=self.user2)
+        response_data = ResponseData()
+        self.assertRaises(PermissionDenied,
+                          services.team_has_room,
+                          team2.id, self.room1,
+                          response_data)
+
+        response_data = ResponseData()
+        services.team_has_room(self.team1.id,self.room1,response_data)
+        self.assertEqual(response_data.mt_status,MTStatus.OK)
+
+
+
+
     def test_create_room(self):
         response_data = ResponseData()
         services.create_room(
@@ -476,3 +494,6 @@ class TeamMemberTestCase(TestCase):
             password=default_password)
         services.delete_member(user3)
         self.assertEqual(None, user3.team_id)
+
+
+

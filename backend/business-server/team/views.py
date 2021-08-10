@@ -473,3 +473,31 @@ class FileTransferView(MTAuthView):
             logger.error(
                 'url: /team/file/, method: post, error: %s', e)
         return self.respond(response_data)
+
+
+class VideoTokenView(MTAuthView):
+    def get(self, request, room_uuid):
+        """
+        @api {get} /team/video_token/:uuid 获取视频通话Token
+        @apiName video_token
+        @apiGroup video
+
+        @apiError TEAM_NOT_EXIST
+        @apiError RECORD_NOT_FOUND
+        @apiError FORBIDDEN
+
+        @apiSuccess {String} token 视频通话Token
+        """
+        response_data = ResponseData()
+        user = request.user
+        try:
+            services.has_team(user, response_data)
+            room = services.check_room_by_uuid(room_uuid, response_data)
+            services.team_has_room(user.team.id, room, response_data)
+            services.generate_video_token(user.id, room_uuid, response_data)
+        except(Team.DoesNotExist, MeetingRoom.DoesNotExist, PermissionDenied) as e:
+            logger.error(
+                'url: /team/video_token/:uuid/, method: get, error: %s', e
+            )
+
+        return self.respond(response_data)

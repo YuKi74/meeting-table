@@ -1,8 +1,10 @@
+from time import time
+
 import requests
 from django.core.files.uploadedfile import UploadedFile
 from mt.config import config
 from mt.errors import HasTeam
-from mt.redis import redis
+from mt.redis import redis, token_expire
 from mt.status import MTStatus
 from mt.views import ResponseData
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -12,6 +14,7 @@ from team.serializers import (ApplicantSerializer, ApplicationSerializer,
                               TeamInformationSerializer, TeamSerializer)
 from user.models import User
 from user.serializers import UserSerializerWithoutPassword
+from video_token.RtcTokenBuilder import Role_Attendee, RtcTokenBuilder
 
 
 def has_no_team(user, response_data):
@@ -273,3 +276,17 @@ def get_user_by_token(token):
         return None
     else:
         return User.objects.get(id=user_id)
+
+
+def team_has_room(team_id, room, response_data):
+    if room.team_id != team_id:
+        response_data.mt_status = MTStatus.FORBIDDEN
+        response_data.data = "该会议室不属于用户所在的团队"
+        raise PermissionDenied
+
+
+def generate_video_token(user_id, room_uuid, response_data):
+    token = RtcTokenBuilder.buildTokenWithUid(
+        config.app_config.agora_app_id, config.app_config.agora_app_certificate,
+        room_uuid, user_id, Role_Attendee, int(time())+token_expire)
+    response_data.data = token
