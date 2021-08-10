@@ -31,6 +31,8 @@ python3.7 manage.py runserver &
 cd /root/backend/metting-room-server
 go run main.go &
 
-echo "环境初始化完成。"
+# 启动前端
+cd /root/frontend
+npm run serve
 
 wait

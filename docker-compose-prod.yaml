@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-    mt:
+    mt_prod:
         build:
             context: .
             dockerfile: ./docker/Dockerfile.prod
