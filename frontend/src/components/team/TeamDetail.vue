@@ -171,7 +171,11 @@ export default {
         success() {
             let input = document.createElement('input');
             input.value =
-                'http://' + window.location.host + '/team/' + this.uuid;
+                window.location.protocol +
+                '//' +
+                window.location.host +
+                '/team/' +
+                this.uuid;
             document.body.appendChild(input);
             input.select();
             document.execCommand('Copy');

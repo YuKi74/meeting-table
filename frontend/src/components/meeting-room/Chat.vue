@@ -72,9 +72,9 @@ export default {
     mounted: function () {
         this.messages = this.content;
         getUserinfo()
-            .then((data) => {
-                this.userId = data.data.id;
-                this.userName = data.data.name;
+            .then((user) => {
+                this.userId = user.data.id;
+                this.userName = user.data.name;
                 this.connection.addMessageHandler(
                     (data) => {
                         return this.id === data.Target && data.Type === 'im';

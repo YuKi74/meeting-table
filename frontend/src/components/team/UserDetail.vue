@@ -213,17 +213,4 @@ export default {
 .edit {
     margin-left: 10px;
 }
-.name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.email {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.edit {
-    margin-left: 10px;
-}
 </style>

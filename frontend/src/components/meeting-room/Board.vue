@@ -53,11 +53,12 @@ export default {
         };
     },
     mounted: function () {
+        const origin = window.location.protocol + '//' + window.location.host;
         getUserinfo()
-            .then((data) => {
+            .then((user) => {
                 this.board = new Board(
                     this.$refs.board,
-                    data.data.id,
+                    user.data.id,
                     this.onBoardMove
                 );
                 this.board.registerMessageHandler(this.connection);
@@ -86,6 +87,10 @@ export default {
             })
             .catch(defaultErrorHandler(getUserinfo));
         window.addEventListener('mousedown', (event) => {
+            if (event.origin !== origin) {
+                return;
+            }
+
             if (
                 event.target.tagName === 'CANVAS' &&
                 isComponent(this.board.tool)
@@ -95,12 +100,20 @@ export default {
             }
         });
         window.addEventListener('mousemove', (event) => {
+            if (event.origin !== origin) {
+                return;
+            }
+
             if (this.selectedComponent) {
                 this.moved = true;
                 this.onDrag(event.clientX, event.clientY);
             }
         });
         window.addEventListener('mouseup', (event) => {
+            if (event.origin !== origin) {
+                return;
+            }
+
             if (this.selectedComponent && this.moved) {
                 this.onDragEnd(event.clientX, event.clientY);
             }

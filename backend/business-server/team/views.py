@@ -298,9 +298,9 @@ class MeetingRoomView(MTAuthView):
         user = request.user
         response_data = ResponseData()
         try:
-            id = self.check_and_get(request.data, 'id', response_data)
+            room_id = self.check_and_get(request.data, 'id', response_data)
             name = self.check_and_get(request.data, 'name', response_data, 1)
-            room = services.is_room_creator(user, id, response_data)
+            room = services.is_room_creator(user, room_id, response_data)
             room.name = name
             room.save()
         except (ValidationError, MeetingRoom.DoesNotExist, PermissionDenied) as e:

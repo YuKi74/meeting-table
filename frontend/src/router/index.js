@@ -39,7 +39,7 @@ const routes = [
     {
         path: '*',
         name: '404',
-        // TODO 指定到404页面
+        component: () => import('../views/404'),
     },
 ];
 

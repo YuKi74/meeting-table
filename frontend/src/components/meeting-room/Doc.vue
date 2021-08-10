@@ -13,7 +13,7 @@
 
 <script>
 import Operation, { regular } from '../../text-cooperation/operation';
-import TextHandler from '../../text-cooperation/handler';
+import TextHandler from '../../text-cooperation/text-handler';
 export default {
     props: ['connection', 'content', 'id'],
     name: 'doc',
@@ -40,8 +40,7 @@ export default {
                     Target: this.id,
                     Data: data,
                 });
-            },
-            () => {}
+            }
         );
         this.connection.addMessageHandler(
             (data) => {
@@ -70,7 +69,7 @@ export default {
             this.createOperation(this.lastEvt);
         },
         getClipboardData: function () {
-            const clipboard = event.clipboardData || window.clipboardData;
+            const clipboard = window.clipboardData;
             this.clipboardData = clipboard.getData('text');
         },
         getChange: function (evt) {

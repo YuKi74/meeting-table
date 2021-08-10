@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { message } from 'ant-design-vue';
+import { message as AMessage } from 'ant-design-vue';
 
 const MTError = function (code, message) {
     this.code = parseInt(code);
@@ -40,9 +40,9 @@ const responseHandler = function (response) {
 const defaultErrorHandler = function (request) {
     return function (data) {
         if (request.errors.includes(data.error)) {
-            message.error(data.data);
+            AMessage.error(data.data);
         } else {
-            message.error(data.error.message);
+            AMessage.error(data.error.message);
         }
     };
 };

@@ -36,8 +36,7 @@
 <script>
 import { List, Avatar, Modal, Button, Message } from 'ant-design-vue';
 import Vue from 'vue';
-import { getMembers } from '../../requests/team';
-import { removeMember } from '../../requests/team';
+import { getMembers, removeMember } from '../../requests/team';
 import { getUserinfo } from '../../requests/user';
 import { defaultErrorHandler } from '../../requests/errors';
 Vue.use(Modal);

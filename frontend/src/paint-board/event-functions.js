@@ -77,6 +77,16 @@ const dragEnd = function (evt, board) {
 };
 
 const onKeyDown = function (evt, board) {
+    const distance = 2;
+    const transformerMove = function (xMove, yMove) {
+        if (board.transformer.nodes().length) {
+            board.transformer.nodes()[0].move({
+                x: xMove,
+                y: yMove,
+            });
+        }
+    };
+
     switch (evt.key) {
         case 'Backspace':
             if (board.transformer.nodes().length) {
@@ -89,36 +99,16 @@ const onKeyDown = function (evt, board) {
             }
             break;
         case 'ArrowLeft':
-            if (board.transformer.nodes().length) {
-                board.transformer.nodes()[0].move({
-                    x: -2,
-                    y: 0,
-                });
-            }
+            transformerMove(-distance, 0);
             break;
         case 'ArrowRight':
-            if (board.transformer.nodes().length) {
-                board.transformer.nodes()[0].move({
-                    x: 2,
-                    y: 0,
-                });
-            }
+            transformerMove(distance, 0);
             break;
         case 'ArrowUp':
-            if (board.transformer.nodes().length) {
-                board.transformer.nodes()[0].move({
-                    x: 0,
-                    y: -2,
-                });
-            }
+            transformerMove(0, -distance);
             break;
         case 'ArrowDown':
-            if (board.transformer.nodes().length) {
-                board.transformer.nodes()[0].move({
-                    x: 0,
-                    y: 2,
-                });
-            }
+            transformerMove(0, distance);
             break;
         case 'Shift':
             board.isRegular = true;

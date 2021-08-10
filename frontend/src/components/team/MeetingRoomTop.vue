@@ -105,18 +105,12 @@ export default {
                 },
             });
         },
-        agree() {
-            //TODO 将申请人从申请列表中删除，加入会议室成员列表
-        },
         refuse() {
             Modal.confirm({
                 title: '确定要拒绝此申请吗？',
                 content: '点击确认后, 此申请会被拒绝',
                 okText: '确认',
                 cancelText: '取消',
-                onOk() {
-                    // TODO 将申请人从申请列表中删除
-                },
             });
         },
     },

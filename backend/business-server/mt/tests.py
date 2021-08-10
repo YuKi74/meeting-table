@@ -1,5 +1,5 @@
-from constant.mt import (response_data_not_in_regular_form,
-                             test_length_limitation)
+from constant.mt import (default_email, response_data_not_in_regular_form,
+                         test_length_limitation)
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
@@ -35,7 +35,7 @@ class MTViewTestCase(TestCase):
                          MTStatus.OK.message)
 
     def test_check_and_get(self):
-        data = {'email': 'test@qq.com'}
+        data = {'email': default_email}
         response_data = ResponseData()
         self.assertRaises(ValidationError,
                           MTView.check_and_get,
@@ -55,10 +55,10 @@ class MTViewTestCase(TestCase):
         self.assertEqual(response_data.data, '输入值"name"长度不可小于%d位' %
                          test_length_limitation)
 
-        data = {'email': 'test@qq.com'}
+        data = {'email': default_email}
         response_data = ResponseData()
         value = MTView.check_and_get(data, 'email', response_data)
-        self.assertEqual(value, 'test@qq.com')
+        self.assertEqual(value, default_email)
 
     def test_check_optional_value(self):
         data = {'name': ''}

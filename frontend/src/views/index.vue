@@ -32,7 +32,7 @@
                 <a-icon class="chart-icon" type="pie-chart" />
             </div>
             <div class="right flex">
-                <img class="picture" src="../assets/table-picture.png" />
+                <img class="picture" src="../assets/table-picture.png" alt="" />
             </div>
         </div>
     </div>

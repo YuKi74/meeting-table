@@ -1,5 +1,5 @@
 import Connection from './connection';
-import { message } from 'ant-design-vue';
+import { message as AMessage } from 'ant-design-vue';
 import { HEART_BEAT_DURATION } from './config';
 
 Connection.prototype.getOpenHandler = function () {
@@ -20,7 +20,6 @@ Connection.prototype.getMessageHandler = function () {
         messageHandlers.forEach((messageHandler) => {
             if (messageHandler.rule(data)) {
                 messageHandler.handler.call(messageHandler.caller, data);
-                return;
             }
         });
         messageCache.unshift(data);
@@ -59,5 +58,5 @@ Connection.prototype.addMessageHandler = function (rule, handler, caller) {
 };
 
 Connection.prototype.closeHandler = function () {
-    message.warn('与服务器的连接已断开，请刷新窗口重新连接！', 0);
+    AMessage.warn('与服务器的连接已断开，请刷新窗口重新连接！', 0);
 };

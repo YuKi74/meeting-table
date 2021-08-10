@@ -41,7 +41,6 @@ import {
     Input,
 } from 'ant-design-vue';
 import { VISITOR_NAME_MAX_LENGTH } from '../../constants/meeting-room';
-// import { defaultErrorHandler } from '../../requests/errors';
 import router from '../../router';
 import Cookies from 'js-cookie';
 
@@ -82,7 +81,6 @@ export default {
     },
     mounted: function () {
         this.isLogin = Cookies.get('token') !== undefined;
-        //TODO 发送请求获取会议室主题
     },
     methods: {
         login() {
@@ -96,7 +94,6 @@ export default {
                 if (valid) {
                     Message.success('已提交申请');
                     this.visible = false;
-                    //TODO 发送游客进入会议室申请
                 }
             });
         },

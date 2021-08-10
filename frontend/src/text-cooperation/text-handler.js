@@ -30,7 +30,9 @@ TextHandler.prototype.start = async function () {
             const operation = that.receiveBuffer.shift();
             if (!that.waiting) {
                 that.version++;
-                that.setReadOnly();
+                if (that.setReadOnly) {
+                    that.setReadOnly();
+                }
                 that.onChange(operation);
             } else if (that.waiting.equals(operation)) {
                 that.waiting = null;
@@ -42,7 +44,9 @@ TextHandler.prototype.start = async function () {
                     that.sendBuffer[index] = operationPrimes[0];
                 });
                 that.version++;
-                that.setReadOnly();
+                if (that.setReadOnly) {
+                    that.setReadOnly();
+                }
                 that.onChange(operationPrimes[1]);
             }
         }

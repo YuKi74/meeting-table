@@ -146,14 +146,12 @@ export default {
         // 修改ant-design中slider的默认样式
         const slidersTrack =
             document.getElementsByClassName('ant-slider-track');
-        for (let i = 0; i < slidersTrack.length; i++) {
-            const slider = slidersTrack[i];
+        for (let slider of slidersTrack) {
             slider.style.backgroundColor = 'gray';
         }
         const slidersHandle =
             document.getElementsByClassName('ant-slider-handle');
-        for (let i = 0; i < slidersHandle.length; i++) {
-            const slider = slidersHandle[i];
+        for (let slider of slidersHandle) {
             slider.style.border = 'solid 2px gray';
         }
         this.$refs.toolbar.addEventListener('wheel', (e) => {

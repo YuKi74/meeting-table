@@ -64,6 +64,7 @@ const initVariables = function (board) {
 };
 
 const initStageEventListener = function (board) {
+    const origin = window.location.protocol + '//' + window.location.host;
     const stage = board.stage;
 
     stage.on('mousedown', function (evt) {
@@ -97,16 +98,26 @@ const initStageEventListener = function (board) {
     });
 
     window.addEventListener('keydown', (evt) => {
+        if (evt.origin !== origin) {
+            return;
+        }
         onKeyDown(evt, board);
     });
 
     window.addEventListener('keyup', (evt) => {
+        if (evt.origin !== origin) {
+            return;
+        }
         onKeyUp(evt, board);
     });
 };
 
 const initContainer = function (board) {
+    const origin = window.location.protocol + '//' + window.location.host;
     window.addEventListener('gesturestart', (e) => {
+        if (e.origin !== origin) {
+            return;
+        }
         e.preventDefault();
         board.startScale = board.stage.scale().x;
         const deltaScale = board.startScale * e.scale - board.stage.scale().x;
@@ -114,12 +125,18 @@ const initContainer = function (board) {
     });
 
     window.addEventListener('gesturechange', (e) => {
+        if (e.origin !== origin) {
+            return;
+        }
         e.preventDefault();
         const deltaScale = board.startScale * e.scale - board.stage.scale().x;
         board.scaleStage(deltaScale);
     });
 
     window.addEventListener('wheel', (e) => {
+        if (e.origin !== origin) {
+            return;
+        }
         if (e.ctrlKey) {
             e.preventDefault();
             board.scaleStage(-e.deltaY / WHEEL_TO_SCALE);

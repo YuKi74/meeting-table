@@ -1,6 +1,8 @@
-from constant.team import (default_password, not_exist_application_id,
-                           not_exist_room_id, not_exist_room_uuid,
-                           not_exist_team_uuid, not_exist_user_id)
+from constant.team import (default_password, defualt_email_one,
+                           defualt_email_three, defualt_email_two,
+                           not_exist_application_id, not_exist_room_id,
+                           not_exist_room_uuid, not_exist_team_uuid,
+                           not_exist_user_id, room_does_not_exist)
 from django.test import TestCase
 from helper.test import (create_application, create_room, create_team,
                          create_user)
@@ -22,7 +24,7 @@ class TeamTestCase(TestCase):
     def setUp(self):
         self.user1 = create_user(
             name='username1',
-            email='test1@qq.com',
+            email=defualt_email_one,
             password=default_password
         )
         self.team1 = create_team(
@@ -35,7 +37,7 @@ class TeamTestCase(TestCase):
 
         self.user2 = create_user(
             name='username2',
-            email='test2@qq.com',
+            email=defualt_email_two,
             password=default_password
         )
 
@@ -51,7 +53,7 @@ class TeamTestCase(TestCase):
     def test_create_team(self):
         self.user3 = create_user(
             name='username3',
-            email='test3@qq.com',
+            email=defualt_email_three,
             password=default_password
         )
 
@@ -128,7 +130,7 @@ class ApplicationProcessTestCase(TestCase):
     def setUp(self):
         self.creator1 = create_user(
             name='username1',
-            email='test1@qq.com',
+            email=defualt_email_one,
             password=default_password
         )
         self.team1 = create_team(
@@ -140,7 +142,7 @@ class ApplicationProcessTestCase(TestCase):
         self.creator1.save()
         self.creator2 = create_user(
             name='username2',
-            email='test2@qq.com',
+            email=defualt_email_two,
             password=default_password
         )
         self.team2 = create_team(
@@ -152,7 +154,7 @@ class ApplicationProcessTestCase(TestCase):
         self.creator2.save()
         self.user1 = create_user(
             name='username3',
-            email='test3@qq.com',
+            email=defualt_email_three,
             password=default_password
         )
         self.user2 = create_user(
@@ -266,11 +268,11 @@ class MeetingRoomTestCase(TestCase):
     def setUp(self):
         self.user1 = create_user(
             name='username1',
-            email='test1@qq.com',
+            email=defualt_email_one,
             password=default_password)
         self.user2 = create_user(
             name='username2',
-            email='test2@qq.com',
+            email=defualt_email_two,
             password=default_password)
 
         self.team1 = create_team(
@@ -305,11 +307,8 @@ class MeetingRoomTestCase(TestCase):
                           response_data)
 
         response_data = ResponseData()
-        services.team_has_room(self.team1.id,self.room1,response_data)
-        self.assertEqual(response_data.mt_status,MTStatus.OK)
-
-
-
+        services.team_has_room(self.team1.id, self.room1, response_data)
+        self.assertEqual(response_data.mt_status, MTStatus.OK)
 
     def test_create_room(self):
         response_data = ResponseData()
@@ -333,7 +332,7 @@ class MeetingRoomTestCase(TestCase):
                           self.user1, not_exist_room_id,
                           response_data)
         self.assertEqual(response_data.mt_status, MTStatus.RECORD_NOT_FOUND)
-        self.assertEqual(response_data.data, '当前会议室不存在')
+        self.assertEqual(response_data.data, room_does_not_exist)
 
         response_data = ResponseData()
         self.assertRaises(PermissionDenied,
@@ -355,7 +354,7 @@ class MeetingRoomTestCase(TestCase):
                           not_exist_room_uuid,
                           response_data)
         self.assertEqual(response_data.mt_status, MTStatus.RECORD_NOT_FOUND)
-        self.assertEqual(response_data.data, '当前会议室不存在')
+        self.assertEqual(response_data.data, room_does_not_exist)
 
         response_data = ResponseData()
         room = services.check_room_by_uuid(self.room1.uuid, response_data)
@@ -368,7 +367,7 @@ class MeetingRoomTestCase(TestCase):
                           not_exist_room_id,
                           response_data)
         self.assertEqual(response_data.mt_status, MTStatus.RECORD_NOT_FOUND)
-        self.assertEqual(response_data.data, '当前会议室不存在')
+        self.assertEqual(response_data.data, room_does_not_exist)
 
         response_data = ResponseData()
         services.check_room_by_id(self.room1.id, response_data)
@@ -377,7 +376,7 @@ class MeetingRoomTestCase(TestCase):
     def test_get_room_information(self):
         user3 = create_user(
             name='username3',
-            email='test3@qq.com',
+            email=defualt_email_three,
             password=default_password)
         team2 = create_team(
             name='teamname2',
@@ -405,11 +404,11 @@ class TeamMemberTestCase(TestCase):
     def setUp(self):
         self.user1 = create_user(
             name='username1',
-            email='test1@qq.com',
+            email=defualt_email_one,
             password=default_password)
         self.user2 = create_user(
             name='username2',
-            email='test2@qq.com',
+            email=defualt_email_two,
             password=default_password)
 
         self.team1 = create_team(
@@ -431,7 +430,7 @@ class TeamMemberTestCase(TestCase):
         response_data = ResponseData()
         user3 = create_user(
             name='username3',
-            email='test3@qq.com',
+            email=defualt_email_three,
             password=default_password)
         self.assertRaises(Team.DoesNotExist, services.has_team,
                           user3, response_data)
@@ -463,7 +462,7 @@ class TeamMemberTestCase(TestCase):
         response_data = ResponseData()
         user3 = create_user(
             name='username3',
-            email='test3@qq.com',
+            email=defualt_email_three,
             password=default_password)
         self.assertRaises(PermissionDenied, services.belong_to_team,
                           user3.id, self.team1, response_data)
@@ -490,10 +489,7 @@ class TeamMemberTestCase(TestCase):
     def test_delete_member(self):
         user3 = create_user(
             name='username3',
-            email='test3@qq.com',
+            email=defualt_email_three,
             password=default_password)
         services.delete_member(user3)
         self.assertEqual(None, user3.team_id)
-
-
-
