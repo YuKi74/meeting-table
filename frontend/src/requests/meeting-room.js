@@ -10,7 +10,16 @@ const createMeetingRoom = function (mtname) {
 };
 
 createMeetingRoom.errors = [Errors.MISSING_PARAMETER, Errors.ERROR_INPUT];
+//获取视频通话token
+const getVideoToken = function (uuid) {
+    return request.get(`/team/video_token/${uuid}/`);
+};
 
+getVideoToken.errors = [
+    Errors.TEAM_NOT_EXIST,
+    Errors.RECORD_NOT_FOUND,
+    Errors.FORBIDDEN,
+];
 //获取团队内所有会议室信息
 const getMeetingRooms = function () {
     return request.get('/team/rooms/');
@@ -66,4 +75,5 @@ export {
     getMeetingRooms,
     getMeetingRoomFile,
     importOtherMeetingRoomFile,
+    getVideoToken,
 };

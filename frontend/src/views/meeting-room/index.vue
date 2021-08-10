@@ -15,11 +15,12 @@
 <script>
 import Board from '../../components/meeting-room/Board.vue';
 import { defaultErrorHandler } from '../../requests/errors';
-import { getMeetingRoomInfo } from '../../requests/meeting-room';
+import { getMeetingRoomInfo, getVideoToken } from '../../requests/meeting-room';
 import Connection from '../../connection';
 import MeetingRoomTop from '../../components/team/MeetingRoomTop.vue';
 import Video from '../../components/meeting-room/Video.vue';
 import { getUserinfo } from '../../requests/user';
+
 export default {
     components: {
         Board,
@@ -46,6 +47,10 @@ export default {
                 this.roomName = data.data.name;
             })
             .catch(defaultErrorHandler(getMeetingRoomInfo));
+        getVideoToken(this.$route.params.uuid).then((data) => {
+            console.log(data);
+            this.token = data.data;
+        });
     },
     methods: {},
 };
@@ -65,7 +70,7 @@ export default {
 }
 .video {
     position: absolute;
-    top: 50px;
+    top: 80px;
     right: 30px;
     z-index: 10;
 }

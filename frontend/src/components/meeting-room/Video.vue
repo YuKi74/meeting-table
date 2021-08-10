@@ -183,7 +183,7 @@ export default {
         getVol(audioTrack) {
             this.testVolume = audioTrack.getVolumeLevel() * HUNDRED;
         },
-        start: async function () {
+        start: async function (isOpen) {
             this.rtc.client = AgoraRTC.createClient({
                 mode: 'rtc',
                 codec: 'vp8',
@@ -192,8 +192,10 @@ export default {
                 await this.rtc.client.subscribe(user, mediaType);
                 if (mediaType === 'video') {
                     const remoteVideoTrack = user.videoTrack;
-                    this.users.append(user.uid);
-                    remoteVideoTrack.play(user.uid);
+                    this.users.push(user.uid.toString());
+                    setTimeout(() => {
+                        remoteVideoTrack.play(user.uid.toString());
+                    }, 0);
                 }
                 if (mediaType === 'audio') {
                     const remoteAudioTrack = user.audioTrack;
@@ -215,18 +217,25 @@ export default {
                 this.options.token,
                 this.userId
             );
-            await this.rtc.client.publish([
-                this.rtc.localAudioTrack,
-                this.rtc.localVideoTrack,
-            ]);
-            setTimeout(() => {
-                this.rtc.localAudioTrack.play();
-                this.rtc.localVideoTrack.play(this.userId);
-            }, 0);
+            if (isOpen) {
+                await this.rtc.client.publish([
+                    this.rtc.localAudioTrack,
+                    this.rtc.localVideoTrack,
+                ]);
+                setTimeout(() => {
+                    this.rtc.localVideoTrack.play(this.userId);
+                }, 0);
+            }
         },
         leave: async function () {
-            if (this.isOpenMicrophone) this.rtc.localAudioTrack.close();
-            if (this.isOpenCamera) this.rtc.localVideoTrack.close();
+            await this.rtc.client.unpublish();
+            if (this.isOpenMicrophone) {
+                this.rtc.localAudioTrack.close();
+            }
+            if (this.isOpenCamera) {
+                this.rtc.localVideoTrack.stop();
+                this.rtc.localVideoTrack.close();
+            }
             await this.rtc.client.leave();
             this.users.length = 0;
             notification.open({
@@ -252,10 +261,11 @@ export default {
             this.isCameraPop = false;
         },
         join: async function (isOpen) {
-            this.start();
+            await this.start(isOpen);
             if (isOpen === true) {
                 this.users.unshift(this.userId);
             } else {
+                this.rtc.localVideoTrack.stop();
                 this.rtc.localAudioTrack.close();
                 this.rtc.localVideoTrack.close();
             }
@@ -269,6 +279,8 @@ export default {
         changeCameraStatus: async function () {
             if (this.isOpenCamera === true) {
                 this.isOpenCamera = false;
+                await this.rtc.client.unpublish(this.rtc.localVideoTrack);
+                this.rtc.localVideoTrack.stop();
                 this.rtc.localVideoTrack.close();
                 const userIndex = this.users.indexOf(this.userId);
                 this.users = this.users
@@ -288,11 +300,13 @@ export default {
                 notification.open({
                     message: '您已开启视频',
                 });
+                await this.rtc.client.publish([this.rtc.localVideoTrack]);
             }
         },
         changeMicrophoneStatus: async function () {
             if (this.isOpenMicrophone === true) {
                 this.isOpenMicrophone = false;
+                await this.rtc.client.unpublish(this.rtc.localAudioTrack);
                 this.rtc.localAudioTrack.close();
                 notification.open({
                     message: '您已关闭音频',
@@ -301,14 +315,16 @@ export default {
                 this.isOpenMicrophone = true;
                 this.rtc.localAudioTrack =
                     await AgoraRTC.createMicrophoneAudioTrack();
-                this.rtc.localAudioTrack.play();
                 notification.open({
                     message: '您已开启音频',
                 });
+                await this.rtc.client.publish([this.rtc.localAudioTrack]);
             }
         },
-        close() {
+        close: async function () {
             this.isModal = false;
+            await this.rtc.client.unpublish();
+            this.rtc.localVideoTrack.stop();
             this.rtc.localAudioTrack.close();
             this.rtc.localVideoTrack.close();
             document.getElementById('pre-local-player').innerHTML = '';
