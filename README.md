@@ -22,7 +22,7 @@ docker-compose -f docker-compose-prod.yaml up -d
 ```
 docker-compose -f docker-compose-dev.yaml up -d
 ```
-然后查看容器的log，等待到容器输出`"环境初始化完成。"`为止，访问80端口即可访问。
+然后查看容器的log，等待到容器输出`"环境初始化完成。"`为止.
 
 **注意**
 

@@ -103,7 +103,7 @@
 
 <script>
 import AgoraRTC from 'agora-rtc-sdk-ng';
-import { Modal, Button, Popover, Progress, notification } from 'ant-design-vue';
+import { Modal, Button, Popover, Progress, message } from 'ant-design-vue';
 import { HUNDRED } from '../../constants/meeting-room';
 import Vue from 'vue';
 
@@ -241,8 +241,8 @@ export default {
             }
             await this.rtc.client.leave();
             this.users.length = 0;
-            notification.open({
-                message: '您已离开视频会议',
+            message.info({
+                content: '您已离开视频会议',
             });
             this.isStartVideo = false;
             this.isOpenCamera = false;
@@ -291,8 +291,8 @@ export default {
                     .slice(0, userIndex)
                     .concat(this.users.slice(userIndex + 1));
                 console.log(this.users);
-                notification.open({
-                    message: '您已关闭视频',
+                message.info({
+                    content: '您已关闭视频',
                 });
             } else {
                 this.isOpenCamera = true;
@@ -302,8 +302,8 @@ export default {
                 setTimeout(() => {
                     this.rtc.localVideoTrack.play('' + this.userId);
                 }, 0);
-                notification.open({
-                    message: '您已开启视频',
+                message.info({
+                    content: '您已开启视频',
                 });
                 await this.rtc.client.publish(this.rtc.localVideoTrack);
             }
@@ -313,15 +313,15 @@ export default {
                 this.isOpenMicrophone = false;
                 await this.rtc.client.unpublish([this.rtc.localAudioTrack]);
                 this.rtc.localAudioTrack.close();
-                notification.open({
-                    message: '您已关闭音频',
+                message.info({
+                    content: '您已关闭音频',
                 });
             } else {
                 this.isOpenMicrophone = true;
                 this.rtc.localAudioTrack =
                     await AgoraRTC.createMicrophoneAudioTrack();
-                notification.open({
-                    message: '您已开启音频',
+                message.info({
+                    content: '您已开启音频',
                 });
                 await this.rtc.client.publish([this.rtc.localAudioTrack]);
             }
