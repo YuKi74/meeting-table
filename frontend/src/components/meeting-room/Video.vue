@@ -1,6 +1,12 @@
 <template>
     <div>
-        <modal title="音视频测试" :visible="isModal" @cancel="close">
+        <modal
+            title="音视频测试"
+            :visible="isModal"
+            @cancel="close"
+            :maskClosable="isMaskClosable"
+            :closable="isClosable"
+        >
             <div class="device-check-container">
                 <h2>microphone</h2>
                 <p>请发出声音测试音频是否正常</p>
@@ -143,10 +149,14 @@ export default {
             isShowInformation: false,
             interval: null,
             isStartVideo: false,
+            isMaskClosable: false,
+            isClosable: false,
         };
     },
     methods: {
         startTest() {
+            // eslint-disable-next-line no-magic-numbers
+            AgoraRTC.setLogLevel(3);
             this.isModal = true;
             AgoraRTC.getDevices()
                 .then((devices) => {
@@ -212,14 +222,22 @@ export default {
                         .slice(0, userIndex)
                         .concat(this.users.slice(userIndex + 1));
                 }
-                // audio不用处理？
             });
-            await this.rtc.client.join(
-                this.options.appId,
-                this.options.channel,
-                this.options.token,
-                this.userId
-            );
+            try {
+                await this.rtc.client.join(
+                    this.options.appId,
+                    this.options.channel,
+                    this.options.token,
+                    this.userId
+                );
+            } catch {
+                message.info({
+                    content: '操作过于频繁，请稍后再试',
+                });
+                this.rtc.client.off('user-published');
+                this.rtc.client.off('user-unpublished');
+                return false;
+            }
             if (isOpen) {
                 await this.rtc.client.publish([
                     this.rtc.localAudioTrack,
@@ -229,6 +247,7 @@ export default {
                     this.rtc.localVideoTrack.play('' + this.userId);
                 }, 0);
             }
+            return true;
         },
         leave: async function () {
             await this.rtc.client.unpublish();
@@ -264,7 +283,15 @@ export default {
             this.isCameraPop = false;
         },
         join: async function (isOpen) {
-            await this.start(isOpen);
+            this.isOpenCamera = isOpen;
+            this.isOpenMicrophone = isOpen;
+            this.isStartVideo = true;
+            this.isModal = false;
+            clearInterval(this.interval);
+            document.getElementById('pre-local-player').innerHTML = '';
+            if (!(await this.start(isOpen))) {
+                return;
+            }
             if (isOpen === true) {
                 this.users.unshift('' + this.userId);
             } else {
@@ -272,12 +299,6 @@ export default {
                 this.rtc.localAudioTrack.close();
                 this.rtc.localVideoTrack.close();
             }
-            this.isOpenCamera = isOpen;
-            this.isOpenMicrophone = isOpen;
-            this.isStartVideo = true;
-            this.isModal = false;
-            clearInterval(this.interval);
-            document.getElementById('pre-local-player').innerHTML = '';
         },
         changeCameraStatus: async function () {
             if (this.isOpenCamera === true) {
@@ -286,11 +307,9 @@ export default {
                 this.rtc.localVideoTrack.stop();
                 this.rtc.localVideoTrack.close();
                 const userIndex = this.users.indexOf('' + this.userId);
-                console.log(userIndex);
                 this.users = this.users
                     .slice(0, userIndex)
                     .concat(this.users.slice(userIndex + 1));
-                console.log(this.users);
                 message.info({
                     content: '您已关闭视频',
                 });
