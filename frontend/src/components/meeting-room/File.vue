@@ -1,20 +1,35 @@
 <template>
     <div class="container">
-        <a-button-group>
-            <a-button type="primary" @click="previousPage"
-                ><a-icon type="left" />上一页</a-button
-            >
-            <a-button type="primary" @click="nextPage"
-                >下一页<a-icon type="right"
+        <div
+            class="flex main-axis-center"
+            v-show="!isChooseButtonShow && !isChooseRoom"
+        >
+            <a-button type="link" @click="previousPage" class="page-button"
+                ><a-icon type="left"
             /></a-button>
-        </a-button-group>
-        <div class="page-num">{{ pageNum }}/{{ pageTotalNum }}</div>
-        <import-file @importFile="getUrl" v-if="isImport"> </import-file>
+            <div class="page-num">{{ pageNum }}/{{ pageTotalNum }}</div>
+            <a-button type="link" @click="nextPage" class="page-button"
+                ><a-icon type="right"
+            /></a-button>
+        </div>
+        <a-button
+            @click="showInput()"
+            v-show="isChooseButtonShow"
+            class="button"
+            >选择文件</a-button
+        >
+        <import-file
+            @importFile="getUrl"
+            v-if="isChooseRoom"
+            class="import-file"
+        >
+        </import-file>
         <pdf
             :page="pageNum"
             :src="url"
             @progress="loadedRatio = $event"
             @num-pages="pageTotalNum = $event"
+            v-show="!isChooseButtonShow && !isChooseRoom"
         ></pdf>
         <input
             v-show="false"
@@ -27,16 +42,16 @@
 </template>
 
 <script>
-import { Button, Icon } from 'ant-design-vue';
+import { Button, Icon, message } from 'ant-design-vue';
 import { uploadFile } from '../../requests/team';
 import { defaultErrorHandler } from '../../requests/errors';
 import ImportFile from './ImportFileView.vue';
+import { FILE_SIZE_LIMIT } from '../../constants/meeting-room';
 import Pdf from 'vue-pdf';
 export default {
     props: ['id', 'connection', 'content'],
     components: {
         AButton: Button,
-        AButtonGroup: Button,
         AIcon: Icon,
         ImportFile,
         Pdf,
@@ -47,16 +62,17 @@ export default {
             pageNum: 1,
             pageTotalNum: 3,
             loadedRatio: 0,
-            isImport: false,
+            isChooseButtonShow: false,
+            isChooseRoom: false,
         };
     },
     mounted: function () {
         let name = this.id.slice(0, this.id.indexOf('_'));
         if (typeof this.content !== 'string') {
             if (name === '文件') {
-                this.$refs.upload.click();
+                this.isChooseButtonShow = true;
             } else if (name === '从其他会议室导入文件') {
-                this.isImport = true;
+                this.isChooseRoom = true;
             }
         } else {
             this.url = this.content;
@@ -64,8 +80,8 @@ export default {
     },
     methods: {
         getUrl(name) {
+            this.isChooseRoom = false;
             this.url = '/api/files/' + name;
-            this.isImport = false;
             let data = {
                 x: this.content.x,
                 y: this.content.y,
@@ -87,8 +103,18 @@ export default {
             page = page < this.pageTotalNum ? page + 1 : 1;
             this.pageNum = page;
         },
+        showInput() {
+            this.$refs.upload.click();
+        },
         getInput() {
             const file = this.$refs.upload.files[0];
+            if (file.size > FILE_SIZE_LIMIT) {
+                message.info({
+                    content: '上传文件过大',
+                });
+                return;
+            }
+            this.isChooseButtonShow = false;
             uploadFile(file, this.$route.params.uuid)
                 .then((data) => {
                     this.url = '/api/files/' + data.data;
@@ -117,7 +143,16 @@ export default {
 .page-num {
     text-align: center;
 }
+.button + span {
+    overflow: auto;
+}
 .ant-btn-primary {
     border-radius: 0;
+}
+.page-button {
+    color: var(--black);
+}
+.import-file {
+    overflow: auto;
 }
 </style>
