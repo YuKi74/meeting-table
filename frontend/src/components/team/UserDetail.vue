@@ -179,6 +179,7 @@ export default {
             updateUser(this.form.name, this.form.password)
                 .then(() => {
                     Message.success('修改成功');
+                    this.showList = JSON.parse(JSON.stringify(this.form));
                     this.visible = false;
                 })
                 .catch(defaultErrorHandler(updateUser));
