@@ -3,7 +3,7 @@
         <popover placement="bottomLeft" arrow-point-at-center>
             <div class="content flex flex-col" slot="content">
                 <div class="title">
-                    <p class="form.name">{{ data.name }}</p>
+                    <p class="form-name">{{ data.name }}</p>
                     <a-button
                         class="edit"
                         icon="edit"
@@ -53,7 +53,9 @@
                         </div>
                     </modal>
                 </div>
-                <p class="self-cross-axis-start">{{ form.introduction }}</p>
+                <p class="self-cross-axis-start introduction">
+                    {{ form.introduction }}
+                </p>
                 <div class="share-and-dissolve">
                     <a-button type="danger" @click="success">分享</a-button>
                     <a-button
@@ -118,6 +120,7 @@ export default {
     },
     data: function () {
         return {
+            tempStorage: '',
             visible: false,
             confirmLoading: false,
             labelCol: { span: 4 },
@@ -163,7 +166,7 @@ export default {
         getTeaminfo(this.uuid)
             .then((data) => {
                 this.data = data.data;
-                this.form = data.data;
+                this.form = JSON.parse(JSON.stringify(data.data));
             })
             .catch(defaultErrorHandler(getTeaminfo));
     },
@@ -218,17 +221,20 @@ export default {
         },
         showModal() {
             this.visible = true;
+            this.tempStorage = JSON.parse(JSON.stringify(this.form));
         },
         handleOk() {
             updateTeam(this.form.name, this.form.introduction)
                 .then(() => {
                     Message.success('修改成功');
                     this.visible = false;
+                    this.data = JSON.parse(JSON.stringify(this.form));
                 })
                 .catch(defaultErrorHandler(updateTeam));
         },
         handleCancel() {
             this.visible = false;
+            this.form = this.tempStorage;
         },
     },
 };
@@ -245,6 +251,14 @@ export default {
     justify-content: space-between;
     align-items: flex-start;
     width: 250px;
+}
+.form-name {
+    width: 220px;
+    word-wrap: break-word;
+}
+.introduction {
+    width: 245px;
+    word-wrap: break-word;
 }
 .edit {
     flex-shrink: 0;

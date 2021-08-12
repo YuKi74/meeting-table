@@ -103,11 +103,13 @@ export default {
     margin-bottom: 10px;
     width: 100%;
     text-align: center;
+    word-wrap: break-word;
 }
 .content {
     font-size: 16px;
     width: 100%;
     text-align: center;
+    word-wrap: break-word;
 }
 .icon {
     color: #ffcc5f;
