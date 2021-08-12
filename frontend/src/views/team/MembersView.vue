@@ -13,6 +13,7 @@
                             type="primary"
                             class="apply-list-button"
                             shape="circle"
+                            @mouseover="refresh"
                         />
                     </popover>
                 </div>
@@ -71,7 +72,7 @@ export default {
             .catch(defaultErrorHandler(getTeaminfo));
     },
     methods: {
-        refreshList() {
+        refresh() {
             this.bus.$emit('refresh');
         },
     },
