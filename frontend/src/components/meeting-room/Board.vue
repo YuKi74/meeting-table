@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { notification, Button } from 'ant-design-vue';
 import Board from '../../paint-board';
 import Toolbar from './Toolbar.vue';
 import { getUserinfo } from '../../requests/user';
@@ -36,6 +37,9 @@ import {
     getComponent,
     restoreComponent,
 } from '../../components-utils';
+import Vue from 'vue';
+Vue.use(Button);
+
 export default {
     props: ['connection'],
     components: {
@@ -50,11 +54,13 @@ export default {
             selectedComponent: null,
             moved: false,
             components: {},
+            userID: 0,
         };
     },
     mounted: function () {
         getUserinfo()
             .then((user) => {
+                this.userID = user.data.id;
                 this.board = new Board(
                     this.$refs.board,
                     user.data.id,
@@ -80,6 +86,16 @@ export default {
                         return data.Type === 'component_delete';
                     },
                     this.handleComponentDelete,
+                    this
+                );
+                this.connection.addMessageHandler(
+                    (data) => {
+                        return (
+                            data.Type === 'view_share' &&
+                            data.Data.id !== this.userID
+                        );
+                    },
+                    this.onShareRequest,
                     this
                 );
                 this.connection.start();
@@ -243,6 +259,32 @@ export default {
             this.$delete(this.components, data.Target);
             this.selectedComponent = null;
             this.moved = false;
+        },
+        onShareRequest: function (data) {
+            const key = '' + new Date().getTime();
+            notification.info({
+                key: key,
+                message: data.Data.name + '发起了一个共享视角请求。',
+                btn: (h) => {
+                    return h(
+                        'a-button',
+                        {
+                            props: {
+                                type: 'primary',
+                                size: 'small',
+                            },
+                            on: {
+                                click: () => {
+                                    notification.close(key);
+                                    this.board.stage.position(data.Data.pos);
+                                    this.onBoardMove();
+                                },
+                            },
+                        },
+                        '同意'
+                    );
+                },
+            });
         },
     },
 };

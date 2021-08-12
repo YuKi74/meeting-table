@@ -1,7 +1,16 @@
 <template>
     <div>
-        <meeting-room-top class="header" :name="roomName" />
-        <board class="board" v-if="connection" :connection="connection"></board>
+        <meeting-room-top
+            class="header"
+            :name="roomName"
+            @share-view="shareView"
+        />
+        <board
+            class="board"
+            v-if="connection"
+            :connection="connection"
+            ref="board"
+        />
         <mt-video
             v-if="userId && token"
             class="video"
@@ -13,6 +22,7 @@
 </template>
 
 <script>
+import { message } from 'ant-design-vue';
 import Board from '../../components/meeting-room/Board.vue';
 import { defaultErrorHandler } from '../../requests/errors';
 import { getMeetingRoomInfo, getVideoToken } from '../../requests/meeting-room';
@@ -33,12 +43,14 @@ export default {
             roomName: '',
             userId: null,
             token: null,
+            userName: '',
         };
     },
     mounted: function () {
         getUserinfo()
             .then((data) => {
                 this.userId = data.data.id;
+                this.userName = data.data.name;
             })
             .catch(defaultErrorHandler(getUserinfo));
         getMeetingRoomInfo(this.$route.params.uuid)
@@ -51,7 +63,21 @@ export default {
             this.token = data.data;
         });
     },
-    methods: {},
+    methods: {
+        shareView: function () {
+            const position = this.$refs.board.board.stage.getPosition();
+            this.connection.send({
+                Type: 'view_share',
+                Target: 'board',
+                Data: {
+                    id: this.userId,
+                    name: this.userName,
+                    pos: position,
+                },
+            });
+            message.success('发送共享视角请求成功');
+        },
+    },
 };
 </script>
 

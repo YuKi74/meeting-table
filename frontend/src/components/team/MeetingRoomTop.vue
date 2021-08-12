@@ -7,6 +7,14 @@
         <div class="header-button flex">
             <a-button
                 class="invite btn"
+                icon="eye"
+                type="primary"
+                @click="$emit('share-view')"
+            >
+                共享视角
+            </a-button>
+            <a-button
+                class="invite btn"
                 icon="user-add"
                 type="primary"
                 @click="success"
@@ -65,6 +73,7 @@ export default {
     height: 60px;
     width: 100%;
     background-color: var(--white);
+    padding-right: 5px;
 }
 .header-theme {
     margin-left: 10px;
