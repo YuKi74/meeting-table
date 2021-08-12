@@ -26,13 +26,17 @@ const onMouseDown = function (evt, board) {
     }
 };
 
-const onMouseMove = function (board) {
+const onMouseMove = function (evt, board) {
     board.isValid = true;
     if (!board.isDrawing) {
         return;
     }
-    board.x = board.getStagePosition().x;
-    board.y = board.getStagePosition().y;
+    const clientPosition = {
+        x: evt.clientX,
+        y: evt.clientY,
+    };
+    board.x = board.getStagePosition(clientPosition).x;
+    board.y = board.getStagePosition(clientPosition).y;
     switch (board.tool) {
         case '画笔':
             board.updatePen();

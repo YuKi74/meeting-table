@@ -70,11 +70,11 @@ const initStageEventListener = function (board) {
         onMouseDown(evt, board);
     });
 
-    stage.on('mousemove', function () {
-        onMouseMove(board);
+    window.addEventListener('mousemove', function (evt) {
+        onMouseMove(evt, board);
     });
 
-    stage.on('mouseup', function () {
+    window.addEventListener('mouseup', function () {
         onMouseUp(board);
     });
 
