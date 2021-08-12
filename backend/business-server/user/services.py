@@ -20,6 +20,10 @@ def get_information(id, response_data):
 
 
 def register(email, name, password, response_data: ResponseData):
+    if User.objects.filter(email=email):
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        response_data.data = '当前邮箱已被占用'
+        raise ValidationError()
     user_serializer = UserSerializer(data={
         'name': name,
         'email': email,
@@ -34,7 +38,6 @@ def register(email, name, password, response_data: ResponseData):
         response_data.data = {'token': token}
     else:
         response_data.mt_status = MTStatus.ERROR_INPUT
-        response_data.data = '当前邮箱已被占用'
         raise ValidationError()
 
 
