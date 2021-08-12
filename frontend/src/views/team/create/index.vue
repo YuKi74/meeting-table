@@ -72,9 +72,10 @@ import {
     TEAM_NAME_MIN_LENGTH,
     TEAM_NAME_MAX_LENGTH,
     TEAM_DESCRIPTION_MAX_LENGTH,
+    TEAM_UUID_LENGTH,
 } from '../../../constants/team';
-import { createTeam } from '../../../requests/team';
-import { defaultErrorHandler } from '../../../requests/errors';
+import { createTeam, getTeaminfo } from '../../../requests/team';
+import Errors, { defaultErrorHandler } from '../../../requests/errors';
 import router from '../../../router';
 import UserDetail from '../../../components/team/UserDetail.vue';
 
@@ -91,7 +92,7 @@ export default {
     data() {
         let handleUrl = (rule, value, callback) => {
             if (!this.isTrueUrl(value)) {
-                callback(new Error('请输入正确的链接'));
+                callback(new Error('请输入正确的团队链接'));
             } else {
                 callback();
             }
@@ -149,12 +150,21 @@ export default {
     },
     methods: {
         isTrueUrl(value) {
-            let hostname = `^${window.location.hostname}`;
+            let hostname = `^${window.location.hostname}/team/`;
             let hostnameReg = RegExp(hostname);
             if (value.startsWith('http://')) {
                 let hostnameIndex = value.indexOf('://') + '://'.length;
                 let url = value.slice(hostnameIndex);
-                return hostnameReg.test(url);
+                if (hostnameReg.test(url)) {
+                    const uuid = this.form.link.slice(
+                        this.form.link.indexOf('/team/') + '/team/'.length,
+                        this.form.link.length
+                    );
+                    if (uuid.length < TEAM_UUID_LENGTH) {
+                        return false;
+                    }
+                    return true;
+                }
             } else return hostnameReg.test(value);
         },
         showModal() {
@@ -168,11 +178,21 @@ export default {
         onSubmit() {
             this.$refs.ruleForm.validate((valid) => {
                 if (valid) {
-                    const url = this.form.link.slice(
-                        this.form.link.indexOf('/team/'),
+                    const uuid = this.form.link.slice(
+                        this.form.link.indexOf('/team/') + '/team/'.length,
                         this.form.link.length
                     );
-                    this.$router.push(url);
+                    getTeaminfo(uuid)
+                        .then(() => {
+                            this.$router.push('/team/' + uuid);
+                        })
+                        .catch((data) => {
+                            if (data.error === Errors.ERROR_INPUT) {
+                                Message.error('请输入正确的团队链接');
+                            } else {
+                                defaultErrorHandler(getTeaminfo)(data);
+                            }
+                        });
                 }
             });
         },
