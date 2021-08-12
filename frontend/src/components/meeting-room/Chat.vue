@@ -115,12 +115,7 @@ export default {
         },
         receive(data) {
             this.isPop = true;
-            if (data.Data.id === this.userId) {
-                this.commitList.shift();
-                this.popContent = '消息发送成功';
-            } else {
-                this.popContent = '您有新的消息';
-            }
+            this.setPopContent(data.Data.id === this.userId);
             this.messages.push(data.Data);
             setTimeout(() => {
                 this.$refs.msgboard.scrollTop =
@@ -129,6 +124,14 @@ export default {
             setTimeout(() => {
                 this.isPop = false;
             }, TIME_INTERVAL);
+        },
+        setPopContent(isOwn) {
+            if (isOwn) {
+                this.commitList.shift();
+                this.popContent = '消息发送成功';
+            } else {
+                this.popContent = '您有新的消息';
+            }
         },
     },
 };

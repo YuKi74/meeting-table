@@ -71,7 +71,7 @@ export default {
             this.createOperation(this.lastEvt);
         },
         getClipboardData: function () {
-            const clipboard = window.clipboardData;
+            const clipboard = event.clipboardData || window.clipboardData;
             this.clipboardData = clipboard.getData('text');
         },
         getChange: function (evt) {
@@ -86,61 +86,72 @@ export default {
             this.lastLength = this.textarea.value.length;
             this.lastValue = this.textarea.value;
         },
-        createOperation: function (evt) {
-            const textarea = this.textarea;
+        getOps: function (value, location, length, type, data) {
             const ops = [];
-            const location = textarea.selectionStart;
-            const length = textarea.value.length;
             let start; // 非负数
             let insert; // 字符串
             let del; // 非正数
             let end; // 非负数
 
-            if (evt.inputType === 'insertText') {
-                insert = evt.data ? evt.data : '\n';
+            if (type === 'insertText') {
+                insert = data ? data : '\n';
                 del = length - this.lastLength - insert.length;
                 start = location - insert.length;
                 end = length - location;
-            } else if (evt.inputType.startsWith('delete')) {
+            } else if (type.startsWith('delete')) {
                 insert = '';
                 del = length - this.lastLength;
                 start = location;
                 end = length - location;
-            } else if (evt.inputType === 'insertFromPaste') {
+            } else if (type === 'insertFromPaste') {
                 insert = this.clipboardData;
                 if (insert === null || insert === '') {
                     this.textarea.value = this.lastValue;
-                    return;
+                    return null;
                 }
                 del = length - this.lastLength - insert.length;
                 start = location - insert.length;
                 end = length - location;
-            } else if (evt.inputType === 'insertLineBreak') {
+            } else if (type === 'insertLineBreak') {
                 insert = '\n';
                 del = length - this.lastLength - insert.length;
                 start = location - insert.length;
                 end = length - location;
             } else if (
-                evt.inputType === 'insertCompositionText' ||
-                evt.inputType === 'insertFromComposition'
+                type === 'insertCompositionText' ||
+                type === 'insertFromComposition'
             ) {
-                insert = evt.data;
+                insert = data;
                 if (insert === null || insert === '') {
                     this.textarea.value = this.lastValue;
-                    return;
+                    return null;
                 }
                 del = length - this.lastLength - insert.length;
                 start = location - insert.length;
                 end = length - location;
             } else {
                 this.textarea.value = this.lastValue;
-                return;
+                return null;
             }
             ops.push(start, insert, del, end);
             this.lastLength = length;
-            this.lastValue = this.textarea.value;
-            const operation = regular(ops);
-            this.textHandler.sendBuffer.push(operation);
+            this.lastValue = value;
+
+            return ops;
+        },
+        createOperation: function (evt) {
+            const textarea = this.textarea;
+            const ops = this.getOps(
+                this.textarea.value,
+                textarea.selectionStart,
+                textarea.value.length,
+                evt.inputType,
+                evt.data
+            );
+            if (ops) {
+                const operation = regular(ops);
+                this.textHandler.sendBuffer.push(operation);
+            }
         },
         applyChange: function (operation) {
             const oldOffset = this.textarea.selectionStart;

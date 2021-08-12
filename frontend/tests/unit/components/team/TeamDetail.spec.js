@@ -1,4 +1,4 @@
-import TeamDetail from '../../src/components/team/TeamDetail';
+import TeamDetail from '../../../../src/components/team/TeamDetail';
 import { shallowMount } from '@vue/test-utils';
 
 describe('TeamDetail.vue', () => {

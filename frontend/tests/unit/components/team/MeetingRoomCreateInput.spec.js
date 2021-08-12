@@ -1,4 +1,4 @@
-import MeetingRoomCreateInput from '../../src/components/team/MeetingRoomCreateInput';
+import MeetingRoomCreateInput from '../../../../src/components/team/MeetingRoomCreateInput';
 import { shallowMount } from '@vue/test-utils';
 
 describe('MeetingRoomCreateInput.vue', () => {
