@@ -38,7 +38,7 @@ import { List, Avatar, Modal, Button, Message } from 'ant-design-vue';
 import Vue from 'vue';
 import { getMembers, removeMember } from '../../requests/team';
 import { getUserinfo } from '../../requests/user';
-import { defaultErrorHandler } from '../../requests/errors';
+import Errors, { defaultErrorHandler } from '../../requests/errors';
 Vue.use(Modal);
 
 export default {
@@ -91,7 +91,12 @@ export default {
                             Message.success('该成员已移除');
                             that.refreshMembers();
                         })
-                        .catch(defaultErrorHandler(removeMember));
+                        .catch((data) => {
+                            defaultErrorHandler(removeMember)(data);
+                            if (data.error === Errors.ERROR_INPUT) {
+                                that.refreshMembers();
+                            }
+                        });
                 },
             });
         },
