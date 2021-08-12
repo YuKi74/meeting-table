@@ -248,6 +248,7 @@ class TeamInformationView(MTView):
         @apiSuccess {String[]} team_information 团队信息
 
         @apiError TEAM_NOT_EXIST
+        @apiError ERROR_INPUT
         """
 
         response_data = ResponseData()

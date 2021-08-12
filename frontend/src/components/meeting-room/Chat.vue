@@ -71,7 +71,6 @@ export default {
     },
     mounted: function () {
         this.messages = JSON.parse(JSON.stringify(this.content));
-        console.log(this.id);
         getUserinfo()
             .then((user) => {
                 this.userId = user.data.id;

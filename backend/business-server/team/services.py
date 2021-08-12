@@ -51,6 +51,9 @@ def get_team_detail(user, uuid, response_data):
     except Team.DoesNotExist as err:
         response_data.mt_status = MTStatus.TEAM_NOT_EXIST
         raise Team.DoesNotExist from err
+    except ValidationError as err:
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        raise ValidationError from err
     response_data.data = TeamInformationSerializer(team).data
     response_data.data['is_creator'] = team.creator_id == user.id
 
@@ -134,6 +137,9 @@ def post_application(user_id, uuid, response_data: ResponseData):
     except Team.DoesNotExist as err:
         response_data.mt_status = MTStatus.TEAM_NOT_EXIST
         raise Team.DoesNotExist() from err
+    except ValidationError as err:
+        response_data.mt_status = MTStatus.ERROR_INPUT
+        raise ValidationError from err
     if Application.objects.filter(user=user_id, team=team.id, status=Application.Status.PENDING):
         response_data.data = "当前用户已提交申请"
         response_data.mt_status = MTStatus.ERROR_INPUT

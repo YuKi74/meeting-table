@@ -39,7 +39,7 @@ const getTeaminfo = function (uuid) {
     return request.get(`/team/${uuid}/`);
 };
 
-getTeaminfo.errors = [Errors.TEAM_NOT_EXIST];
+getTeaminfo.errors = [Errors.TEAM_NOT_EXIST, Errors.ERROR_INPUT];
 
 //编辑团队信息
 const updateTeam = function (name, description) {
