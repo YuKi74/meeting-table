@@ -5,7 +5,7 @@
         class="board"
     >
         <a-list-item slot="renderItem" slot-scope="item, index">
-            <div class="box shadow" v-if="item === roomAddCard">
+            <div class="box" v-if="item === roomAddCard">
                 <div class="create flex main-axis-center" @click="addConfirm">
                     <a-icon
                         type="plus-circle"
@@ -15,7 +15,7 @@
                     />
                 </div>
             </div>
-            <div class="box shadow" v-else>
+            <div class="box" v-else>
                 <a-card
                     :title="item.name"
                     :number="index"
@@ -149,7 +149,6 @@ export default {
     height: 250px;
     background-color: var(--primary-color-2);
     border-radius: 8px;
-    box-shadow: 0 3px 20px rgb(0 0 0 / 20%);
     max-width: 500px;
 }
 .create:hover {
@@ -180,7 +179,6 @@ export default {
     height: 250px;
     background-color: var(--white);
     border-radius: 8px;
-    box-shadow: 0 3px 20px rgb(0 0 0 / 20%);
     cursor: pointer;
     padding: 0;
     max-width: 500px;

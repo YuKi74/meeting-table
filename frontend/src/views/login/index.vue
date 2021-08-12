@@ -134,10 +134,8 @@ export default {
 .blank-space {
     height: 20px;
 }
-div {
-    text-align: center;
-}
 .tip {
+    text-align: center;
     font-size: 24px;
     justify-content: center;
     margin-bottom: 30px;

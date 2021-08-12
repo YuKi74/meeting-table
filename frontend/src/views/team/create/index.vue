@@ -55,7 +55,7 @@
                 </form-model-item>
                 <form-model-item prop="description">
                     <a-input
-                        class="input description"
+                        class="input"
                         v-model="teamForm.description"
                         type="textarea"
                         placeholder="请输入团队简介"
@@ -268,5 +268,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.input {
+    width: 472px;
 }
 </style>

@@ -164,6 +164,7 @@ export default {
     width: 40%;
 }
 .right {
+    padding-bottom: 90px;
     width: 60%;
     display: flex;
     justify-content: center;
@@ -187,8 +188,5 @@ export default {
     height: 70px;
     width: 100%;
     display: flex;
-}
-.header:hover {
-    background-color: var(--secondary-color-2);
 }
 </style>

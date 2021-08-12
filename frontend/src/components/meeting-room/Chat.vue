@@ -44,7 +44,12 @@
             </div>
         </div>
         <p v-if="isPop">{{ popContent }}</p>
-        <a-textarea :rows="1" v-model="value" @pressEnter="enter" />
+        <a-textarea
+            :rows="1"
+            v-model="value"
+            @pressEnter="enter"
+            class="input"
+        />
     </div>
 </template>
 <script>
@@ -145,7 +150,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 5px solid var(--secondary-color-1);
     background-color: var(--white);
 }
 .msgboard {
@@ -207,7 +211,7 @@ export default {
     border-width: 10px;
     border-style: solid;
     right: -20px;
-    border-color: transparent transparent transparent var(--secondary-color-2);
+    border-color: transparent;
 }
 .title {
     white-space: nowrap;
@@ -217,5 +221,8 @@ export default {
     font-size: larger;
     border-bottom: 5px solid var(--secondary-color-1);
     color: var(--black);
+}
+.input {
+    background-color: var(--white);
 }
 </style>

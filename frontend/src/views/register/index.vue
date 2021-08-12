@@ -3,13 +3,8 @@
         <card :bordered="true" class="card" :headStyle="headStyle">
             <div class="flex reg">注册</div>
             <div class="flex main-axis-center">
-                <register-form
-                    :rules="rules"
-                    :model="ruleForm"
-                    ref="ruleForm"
-                    :hideRequiredMark="true"
-                >
-                    <register-form-item class="input-box" prop="email">
+                <register-form :rules="rules" :model="ruleForm" ref="ruleForm">
+                    <register-form-item prop="email">
                         <register-input
                             type="email"
                             placeholder="请输入邮箱"
@@ -17,14 +12,14 @@
                             v-model="ruleForm.email"
                         />
                     </register-form-item>
-                    <register-form-item class="input-box" prop="userName">
+                    <register-form-item prop="userName">
                         <register-input
                             placeholder="请输入用户名"
                             class="input"
                             v-model="ruleForm.userName"
                         />
                     </register-form-item>
-                    <register-form-item class="input-box" prop="password">
+                    <register-form-item prop="password">
                         <register-input
                             type="password"
                             :placeholder="passwordtext"
@@ -32,10 +27,7 @@
                             v-model="ruleForm.password"
                         />
                     </register-form-item>
-                    <register-form-item
-                        class="input-box"
-                        prop="confirmPassword"
-                    >
+                    <register-form-item prop="confirmPassword">
                         <register-input
                             type="password"
                             placeholder="请确定密码"
@@ -43,16 +35,7 @@
                             v-model="ruleForm.confirmPassword"
                         />
                     </register-form-item>
-                    <register-form-item
-                        class="flex main-axis-around button-box"
-                    >
-                        <register-button
-                            class="button"
-                            @click="resetForm"
-                            type="danger"
-                        >
-                            重置
-                        </register-button>
+                    <div class="flex main-axis-around button-box">
                         <register-button
                             class="button"
                             @click="submitForm"
@@ -60,7 +43,14 @@
                         >
                             提交
                         </register-button>
-                    </register-form-item>
+                        <register-button
+                            class="button"
+                            @click="resetForm"
+                            type="danger"
+                        >
+                            重置
+                        </register-button>
+                    </div>
                     <register-form-item>
                         <router-link to="/login" class="linkto">
                             已有账号？点击这里登录
@@ -190,10 +180,6 @@ export default {
 </script>
 
 <style scoped>
-* {
-    padding: 0;
-    margin: 0;
-}
 .reg {
     font-size: 24px;
     justify-content: center;
@@ -206,13 +192,10 @@ export default {
     background-color: var(--background);
 }
 .card {
-    padding: 40px 64px 40px;
+    padding-top: 30px;
     width: 500px;
     background-color: var(--white);
     border-radius: var(--border-radius);
-}
-.input-box {
-    margin: 20px 10px;
 }
 .input {
     width: 360px;
@@ -221,7 +204,8 @@ export default {
 }
 
 .button-box {
-    display: flex;
+    width: 100%;
+    margin: 0;
 }
 .button {
     width: 100px;

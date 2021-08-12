@@ -170,5 +170,6 @@ export default {
     height: 100%;
     resize: none;
     border: none;
+    background-color: var(--white);
 }
 </style>

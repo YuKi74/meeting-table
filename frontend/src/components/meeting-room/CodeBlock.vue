@@ -143,5 +143,6 @@ export default {
 <style>
 .top {
     background-color: var(--white);
+    margin-left: 10px;
 }
 </style>

@@ -70,7 +70,7 @@ export default {
 .video {
     position: absolute;
     top: 80px;
-    right: 30px;
+    right: 10px;
     z-index: 10;
 }
 </style>

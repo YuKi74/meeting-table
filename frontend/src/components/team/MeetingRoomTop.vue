@@ -67,7 +67,7 @@ export default {
     background-color: var(--white);
 }
 .header-theme {
-    margin-left: 20px;
+    margin-left: 10px;
 }
 .info {
     padding-top: 4.5px;
