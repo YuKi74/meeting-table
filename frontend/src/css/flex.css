@@ -1,0 +1,77 @@
+/* 总超集 */
+.flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+/* 换行 */
+.flex-warp {
+    flex-wrap: wrap;
+}
+
+/* 不换行 */
+.flex-nowarp {
+    flex-wrap: nowrap;
+}
+
+/* 垂直方向 */
+.flex-col {
+    flex-direction: column;
+}
+
+/* 主轴起点对齐 */
+.main-axis-start {
+    justify-content: flex-start;
+}
+
+/* 主轴居中对齐 */
+.main-axis-center {
+    justify-content: center;
+}
+
+/* 主轴终点对齐 */
+.main-axis-end {
+    justify-content: end;
+}
+
+/* 主轴两端对齐 */
+.main-axis-between {
+    justify-content: space-between;
+}
+
+/* 主轴等间距对齐 */
+.main-axis-around {
+    justify-content: space-around;
+}
+
+/* 交叉轴起点对齐 */
+.cross-axis-start {
+    align-items: flex-start;
+}
+
+/* 交叉轴居中对齐 */
+.cross-axis-center {
+    align-items: center;
+}
+
+/* 交叉轴终点对齐 */
+.cross-axis-end {
+    align-items: flex-end;
+}
+
+/* 交叉轴基线对齐 */
+.cross-axis-baseline {
+    align-items: baseline;
+}
+
+/* 个体交叉轴起点对齐 */
+.self-cross-axis-start{
+    align-self: flex-start;
+}
+
+/* 个体交叉轴终点对齐 */
+.self-cross-axis-end{
+    align-self: flex-end;
+}
+

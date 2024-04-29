@@ -1,0 +1,7 @@
+@import url(variables.css);
+@import url(flex.css);
+@import url(base.css);
+
+body {
+    margin: 0;
+}

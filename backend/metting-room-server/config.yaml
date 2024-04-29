@@ -1,0 +1,28 @@
+AppName: Meeting Table
+version: 0.1.0
+
+log:
+  path: "/var/log/mt/meeting-room-server"
+  console: true
+
+mysql:
+  username: root
+  password: 123
+  addr: 127.0.0.1:3306
+  database: mt
+  config: charset=utf8mb4&parseTime=True&loc=Local&collation=utf8mb4_unicode_ci
+  max-idle-conns: 10
+  max-open-conns: 10
+
+redis:
+  addr: 127.0.0.1:6379
+  db: 0
+  password:
+  maxidle: 30
+  maxactive: 30
+  idletimeout: 200
+
+appconfig:
+  port: 7000
+  filepath: /files
+  storagepath: /storage

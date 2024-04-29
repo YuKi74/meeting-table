@@ -1,0 +1,44 @@
+stages:
+    - install_node_modules
+    - install_python_modules
+    - eslint_and_pylint
+    - unit_test_and_sonar
+
+cache:
+    paths:
+        - frontend/node_modules
+
+install_node_modules:
+    stage: install_node_modules
+    only:
+        changes:
+            - frontend/package.json
+    script:
+        - cd frontend
+        - npm install
+
+install_python_modules:
+    stage: install_python_modules
+    only:
+        changes:
+            - backend/business-server/requirements.txt
+    script:
+        - pip3 install -r backend/business-server/requirements.txt
+
+eslint_and_pylint:
+    stage: eslint_and_pylint
+    script:
+        - cd frontend
+        - npm run lint
+        - cd ..
+        - touch backend/business-server/__init__.py
+        - pylint --ignore=migrations --exit-zero backend/business-server
+
+unit_test_and_sonar:
+    stage: unit_test_and_sonar
+    before_script:
+        - python3 backend/business-server/manage.py migrate
+    script:
+        - cd frontend && npm run test:unit
+        - cd ../backend/business-server && coverage run manage.py test && coverage xml
+        - cd ../.. && sonar-scanner

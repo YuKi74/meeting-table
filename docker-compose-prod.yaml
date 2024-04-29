@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+    mt_prod:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.prod
+        ports:
+            - "80:80"

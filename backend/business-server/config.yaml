@@ -1,0 +1,12 @@
+app_config:
+    log_path: /var/log/mt/business-server
+    meeting_room_server: 127.0.0.1:7000
+    file_path: /files/
+    agora_app_id: 52a942a5595e46d78af3ef7f60a8766d
+    agora_app_certificate: 599927a957c5431faf49656f8d8dd5e0
+
+mysql_config:
+    user: root
+    password: 123
+    host: localhost
+    name: mt

@@ -1,0 +1,58 @@
+FROM mysql:8.0
+
+# 数据库设置
+ENV MYSQL_ROOT_PASSWORD=123
+ENV MYSQL_DATABASE=mt
+
+# GOPROXY设置
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn
+
+COPY ./docker/config /root/
+COPY ./backend /root/backend
+COPY ./frontend /root/frontend
+
+RUN \
+    # 更换apt-get镜像源
+    mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
+    mv /root/sources.list /etc/apt/sources.list && \
+    apt-get update && \
+    # 安装软件
+    apt-get install -y curl && \
+    apt-get install -y dos2unix && \
+    apt-get install -y python3.7 && \
+    apt-get install -y python3-pip && \
+    apt-get install -y golang-go && \
+    apt-get install -y redis && \
+    apt-get install -y nginx && \
+    # 安装npm
+    curl -fsSL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt-get install -y nodejs && \
+    # 更换npm镜像源
+    npm config set registry https://registry.npm.taobao.org/ && \
+    # 安装前端项目
+    cd /root/frontend && \
+    npm install && \
+    # 安装后端依赖
+    cd /root/backend/metting-room-server && \
+    go mod download && \
+    cd /root/backend/business-server && \
+    pip3 install -r /root/backend/business-server/requirements.txt && \
+    # 修改Nginx配置
+    mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && \
+    mv /root/nginx.conf /etc/nginx/nginx.conf && \
+    # 修改Redis配置
+    mv /etc/redis/redis.conf /etc/redis/redis.conf.bak && \
+    mv /root/redis.conf /etc/redis/redis.conf && \
+    # 创建存储目录
+    mkdir /storage && \
+    mkdir /files && \
+    # 给予entry执行权限
+    chmod +x /root/entry.prod.sh && \
+    # 解决Windows环境下换行符的问题
+    dos2unix /root/entry.prod.sh && \
+    dos2unix /root/init-mysql.sh
+
+ENTRYPOINT [ "/root/entry.prod.sh" ]
+
+EXPOSE 80
